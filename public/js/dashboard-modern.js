@@ -294,6 +294,9 @@ function displaySurveys(surveys) {
     const container = document.getElementById('surveysGrid');
     if (!container) return;
 
+    // Mettre à jour les statistiques des sondages
+    updateSurveyStats(surveys);
+
     if (!surveys || surveys.length === 0) {
         container.innerHTML = `
             <div class="no-surveys">
@@ -343,6 +346,30 @@ function displaySurveys(surveys) {
     `).join('');
 
     container.innerHTML = surveysHTML;
+}
+
+// Mettre à jour les statistiques des sondages
+function updateSurveyStats(surveys) {
+    // Mettre à jour le nombre total de sondages
+    const totalSurveysEl = document.getElementById('totalSurveys');
+    if (totalSurveysEl) {
+        totalSurveysEl.textContent = surveys.length;
+    }
+
+    // Calculer le total des récompenses
+    const totalRewards = surveys.reduce((sum, survey) => sum + (survey.reward_amount || 0), 0);
+    const totalRewardsEl = document.getElementById('totalRewards');
+    if (totalRewardsEl) {
+        totalRewardsEl.textContent = totalRewards.toLocaleString();
+    }
+
+    // Calculer le temps moyen (estimation basée sur le nombre de questions)
+    const avgQuestions = surveys.reduce((sum, survey) => sum + (survey.questions_count || 0), 0) / surveys.length;
+    const avgTime = Math.round(avgQuestions * 0.5); // 30 secondes par question
+    const avgTimeEl = document.getElementById('avgTime');
+    if (avgTimeEl) {
+        avgTimeEl.textContent = avgTime;
+    }
 }
 
 function displaySurveysError() {
@@ -694,22 +721,19 @@ async function submitSurvey() {
         // Calculer le score
         const score = (userAnswers.length / currentSurveyData.questions.length) * 100;
 
-        // Préparer les données de soumission
+        // Préparer les données de soumission selon le format attendu par l'API
         const submissionData = {
-            survey_id: currentSurveyData.id,
+            themeId: currentSurveyData.id,
             answers: userAnswers.map((answer, index) => ({
-                question_id: currentSurveyData.questions[index].id,
-                selected_option: answer,
-                option_text: currentSurveyData.questions[index].options[answer]
-            })),
-            score: score,
-            completed_at: new Date().toISOString()
+                questionId: currentSurveyData.questions[index].id,
+                answer: answer
+            }))
         };
 
         console.log('📤 Soumission du sondage:', submissionData);
 
         const token = localStorage.getItem('token') || localStorage.getItem('authToken');
-        const response = await fetch(`/api/surveys/${currentSurveyData.id}/submit`, {
+        const response = await fetch('/api/surveys/submit', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -848,9 +872,37 @@ function toggleUserMenu() {
 // Fonction pour toggle la sidebar sur mobile
 function toggleSidebar() {
     const sidebar = document.querySelector('.sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+
     if (sidebar) {
-        sidebar.classList.toggle('active');
+        const isActive = sidebar.classList.contains('active');
+
+        if (isActive) {
+            closeSidebar();
+        } else {
+            openSidebar();
+        }
     }
+}
+
+// Ouvrir la sidebar
+function openSidebar() {
+    const sidebar = document.querySelector('.sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+
+    if (sidebar) sidebar.classList.add('active');
+    if (overlay) overlay.classList.add('active');
+    document.body.style.overflow = 'hidden'; // Empêcher le scroll
+}
+
+// Fermer la sidebar
+function closeSidebar() {
+    const sidebar = document.querySelector('.sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+
+    if (sidebar) sidebar.classList.remove('active');
+    if (overlay) overlay.classList.remove('active');
+    document.body.style.overflow = ''; // Restaurer le scroll
 }
 
 // Fermer le menu utilisateur en cliquant ailleurs
@@ -892,6 +944,8 @@ window.startSurvey = startSurvey;
 window.filterSurveys = filterSurveys;
 window.toggleUserMenu = toggleUserMenu;
 window.toggleSidebar = toggleSidebar;
+window.openSidebar = openSidebar;
+window.closeSidebar = closeSidebar;
 window.previousQuestion = previousQuestion;
 window.nextQuestion = nextQuestion;
 window.submitSurvey = submitSurvey;
