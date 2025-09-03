@@ -409,14 +409,18 @@ async function startSurvey(surveyId) {
 
         if (response.ok) {
             const data = await response.json();
+            console.log('📊 Données reçues:', data);
+
             currentSurveyData = {
                 id: surveyId,
                 theme: availableSurveys.find(s => s.id === surveyId),
-                questions: data.questions || []
+                questions: data.questions || data || []
             };
 
+            console.log(`✅ ${currentSurveyData.questions.length} questions chargées`);
+
             if (currentSurveyData.questions.length === 0) {
-                alert('Ce sondage n\'a pas encore de questions. Veuillez réessayer plus tard.');
+                showErrorPopup('Ce sondage n\'a pas encore de questions. Veuillez réessayer plus tard.');
                 return;
             }
 
@@ -427,13 +431,243 @@ async function startSurvey(surveyId) {
             // Afficher la section de sondage
             showSection('takeSurvey');
             initializeSurveyInterface();
+            displayCurrentQuestion();
 
         } else {
-            alert('Erreur lors du chargement du sondage');
+            showErrorPopup('Erreur lors du chargement du sondage');
         }
     } catch (error) {
         console.error('❌ Erreur démarrage sondage:', error);
-        alert('Erreur lors du démarrage du sondage');
+        showErrorPopup('Erreur lors du démarrage du sondage');
+    }
+}
+
+// Initialiser l'interface de sondage
+function initializeSurveyInterface() {
+    if (!currentSurveyData) return;
+
+    // Mettre à jour les informations du sondage
+    const surveyTitle = document.getElementById('surveyTitle');
+    const totalQuestions = document.getElementById('totalQuestions');
+    const surveyReward = document.getElementById('surveyReward');
+
+    if (surveyTitle) {
+        surveyTitle.textContent = currentSurveyData.theme.name;
+    }
+
+    if (totalQuestions) {
+        totalQuestions.textContent = currentSurveyData.questions.length;
+    }
+
+    if (surveyReward) {
+        surveyReward.textContent = currentSurveyData.theme.reward_amount;
+    }
+
+    // Réinitialiser les boutons
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const submitBtn = document.getElementById('submitBtn');
+
+    if (prevBtn) prevBtn.disabled = true;
+    if (nextBtn) nextBtn.disabled = true;
+    if (submitBtn) submitBtn.style.display = 'none';
+}
+
+// Afficher la question actuelle
+function displayCurrentQuestion() {
+    if (!currentSurveyData || currentQuestionIndex >= currentSurveyData.questions.length) return;
+
+    const question = currentSurveyData.questions[currentQuestionIndex];
+    const questionText = document.getElementById('questionText');
+    const optionsContainer = document.getElementById('optionsContainer');
+    const currentQuestionEl = document.getElementById('currentQuestion');
+    const progressFill = document.getElementById('progressFill');
+
+    // Mettre à jour le texte de la question
+    if (questionText) {
+        questionText.textContent = question.question_text;
+    }
+
+    // Mettre à jour le numéro de question
+    if (currentQuestionEl) {
+        currentQuestionEl.textContent = currentQuestionIndex + 1;
+    }
+
+    // Mettre à jour la barre de progression
+    if (progressFill) {
+        const progress = ((currentQuestionIndex + 1) / currentSurveyData.questions.length) * 100;
+        progressFill.style.width = `${progress}%`;
+    }
+
+    // Générer les options
+    if (optionsContainer) {
+        optionsContainer.innerHTML = '';
+
+        question.options.forEach((option, index) => {
+            const optionElement = document.createElement('div');
+            optionElement.className = 'option-item';
+            optionElement.innerHTML = `
+                <input type="radio" id="option_${index}" name="question_${currentQuestionIndex}" value="${index}">
+                <label for="option_${index}">
+                    <span class="option-text">${option}</span>
+                    <span class="option-check"><i class="fas fa-check"></i></span>
+                </label>
+            `;
+
+            // Ajouter l'événement de sélection
+            const radio = optionElement.querySelector('input[type="radio"]');
+            radio.addEventListener('change', function() {
+                if (this.checked) {
+                    selectOption(index);
+                }
+            });
+
+            optionsContainer.appendChild(optionElement);
+        });
+    }
+
+    // Mettre à jour les boutons
+    updateNavigationButtons();
+}
+
+// Sélectionner une option
+function selectOption(optionIndex) {
+    // Enregistrer la réponse
+    userAnswers[currentQuestionIndex] = optionIndex;
+
+    // Mettre à jour l'interface
+    const options = document.querySelectorAll('.option-item');
+    options.forEach((option, index) => {
+        if (index === optionIndex) {
+            option.classList.add('selected');
+        } else {
+            option.classList.remove('selected');
+        }
+    });
+
+    // Activer le bouton suivant
+    updateNavigationButtons();
+}
+
+// Mettre à jour les boutons de navigation
+function updateNavigationButtons() {
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const submitBtn = document.getElementById('submitBtn');
+
+    // Bouton précédent
+    if (prevBtn) {
+        prevBtn.disabled = currentQuestionIndex === 0;
+    }
+
+    // Bouton suivant / terminer
+    const isLastQuestion = currentQuestionIndex === currentSurveyData.questions.length - 1;
+    const hasAnswer = userAnswers[currentQuestionIndex] !== undefined;
+
+    if (isLastQuestion) {
+        if (nextBtn) nextBtn.style.display = 'none';
+        if (submitBtn) {
+            submitBtn.style.display = 'inline-flex';
+            submitBtn.disabled = !hasAnswer;
+        }
+    } else {
+        if (nextBtn) {
+            nextBtn.style.display = 'inline-flex';
+            nextBtn.disabled = !hasAnswer;
+        }
+        if (submitBtn) submitBtn.style.display = 'none';
+    }
+}
+
+// Question précédente
+function previousQuestion() {
+    if (currentQuestionIndex > 0) {
+        currentQuestionIndex--;
+        displayCurrentQuestion();
+
+        // Restaurer la réponse précédente si elle existe
+        const previousAnswer = userAnswers[currentQuestionIndex];
+        if (previousAnswer !== undefined) {
+            const radio = document.querySelector(`input[name="question_${currentQuestionIndex}"][value="${previousAnswer}"]`);
+            if (radio) {
+                radio.checked = true;
+                selectOption(previousAnswer);
+            }
+        }
+    }
+}
+
+// Question suivante
+function nextQuestion() {
+    if (currentQuestionIndex < currentSurveyData.questions.length - 1) {
+        currentQuestionIndex++;
+        displayCurrentQuestion();
+
+        // Restaurer la réponse précédente si elle existe
+        const previousAnswer = userAnswers[currentQuestionIndex];
+        if (previousAnswer !== undefined) {
+            const radio = document.querySelector(`input[name="question_${currentQuestionIndex}"][value="${previousAnswer}"]`);
+            if (radio) {
+                radio.checked = true;
+                selectOption(previousAnswer);
+            }
+        }
+    }
+}
+
+// Soumettre le sondage
+async function submitSurvey() {
+    try {
+        // Vérifier que toutes les questions ont une réponse
+        if (userAnswers.length !== currentSurveyData.questions.length) {
+            showWarningPopup('Veuillez répondre à toutes les questions avant de soumettre.');
+            return;
+        }
+
+        // Calculer le score
+        const score = (userAnswers.length / currentSurveyData.questions.length) * 100;
+
+        // Préparer les données de soumission
+        const submissionData = {
+            survey_id: currentSurveyData.id,
+            answers: userAnswers.map((answer, index) => ({
+                question_id: currentSurveyData.questions[index].id,
+                selected_option: answer,
+                option_text: currentSurveyData.questions[index].options[answer]
+            })),
+            score: score,
+            completed_at: new Date().toISOString()
+        };
+
+        console.log('📤 Soumission du sondage:', submissionData);
+
+        const token = localStorage.getItem('token') || localStorage.getItem('authToken');
+        const response = await fetch(`/api/surveys/${currentSurveyData.id}/submit`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(submissionData)
+        });
+
+        if (response.ok) {
+            const result = await response.json();
+            showSuccessPopup(
+                `Félicitations ! Vous avez terminé le sondage avec un score de ${score.toFixed(1)}%. Vous avez gagné ${currentSurveyData.theme.reward_amount} FCFA !`,
+                () => {
+                    showSection('surveys');
+                    loadAvailableSurveys(); // Recharger les sondages
+                }
+            );
+        } else {
+            const error = await response.json();
+            showErrorPopup(error.message || 'Erreur lors de la soumission du sondage');
+        }
+
+    } catch (error) {
+        console.error('❌ Erreur soumission sondage:', error);
+        showErrorPopup('Erreur lors de la soumission du sondage');
     }
 }
 
@@ -642,6 +876,79 @@ function logout() {
     window.location.href = '/';
 }
 
+// ===== SYSTÈME DE POPUP MODERNE =====
+function showPopup(title, message, type = 'info', confirmCallback = null) {
+    const overlay = document.getElementById('popupOverlay');
+    const titleEl = document.getElementById('popupTitle');
+    const messageEl = document.getElementById('popupMessage');
+    const iconEl = document.getElementById('popupIcon');
+    const confirmBtn = document.getElementById('popupConfirm');
+    const cancelBtn = document.getElementById('popupCancel');
+
+    if (!overlay) return;
+
+    // Mettre à jour le contenu
+    titleEl.textContent = title;
+    messageEl.textContent = message;
+
+    // Mettre à jour l'icône selon le type
+    iconEl.className = `popup-icon ${type}`;
+    const icons = {
+        success: 'fas fa-check',
+        error: 'fas fa-exclamation-triangle',
+        warning: 'fas fa-exclamation-circle',
+        info: 'fas fa-info-circle'
+    };
+    iconEl.innerHTML = `<i class="${icons[type] || icons.info}"></i>`;
+
+    // Gérer les boutons
+    if (confirmCallback) {
+        confirmBtn.onclick = () => {
+            closePopup();
+            confirmCallback();
+        };
+        cancelBtn.style.display = 'inline-flex';
+    } else {
+        confirmBtn.onclick = closePopup;
+        cancelBtn.style.display = 'none';
+    }
+
+    // Afficher le popup
+    overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function showSuccessPopup(message, callback = null) {
+    showPopup('Succès', message, 'success', callback);
+}
+
+function showErrorPopup(message, callback = null) {
+    showPopup('Erreur', message, 'error', callback);
+}
+
+function showWarningPopup(message, callback = null) {
+    showPopup('Attention', message, 'warning', callback);
+}
+
+function showInfoPopup(message, callback = null) {
+    showPopup('Information', message, 'info', callback);
+}
+
+function closePopup() {
+    const overlay = document.getElementById('popupOverlay');
+    if (overlay) {
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+}
+
+// Fermer popup avec Escape
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        closePopup();
+    }
+});
+
 // Fonction pour toggle le menu utilisateur
 function toggleUserMenu() {
     const userMenu = document.getElementById('userMenu');
@@ -697,5 +1004,10 @@ window.startSurvey = startSurvey;
 window.filterSurveys = filterSurveys;
 window.toggleUserMenu = toggleUserMenu;
 window.toggleSidebar = toggleSidebar;
+window.previousQuestion = previousQuestion;
+window.nextQuestion = nextQuestion;
+window.submitSurvey = submitSurvey;
+window.selectOption = selectOption;
+window.closePopup = closePopup;
 window.showSection = showSection;
 window.logout = logout;
