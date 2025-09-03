@@ -556,13 +556,7 @@ function displayUsers(usersList) {
     const container = document.getElementById('usersTable');
 
     if (!usersList || usersList.length === 0) {
-        container.innerHTML = `
-            <div class="empty-state">
-                <i class="fas fa-users" style="font-size: 3rem; color: #ccc; margin-bottom: 1rem;"></i>
-                <h3>Aucun utilisateur trouvé</h3>
-                <p>Les nouveaux utilisateurs apparaîtront ici</p>
-            </div>
-        `;
+        container.innerHTML = '<p>Aucun utilisateur trouvé</p>';
         return;
     }
 
@@ -573,49 +567,33 @@ function displayUsers(usersList) {
     console.log(`👥 Affichage: ${pendingUsers.length} en attente, ${approvedUsers.length} approuvés`);
 
     const html = `
-        <!-- Statistiques rapides -->
-        <div class="users-stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
-            <div class="stat-mini-card" style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem; border-radius: 8px;">
-                <div style="display: flex; align-items: center; gap: 0.5rem;">
-                    <i class="fas fa-clock" style="color: #856404;"></i>
-                    <span style="font-weight: bold; color: #856404;">En attente</span>
-                </div>
-                <div style="font-size: 1.5rem; font-weight: bold; color: #856404; margin-top: 0.5rem;">${pendingUsers.length}</div>
-            </div>
-            <div class="stat-mini-card" style="background: #d1edff; border-left: 4px solid #0d6efd; padding: 1rem; border-radius: 8px;">
-                <div style="display: flex; align-items: center; gap: 0.5rem;">
-                    <i class="fas fa-check-circle" style="color: #084298;"></i>
-                    <span style="font-weight: bold; color: #084298;">Approuvés</span>
-                </div>
-                <div style="font-size: 1.5rem; font-weight: bold; color: #084298; margin-top: 0.5rem;">${approvedUsers.length}</div>
-            </div>
-            <div class="stat-mini-card" style="background: #f8f9fa; border-left: 4px solid #6c757d; padding: 1rem; border-radius: 8px;">
-                <div style="display: flex; align-items: center; gap: 0.5rem;">
-                    <i class="fas fa-users" style="color: #495057;"></i>
-                    <span style="font-weight: bold; color: #495057;">Total</span>
-                </div>
-                <div style="font-size: 1.5rem; font-weight: bold; color: #495057; margin-top: 0.5rem;">${usersList.length}</div>
+        <div class="table-header" style="margin-bottom: 2rem;">
+            <h3>Gestion des Utilisateurs (${usersList.length} total)</h3>
+            <div class="table-actions">
+                <button class="btn btn-primary" onclick="refreshUsers()">
+                    <i class="fas fa-sync"></i> Actualiser
+                </button>
+                <button class="btn btn-outline" onclick="exportUsers()">
+                    <i class="fas fa-download"></i> Exporter
+                </button>
             </div>
         </div>
 
-        <!-- Onglets pour séparer les types d'utilisateurs -->
-        <div class="users-tabs" style="margin-bottom: 1.5rem;">
-            <button class="tab-btn ${pendingUsers.length > 0 ? 'active' : ''}" onclick="switchUserTab('pending')" id="pendingTab">
-                <i class="fas fa-clock"></i> En attente (${pendingUsers.length})
-            </button>
-            <button class="tab-btn ${pendingUsers.length === 0 ? 'active' : ''}" onclick="switchUserTab('approved')" id="approvedTab">
-                <i class="fas fa-check-circle"></i> Approuvés (${approvedUsers.length})
-            </button>
-        </div>
+        ${pendingUsers.length > 0 ? `
+            <div class="section-header" style="background: #fff3cd; padding: 1rem; margin-bottom: 1rem; border-radius: 8px; border-left: 4px solid #ffc107;">
+                <h3 style="margin: 0; color: #856404;"><i class="fas fa-clock"></i> Utilisateurs en attente d'approbation (${pendingUsers.length})</h3>
+                <p style="margin: 0.5rem 0 0 0; color: #856404; font-size: 0.9rem;">Ces utilisateurs nécessitent votre approbation pour accéder à la plateforme</p>
+            </div>
+            ${generateUserTable(pendingUsers, true)}
+        ` : ''}
 
-        <!-- Contenu des onglets -->
-        <div id="pendingUsersContent" class="tab-content ${pendingUsers.length > 0 ? 'active' : ''}">
-            ${pendingUsers.length > 0 ? generateUserCards(pendingUsers, true) : '<div class="empty-tab"><i class="fas fa-check"></i><p>Aucun utilisateur en attente</p></div>'}
-        </div>
-
-        <div id="approvedUsersContent" class="tab-content ${pendingUsers.length === 0 ? 'active' : ''}">
-            ${approvedUsers.length > 0 ? generateUserCards(approvedUsers, false) : '<div class="empty-tab"><i class="fas fa-users"></i><p>Aucun utilisateur approuvé</p></div>'}
-        </div>
+        ${approvedUsers.length > 0 ? `
+            <div class="section-header" style="background: #d1edff; padding: 1rem; margin-bottom: 1rem; border-radius: 8px; border-left: 4px solid #0d6efd;">
+                <h3 style="margin: 0; color: #084298;"><i class="fas fa-check-circle"></i> Utilisateurs approuvés (${approvedUsers.length})</h3>
+                <p style="margin: 0.5rem 0 0 0; color: #084298; font-size: 0.9rem;">Utilisateurs actifs avec accès complet à la plateforme</p>
+            </div>
+            ${generateUserTable(approvedUsers, false)}
+        ` : ''}
     `;
 
     container.innerHTML = html;
@@ -696,6 +674,21 @@ function generateUserCards(users, isPending) {
         </div>
     `;
 }
+
+// Fonction originale pour le tableau (gardée pour compatibilité)
+function generateUserTable(users, isPending) {
+    return `
+        <table class="admin-table" style="margin-bottom: 2rem;">
+            <thead>
+                <tr ${isPending ? 'style="background: #fff3cd;"' : ''}>
+                    <th style="width: 50%;">Coordonnées Complètes</th>
+                    <th style="width: 20%;">Statut & Activité</th>
+                    <th style="width: 15%;">Inscription</th>
+                    <th style="width: 15%;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${users.map(user => `
                     <tr ${isPending ? 'style="background: #fffbf0;"' : ''}>
                         <td>
                             <div class="user-full-details">
@@ -1548,16 +1541,35 @@ function refreshUsers() {
     loadUsers();
 }
 
-// Gestion des onglets utilisateurs
-function switchUserTab(tabName) {
-    // Désactiver tous les onglets
-    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-
-    // Activer l'onglet sélectionné
-    document.getElementById(tabName + 'Tab').classList.add('active');
-    document.getElementById(tabName + 'UsersContent').classList.add('active');
+function refreshSurveys() {
+    loadSurveys();
 }
+
+function refreshWithdrawals() {
+    loadWithdrawals();
+}
+
+function refreshQuiz() {
+    // TODO: Implémenter le chargement des quiz
+    showNotification('Fonctionnalité quiz en développement', 'info');
+}
+
+function createSurvey() {
+    // TODO: Implémenter la création de sondage
+    showNotification('Fonctionnalité création de sondage en développement', 'info');
+}
+
+function createQuiz() {
+    // TODO: Implémenter la création de quiz
+    showNotification('Fonctionnalité création de quiz en développement', 'info');
+}
+
+function exportWithdrawals() {
+    // TODO: Implémenter l'export des retraits
+    showNotification('Fonctionnalité export en développement', 'info');
+}
+
+// Fonction supprimée - pas utilisée dans la version tableau
 
 // Nouvelle fonction pour voir les détails d'un utilisateur
 function viewUserDetails(userId) {

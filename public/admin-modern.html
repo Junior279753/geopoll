@@ -1550,25 +1550,77 @@
                     </div>
                 </section>
 
-                <!-- Autres sections seront ajoutées -->
+                <!-- Section Sondages -->
                 <section id="surveys" class="content-section">
                     <div class="admin-card">
                         <div class="card-header">
                             <h3 class="card-title">Gestion des sondages</h3>
+                            <div class="card-actions">
+                                <button class="btn btn-primary" onclick="refreshSurveys()">
+                                    <i class="fas fa-sync"></i> Actualiser
+                                </button>
+                                <button class="btn btn-success" onclick="createSurvey()">
+                                    <i class="fas fa-plus"></i> Nouveau sondage
+                                </button>
+                            </div>
                         </div>
                         <div class="card-content">
-                            <p>Section en développement...</p>
+                            <div id="surveysTable">
+                                <div class="loading-spinner">
+                                    <i class="fas fa-spinner fa-spin"></i>
+                                    <span>Chargement des sondages...</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </section>
 
+                <!-- Section Quiz -->
+                <section id="quiz" class="content-section">
+                    <div class="admin-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Gestion des quiz</h3>
+                            <div class="card-actions">
+                                <button class="btn btn-primary" onclick="refreshQuiz()">
+                                    <i class="fas fa-sync"></i> Actualiser
+                                </button>
+                                <button class="btn btn-success" onclick="createQuiz()">
+                                    <i class="fas fa-plus"></i> Nouveau quiz
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-content">
+                            <div id="quizTable">
+                                <div class="loading-spinner">
+                                    <i class="fas fa-spinner fa-spin"></i>
+                                    <span>Chargement des quiz...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section Retraits -->
                 <section id="withdrawals" class="content-section">
                     <div class="admin-card">
                         <div class="card-header">
                             <h3 class="card-title">Demandes de retrait</h3>
+                            <div class="card-actions">
+                                <button class="btn btn-primary" onclick="refreshWithdrawals()">
+                                    <i class="fas fa-sync"></i> Actualiser
+                                </button>
+                                <button class="btn btn-outline" onclick="exportWithdrawals()">
+                                    <i class="fas fa-download"></i> Exporter
+                                </button>
+                            </div>
                         </div>
                         <div class="card-content">
-                            <p>Section en développement...</p>
+                            <div id="withdrawalsTable">
+                                <div class="loading-spinner">
+                                    <i class="fas fa-spinner fa-spin"></i>
+                                    <span>Chargement des retraits...</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </section>

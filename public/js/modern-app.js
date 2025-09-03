@@ -289,9 +289,15 @@ async function handleLogin(e) {
             },
             body: JSON.stringify(loginData)
         });
-        
+
+        // Vérifier si la réponse est du JSON valide
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            throw new Error('Réponse serveur invalide. Vérifiez la configuration API.');
+        }
+
         const data = await response.json();
-        
+
         if (response.ok) {
             showNotification('Connexion réussie ! Redirection...', 'success');
             localStorage.setItem('authToken', data.token);
@@ -452,7 +458,13 @@ async function handleRegistration(e) {
             },
             body: JSON.stringify(completeData)
         });
-        
+
+        // Vérifier si la réponse est du JSON valide
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            throw new Error('Réponse serveur invalide. Vérifiez la configuration API.');
+        }
+
         const data = await response.json();
         
         if (response.ok) {

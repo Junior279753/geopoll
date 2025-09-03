@@ -292,33 +292,44 @@ router.get('/activity-logs', async (req, res) => {
 // Route pour obtenir tous les sondages
 router.get('/surveys', async (req, res) => {
     try {
+        const db = DatabaseFactory.create();
         const { page = 1, limit = 20 } = req.query;
+
+        // Récupérer les tentatives de sondages
+        const allAttempts = await db.all('survey_attempts', {},
+            'id, user_id, theme_id, is_completed, is_passed, score, reward_amount, started_at, completed_at',
+            { column: 'started_at', ascending: false }
+        );
+
+        // Récupérer les utilisateurs et thèmes pour enrichir les données
+        const users = await db.all('users', {}, 'id, first_name, last_name, email');
+        const themes = await db.all('survey_themes', {}, 'id, name');
+
+        // Enrichir les tentatives avec les infos utilisateur et thème
+        const enrichedAttempts = allAttempts.map(attempt => {
+            const user = users.find(u => u.id === attempt.user_id);
+            const theme = themes.find(t => t.id === attempt.theme_id);
+            return {
+                ...attempt,
+                first_name: user?.first_name || null,
+                last_name: user?.last_name || null,
+                email: user?.email || null,
+                theme_name: theme?.name || null
+            };
+        });
+
+        // Pagination
+        const total = enrichedAttempts.length;
         const offset = (page - 1) * limit;
-
-        // Obtenir les tentatives de sondages avec détails utilisateur
-        const surveys = await db.all(`
-            SELECT
-                sa.id, sa.user_id, sa.theme_id, sa.is_completed, sa.is_passed,
-                sa.score, sa.reward_amount, sa.started_at, sa.completed_at,
-                u.first_name, u.last_name, u.email,
-                st.name as theme_name
-            FROM survey_attempts sa
-            LEFT JOIN users u ON sa.user_id = u.id
-            LEFT JOIN survey_themes st ON sa.theme_id = st.id
-            ORDER BY sa.started_at DESC
-            LIMIT ? OFFSET ?
-        `, [limit, offset]);
-
-        // Compter le total
-        const totalCount = await db.get('SELECT COUNT(*) as total FROM survey_attempts');
+        const surveys = enrichedAttempts.slice(offset, offset + parseInt(limit));
 
         res.json({
             surveys,
             pagination: {
                 page: parseInt(page),
                 limit: parseInt(limit),
-                total: totalCount.total,
-                pages: Math.ceil(totalCount.total / limit)
+                total: total,
+                pages: Math.ceil(total / limit)
             }
         });
 
@@ -386,40 +397,48 @@ router.get('/surveys/themes', async (req, res) => {
 // Route pour obtenir les demandes de retrait
 router.get('/withdrawals', async (req, res) => {
     try {
+        const db = DatabaseFactory.create();
         const { status = 'all', page = 1, limit = 20 } = req.query;
-        const offset = (page - 1) * limit;
 
-        let whereClause = "WHERE t.type = 'withdrawal'";
-        const params = [];
+        // Récupérer toutes les transactions de type withdrawal
+        const allTransactions = await db.all('transactions', { type: 'withdrawal' },
+            'id, user_id, amount, status, created_at, processed_at',
+            { column: 'created_at', ascending: false }
+        );
 
+        // Filtrer par statut si spécifié
+        let filteredTransactions = allTransactions;
         if (status !== 'all') {
-            whereClause += ' AND t.status = ?';
-            params.push(status);
+            filteredTransactions = filteredTransactions.filter(t => t.status === status);
         }
 
-        const withdrawals = await db.all(`
-            SELECT
-                t.id, t.user_id, t.amount, t.status, t.created_at, t.processed_at,
-                t.payment_method, t.payment_details,
-                u.first_name, u.last_name, u.email, u.balance
-            FROM transactions t
-            LEFT JOIN users u ON t.user_id = u.id
-            ${whereClause}
-            ORDER BY t.created_at DESC
-            LIMIT ? OFFSET ?
-        `, [...params, limit, offset]);
+        // Récupérer les utilisateurs pour enrichir les données
+        const users = await db.all('users', {}, 'id, first_name, last_name, email, balance');
 
-        // Compter le total
-        const totalQuery = `SELECT COUNT(*) as total FROM transactions t ${whereClause}`;
-        const totalCount = await db.get(totalQuery, params);
+        // Enrichir les transactions avec les infos utilisateur
+        const enrichedTransactions = filteredTransactions.map(transaction => {
+            const user = users.find(u => u.id === transaction.user_id);
+            return {
+                ...transaction,
+                first_name: user?.first_name || null,
+                last_name: user?.last_name || null,
+                email: user?.email || null,
+                balance: user?.balance || 0
+            };
+        });
+
+        // Pagination
+        const total = enrichedTransactions.length;
+        const offset = (page - 1) * limit;
+        const withdrawals = enrichedTransactions.slice(offset, offset + parseInt(limit));
 
         res.json({
             withdrawals,
             pagination: {
                 page: parseInt(page),
                 limit: parseInt(limit),
-                total: totalCount.total,
-                pages: Math.ceil(totalCount.total / limit)
+                total: total,
+                pages: Math.ceil(total / limit)
             }
         });
 
@@ -511,45 +530,48 @@ router.put('/withdrawals/:id/process', async (req, res) => {
 // Route pour obtenir les logs d'activité
 router.get('/logs', async (req, res) => {
     try {
+        const db = DatabaseFactory.create();
         const { page = 1, limit = 50, action, userId } = req.query;
-        const offset = (page - 1) * limit;
 
-        let whereClause = 'WHERE 1=1';
-        const params = [];
+        // Pour Supabase, on récupère tous les logs et on filtre côté client
+        const allLogs = await db.all('activity_logs', {},
+            'id, user_id, action, ip_address, user_agent, details, created_at',
+            { column: 'created_at', ascending: false }
+        );
 
+        // Filtrer par action si spécifié
+        let filteredLogs = allLogs;
         if (action) {
-            whereClause += ' AND al.action = ?';
-            params.push(action);
+            filteredLogs = filteredLogs.filter(log => log.action === action);
         }
-
         if (userId) {
-            whereClause += ' AND al.user_id = ?';
-            params.push(userId);
+            filteredLogs = filteredLogs.filter(log => log.user_id === parseInt(userId));
         }
 
-        const logs = await db.all(`
-            SELECT
-                al.id, al.user_id, al.action, al.ip_address, al.user_agent,
-                al.details, al.created_at,
-                u.first_name, u.last_name, u.email
-            FROM activity_logs al
-            LEFT JOIN users u ON al.user_id = u.id
-            ${whereClause}
-            ORDER BY al.created_at DESC
-            LIMIT ? OFFSET ?
-        `, [...params, limit, offset]);
+        // Pagination
+        const total = filteredLogs.length;
+        const offset = (page - 1) * limit;
+        const paginatedLogs = filteredLogs.slice(offset, offset + parseInt(limit));
 
-        // Compter le total
-        const totalQuery = `SELECT COUNT(*) as total FROM activity_logs al ${whereClause}`;
-        const totalCount = await db.get(totalQuery, params);
+        // Enrichir avec les infos utilisateur
+        const users = await db.all('users', {}, 'id, first_name, last_name, email');
+        const enrichedLogs = paginatedLogs.map(log => {
+            const user = users.find(u => u.id === log.user_id);
+            return {
+                ...log,
+                first_name: user?.first_name || null,
+                last_name: user?.last_name || null,
+                email: user?.email || null
+            };
+        });
 
         res.json({
-            logs,
+            logs: enrichedLogs,
             pagination: {
                 page: parseInt(page),
                 limit: parseInt(limit),
-                total: totalCount.total,
-                pages: Math.ceil(totalCount.total / limit)
+                total: total,
+                pages: Math.ceil(total / limit)
             }
         });
 
