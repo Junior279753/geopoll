@@ -409,27 +409,49 @@ function getEstimatedTime(questionsCount) {
 
 // Filtrage des sondages
 function filterSurveys() {
-    const difficultyFilter = document.getElementById('difficultyFilter').value;
-    const rewardFilter = document.getElementById('rewardFilter').value;
+    console.log('🔍 Filtrage des sondages...');
+
+    const difficultyFilterEl = document.getElementById('difficultyFilter');
+    const rewardFilterEl = document.getElementById('rewardFilter');
+
+    if (!difficultyFilterEl || !rewardFilterEl) {
+        console.error('❌ Éléments de filtre non trouvés');
+        return;
+    }
+
+    const difficultyFilter = difficultyFilterEl.value;
+    const rewardFilter = rewardFilterEl.value;
+
+    console.log('🔍 Filtres:', { difficultyFilter, rewardFilter });
+    console.log('🔍 Sondages disponibles:', availableSurveys.length);
 
     let filteredSurveys = [...availableSurveys];
 
     if (difficultyFilter) {
-        filteredSurveys = filteredSurveys.filter(s => s.difficulty === difficultyFilter);
+        filteredSurveys = filteredSurveys.filter(s => {
+            console.log(`🔍 Sondage ${s.name}: difficulté ${s.difficulty} vs filtre ${difficultyFilter}`);
+            return s.difficulty === difficultyFilter;
+        });
+        console.log(`🔍 Après filtre difficulté: ${filteredSurveys.length} sondages`);
     }
 
     if (rewardFilter) {
         filteredSurveys = filteredSurveys.filter(s => {
             const reward = s.reward_amount;
+            let matches = false;
             switch (rewardFilter) {
-                case 'low': return reward < 2500;
-                case 'medium': return reward >= 2500 && reward <= 3500;
-                case 'high': return reward > 3500;
-                default: return true;
+                case 'low': matches = reward < 2500; break;
+                case 'medium': matches = reward >= 2500 && reward <= 3500; break;
+                case 'high': matches = reward > 3500; break;
+                default: matches = true;
             }
+            console.log(`🔍 Sondage ${s.name}: récompense ${reward} vs filtre ${rewardFilter} = ${matches}`);
+            return matches;
         });
+        console.log(`🔍 Après filtre récompense: ${filteredSurveys.length} sondages`);
     }
 
+    console.log(`🔍 Résultat final: ${filteredSurveys.length} sondages`);
     displaySurveys(filteredSurveys);
 }
 
