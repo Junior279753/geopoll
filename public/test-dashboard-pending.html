@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Dashboard - Utilisateurs en Attente</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+            margin: 0;
+        }
+        
+        .test-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .test-section {
+            margin: 2rem 0;
+            padding: 1.5rem;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            background: #f8f9fa;
+        }
+        
+        .test-section h3 {
+            margin-top: 0;
+            color: #495057;
+        }
+        
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .feature-list li {
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #dee2e6;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            min-width: 80px;
+            text-align: center;
+        }
+        
+        .status.new {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status.improved {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+        
+        .test-link {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            text-align: center;
+            transition: background 0.3s ease;
+            margin: 0.5rem;
+            font-weight: 500;
+        }
+        
+        .test-link:hover {
+            background: #5a6fd8;
+            color: white;
+        }
+        
+        .test-link.primary {
+            background: #28a745;
+            font-size: 1.1rem;
+            padding: 1.25rem 2.5rem;
+        }
+        
+        .test-link.primary:hover {
+            background: #218838;
+        }
+        
+        .preview-box {
+            background: #fff;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+        
+        .preview-card {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            border: 1px solid #ffeaa7;
+            border-left: 4px solid #ffc107;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            box-shadow: 0 4px 12px rgba(255, 193, 7, 0.2);
+        }
+        
+        .preview-stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid #e9ecef;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .preview-stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(255, 193, 7, 0.3);
+        }
+        
+        .preview-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            background: linear-gradient(135deg, #ffc107 0%, #ff8f00 100%);
+        }
+        
+        .preview-content {
+            flex: 1;
+        }
+        
+        .preview-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #ff8f00;
+            margin-bottom: 0.25rem;
+        }
+        
+        .preview-label {
+            color: #666;
+            font-size: 0.875rem;
+        }
+        
+        .preview-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #dc3545;
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.7);
+            }
+            70% {
+                transform: scale(1.05);
+                box-shadow: 0 0 0 10px rgba(255, 193, 7, 0);
+            }
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(255, 193, 7, 0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1><i class="fas fa-tachometer-alt"></i> Dashboard Mis à Jour - Utilisateurs en Attente</h1>
+        
+        <!-- Section 1: Nouvelles fonctionnalités -->
+        <div class="test-section">
+            <h3>🆕 Nouvelles fonctionnalités ajoutées</h3>
+            <ul class="feature-list">
+                <li>
+                    <span class="status new">NOUVEAU</span>
+                    <div>
+                        <strong>Carte d'alerte prioritaire</strong>
+                        <div style="font-size: 0.9rem; color: #666;">Affichage en haut du dashboard avec animation</div>
+                    </div>
+                </li>
+                <li>
+                    <span class="status improved">AMÉLIORÉ</span>
+                    <div>
+                        <strong>Carte statistique interactive</strong>
+                        <div style="font-size: 0.9rem; color: #666;">Cliquable avec effet hover et badge de notification</div>
+                    </div>
+                </li>
+                <li>
+                    <span class="status new">NOUVEAU</span>
+                    <div>
+                        <strong>Animation pulse</strong>
+                        <div style="font-size: 0.9rem; color: #666;">Attire l'attention sur les éléments en attente</div>
+                    </div>
+                </li>
+                <li>
+                    <span class="status improved">AMÉLIORÉ</span>
+                    <div>
+                        <strong>Badges de navigation</strong>
+                        <div style="font-size: 0.9rem; color: #666;">Compteurs en temps réel sur menu et cartes</div>
+                    </div>
+                </li>
+                <li>
+                    <span class="status new">NOUVEAU</span>
+                    <div>
+                        <strong>Actualisation automatique</strong>
+                        <div style="font-size: 0.9rem; color: #666;">Mise à jour toutes les 30 secondes</div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        
+        <!-- Section 2: Aperçu des éléments -->
+        <div class="test-section">
+            <h3>👀 Aperçu des nouveaux éléments</h3>
+            
+            <h4>Carte d'alerte (affichée quand il y a des utilisateurs en attente) :</h4>
+            <div class="preview-card">
+                <div style="display: flex; align-items: center; justify-content: between;">
+                    <div style="flex: 1;">
+                        <h4 style="margin: 0 0 0.5rem 0; color: #856404; display: flex; align-items: center; gap: 0.5rem;">
+                            <div style="width: 40px; height: 40px; background: #ffc107; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #000;">
+                                <i class="fas fa-user-clock"></i>
+                            </div>
+                            Demandes d'approbation en attente
+                        </h4>
+                        <p style="margin: 0; color: #856404; font-size: 1.1rem;">
+                            3 utilisateur(s) en attente d'approbation. Cliquez pour les gérer.
+                        </p>
+                        <div style="margin-top: 0.5rem;">
+                            <span style="background: #856404; color: #fff3cd; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.9rem; font-weight: 500;">
+                                <i class="fas fa-clock"></i> Action requise
+                            </span>
+                        </div>
+                    </div>
+                    <button style="background: #ffc107; color: #000; border: none; padding: 1rem 2rem; border-radius: 8px; cursor: pointer; font-weight: 600; margin-left: 1rem; font-size: 1.1rem;">
+                        <i class="fas fa-users"></i> Gérer les demandes
+                    </button>
+                </div>
+            </div>
+            
+            <h4>Carte statistique interactive :</h4>
+            <div class="preview-box">
+                <div class="preview-stat-card">
+                    <div class="preview-icon">
+                        <i class="fas fa-user-clock"></i>
+                    </div>
+                    <div class="preview-content">
+                        <div class="preview-value">3</div>
+                        <div class="preview-label">En attente d'approbation</div>
+                        <div style="font-size: 0.8rem; color: #ff8f00; margin-top: 0.25rem;">
+                            <i class="fas fa-hand-pointer"></i> Cliquez pour gérer
+                        </div>
+                    </div>
+                    <div class="preview-badge">3</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Section 3: Instructions de test -->
+        <div class="test-section">
+            <h3>🧪 Instructions de test</h3>
+            <ol>
+                <li><strong>Connectez-vous</strong> à l'interface admin avec <code>admin@geopoll.ci</code> / <code>admin123</code></li>
+                <li><strong>Vérifiez le dashboard</strong> - vous devriez voir :
+                    <ul>
+                        <li>La carte d'alerte jaune en haut (si des utilisateurs en attente)</li>
+                        <li>La carte statistique "En attente d'approbation" avec badge rouge</li>
+                        <li>Le badge sur "Utilisateurs" dans le menu latéral</li>
+                    </ul>
+                </li>
+                <li><strong>Testez l'interactivité</strong> :
+                    <ul>
+                        <li>Cliquez sur la carte statistique → Redirection vers section Utilisateurs</li>
+                        <li>Cliquez sur "Gérer les demandes" → Redirection vers section Utilisateurs</li>
+                        <li>Observez les animations pulse sur les éléments en attente</li>
+                    </ul>
+                </li>
+                <li><strong>Vérifiez l'actualisation</strong> - Les compteurs se mettent à jour automatiquement</li>
+            </ol>
+        </div>
+        
+        <!-- Section 4: Liens de test -->
+        <div class="test-section">
+            <h3>🔗 Liens de test</h3>
+            <div style="text-align: center;">
+                <a href="/admin-modern.html" class="test-link primary">
+                    <i class="fas fa-tachometer-alt"></i>
+                    Tester le Dashboard Mis à Jour
+                </a>
+                <br>
+                <a href="/test-admin-auth.html" class="test-link">
+                    <i class="fas fa-shield-alt"></i>
+                    Test Authentification
+                </a>
+                <a href="/test-notifications.html" class="test-link">
+                    <i class="fas fa-bell"></i>
+                    Test Notifications
+                </a>
+                <a href="/check-pending-users.js" class="test-link">
+                    <i class="fas fa-database"></i>
+                    Vérifier BDD
+                </a>
+            </div>
+        </div>
+        
+        <!-- Section 5: Vérifications -->
+        <div class="test-section">
+            <h3>✅ Points de vérification</h3>
+            <ul class="feature-list">
+                <li>
+                    <i class="fas fa-check-circle" style="color: #28a745;"></i>
+                    <div>La carte d'alerte s'affiche quand il y a des utilisateurs en attente</div>
+                </li>
+                <li>
+                    <i class="fas fa-check-circle" style="color: #28a745;"></i>
+                    <div>La carte statistique affiche le bon nombre avec badge</div>
+                </li>
+                <li>
+                    <i class="fas fa-check-circle" style="color: #28a745;"></i>
+                    <div>Les animations pulse fonctionnent</div>
+                </li>
+                <li>
+                    <i class="fas fa-check-circle" style="color: #28a745;"></i>
+                    <div>Les clics redirigent vers la section Utilisateurs</div>
+                </li>
+                <li>
+                    <i class="fas fa-check-circle" style="color: #28a745;"></i>
+                    <div>L'actualisation automatique fonctionne (30s)</div>
+                </li>
+                <li>
+                    <i class="fas fa-check-circle" style="color: #28a745;"></i>
+                    <div>Les badges de navigation sont mis à jour</div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

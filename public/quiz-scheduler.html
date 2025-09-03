@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planificateur de Quiz - GeoPoll</title>
+    <link rel="stylesheet" href="/css/modern-style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        .scheduler-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: #f8fafc;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            color: white;
+            padding: 2rem;
+            border-radius: var(--border-radius-2xl);
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .tabs {
+            display: flex;
+            background: white;
+            border-radius: var(--border-radius-xl);
+            padding: 0.5rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .tab {
+            flex: 1;
+            padding: 1rem;
+            text-align: center;
+            border-radius: var(--border-radius-lg);
+            cursor: pointer;
+            transition: var(--transition-fast);
+            font-weight: 500;
+        }
+
+        .tab.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .tab:hover:not(.active) {
+            background: var(--gray-100);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .quiz-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .quiz-card {
+            background: white;
+            border-radius: var(--border-radius-xl);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            border: 2px solid transparent;
+            transition: var(--transition-normal);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .quiz-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .quiz-card.featured {
+            border-color: var(--warning);
+            background: linear-gradient(135deg, #fffbeb, white);
+        }
+
+        .quiz-card.featured::before {
+            content: "⭐ Mis en avant";
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: var(--warning);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border-bottom-left-radius: var(--border-radius);
+        }
+
+        .quiz-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .quiz-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: var(--border-radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .quiz-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 0.25rem;
+        }
+
+        .quiz-theme {
+            font-size: 0.9rem;
+            color: var(--gray-600);
+        }
+
+        .quiz-info {
+            margin-bottom: 1.5rem;
+        }
+
+        .quiz-description {
+            color: var(--gray-700);
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+
+        .quiz-meta {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--gray-600);
+        }
+
+        .meta-item i {
+            color: var(--primary-color);
+        }
+
+        .quiz-schedule {
+            background: var(--gray-50);
+            padding: 1rem;
+            border-radius: var(--border-radius-lg);
+            margin-bottom: 1rem;
+        }
+
+        .schedule-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .schedule-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .schedule-label {
+            font-weight: 500;
+            color: var(--gray-700);
+        }
+
+        .schedule-value {
+            color: var(--gray-900);
+            font-weight: 600;
+        }
+
+        .quiz-rewards {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .reward-item {
+            flex: 1;
+            text-align: center;
+            padding: 0.75rem;
+            background: var(--gray-50);
+            border-radius: var(--border-radius-lg);
+        }
+
+        .reward-amount {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--secondary-color);
+        }
+
+        .reward-label {
+            font-size: 0.8rem;
+            color: var(--gray-600);
+            margin-top: 0.25rem;
+        }
+
+        .quiz-status {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius-full);
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .status-upcoming {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .status-active {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-ended {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .quiz-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .btn-register {
+            flex: 1;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem;
+            border-radius: var(--border-radius-lg);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-fast);
+        }
+
+        .btn-register:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-register:disabled {
+            background: var(--gray-400);
+            cursor: not-allowed;
+        }
+
+        .btn-details {
+            background: var(--gray-100);
+            color: var(--gray-700);
+            border: none;
+            padding: 0.75rem 1rem;
+            border-radius: var(--border-radius-lg);
+            cursor: pointer;
+            transition: var(--transition-fast);
+        }
+
+        .btn-details:hover {
+            background: var(--gray-200);
+        }
+
+        .participants-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            padding: 0.5rem;
+            background: var(--gray-50);
+            border-radius: var(--border-radius);
+        }
+
+        .participants-bar {
+            flex: 1;
+            height: 6px;
+            background: var(--gray-200);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .participants-fill {
+            height: 100%;
+            background: var(--secondary-color);
+            transition: width 0.3s ease;
+        }
+
+        .create-quiz-form {
+            background: white;
+            padding: 2rem;
+            border-radius: var(--border-radius-xl);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            padding: 0.75rem;
+            border: 2px solid var(--gray-200);
+            border-radius: var(--border-radius-lg);
+            font-size: 1rem;
+            transition: var(--transition-fast);
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .difficulty-selector {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .difficulty-option {
+            flex: 1;
+            padding: 0.75rem;
+            border: 2px solid var(--gray-200);
+            border-radius: var(--border-radius-lg);
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition-fast);
+        }
+
+        .difficulty-option.selected {
+            border-color: var(--primary-color);
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: var(--border-radius-xl);
+            box-shadow: var(--shadow-sm);
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--gray-600);
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .scheduler-container {
+                padding: 1rem;
+            }
+
+            .quiz-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tabs {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="scheduler-container">
+        <div class="header">
+            <h1>📅 Planificateur de Quiz GeoPoll</h1>
+            <p>Gérez et participez aux quiz planifiés</p>
+        </div>
+
+        <!-- Navigation par onglets -->
+        <div class="tabs">
+            <div class="tab active" onclick="showTab('available')">
+                <i class="fas fa-calendar-alt"></i>
+                Quiz Disponibles
+            </div>
+            <div class="tab" onclick="showTab('my-registrations')">
+                <i class="fas fa-user-check"></i>
+                Mes Inscriptions
+            </div>
+            <div class="tab" onclick="showTab('create')" id="createTab" style="display: none;">
+                <i class="fas fa-plus-circle"></i>
+                Créer un Quiz
+            </div>
+            <div class="tab" onclick="showTab('stats')" id="statsTab" style="display: none;">
+                <i class="fas fa-chart-bar"></i>
+                Statistiques
+            </div>
+        </div>
+
+        <!-- Contenu des onglets -->
+        
+        <!-- Quiz Disponibles -->
+        <div id="available" class="tab-content active">
+            <div id="quizzesLoading" class="text-center" style="padding: 3rem;">
+                <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: var(--primary-color);"></i>
+                <p style="margin-top: 1rem; color: var(--gray-600);">Chargement des quiz...</p>
+            </div>
+            <div id="quizzesContainer" style="display: none;"></div>
+        </div>
+
+        <!-- Mes Inscriptions -->
+        <div id="my-registrations" class="tab-content">
+            <div id="registrationsContainer">
+                <p style="text-align: center; color: var(--gray-600); padding: 3rem;">
+                    Chargement de vos inscriptions...
+                </p>
+            </div>
+        </div>
+
+        <!-- Créer un Quiz (Admin) -->
+        <div id="create" class="tab-content">
+            <div class="create-quiz-form">
+                <h2 style="margin-bottom: 2rem; color: var(--gray-900);">
+                    <i class="fas fa-plus-circle"></i>
+                    Créer un Nouveau Quiz Planifié
+                </h2>
+                
+                <form id="createQuizForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Titre du Quiz</label>
+                            <input type="text" class="form-input" id="quizTitle" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Thème</label>
+                            <select class="form-select" id="quizTheme" required>
+                                <option value="">Sélectionner un thème</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group full-width">
+                            <label class="form-label">Description</label>
+                            <textarea class="form-textarea" id="quizDescription" placeholder="Décrivez le quiz..."></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Date et Heure de Début</label>
+                            <input type="datetime-local" class="form-input" id="startDate" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Date et Heure de Fin</label>
+                            <input type="datetime-local" class="form-input" id="endDate" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Nombre Max de Participants</label>
+                            <input type="number" class="form-input" id="maxParticipants" min="1" placeholder="Illimité si vide">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Durée Estimée (minutes)</label>
+                            <input type="number" class="form-input" id="estimatedDuration" value="10" min="1" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Récompense (FCFA)</label>
+                            <input type="number" class="form-input" id="rewardAmount" value="22500" min="0" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Bonus (FCFA)</label>
+                            <input type="number" class="form-input" id="bonusReward" value="0" min="0">
+                        </div>
+                        
+                        <div class="form-group full-width">
+                            <label class="form-label">Niveau de Difficulté</label>
+                            <div class="difficulty-selector">
+                                <div class="difficulty-option" data-level="easy">
+                                    <i class="fas fa-smile"></i>
+                                    <div>Facile</div>
+                                </div>
+                                <div class="difficulty-option selected" data-level="medium">
+                                    <i class="fas fa-meh"></i>
+                                    <div>Moyen</div>
+                                </div>
+                                <div class="difficulty-option" data-level="hard">
+                                    <i class="fas fa-frown"></i>
+                                    <div>Difficile</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                                <input type="checkbox" id="isFeatured">
+                                <span>Mettre en avant ce quiz</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div style="text-align: center;">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-calendar-plus"></i>
+                            Créer le Quiz Planifié
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Statistiques (Admin) -->
+        <div id="stats" class="tab-content">
+            <div class="stats-grid" id="statsGrid">
+                <!-- Les statistiques seront chargées ici -->
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/quiz-scheduler.js"></script>
+</body>
+</html>

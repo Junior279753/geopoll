@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accès Administrateur - GeoPoll</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .admin-access-container {
+            background: white;
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .admin-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 2rem;
+            color: white;
+            font-size: 2rem;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .description {
+            color: #666;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .access-options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .access-btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .access-btn.primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .access-btn.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .access-btn.secondary {
+            background: #f8f9fa;
+            color: #333;
+            border: 2px solid #e9ecef;
+        }
+
+        .access-btn.secondary:hover {
+            background: #e9ecef;
+            transform: translateY(-1px);
+        }
+
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 2rem;
+            color: #856404;
+        }
+
+        .warning i {
+            margin-right: 0.5rem;
+        }
+
+        .back-link {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            color: white;
+            text-decoration: none;
+            font-size: 1.1rem;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+
+        .back-link:hover {
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            .admin-access-container {
+                padding: 2rem;
+                margin: 1rem;
+            }
+
+            .back-link {
+                position: relative;
+                top: auto;
+                left: auto;
+                display: block;
+                text-align: center;
+                margin-bottom: 2rem;
+                color: #333;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="/" class="back-link">
+        <i class="fas fa-arrow-left"></i>
+        Retour à l'accueil
+    </a>
+
+    <div class="admin-access-container">
+        <div class="admin-icon">
+            <i class="fas fa-shield-alt"></i>
+        </div>
+        
+        <h1>Accès Administrateur</h1>
+        <p class="description">
+            Accédez à l'interface d'administration de GeoPoll pour gérer les utilisateurs, 
+            les sondages et superviser la plateforme.
+        </p>
+
+        <div class="access-options">
+            <a href="/admin-modern.html" class="access-btn primary">
+                <i class="fas fa-tachometer-alt"></i>
+                Interface Admin Moderne
+            </a>
+            
+            <a href="/admin.html" class="access-btn secondary">
+                <i class="fas fa-cog"></i>
+                Interface Admin Classique
+            </a>
+            
+            <a href="/admin-users.html" class="access-btn secondary">
+                <i class="fas fa-users"></i>
+                Gestion des Utilisateurs
+            </a>
+        </div>
+
+        <div class="warning">
+            <i class="fas fa-exclamation-triangle"></i>
+            <strong>Accès restreint :</strong> Cette section est réservée aux administrateurs autorisés. 
+            Une authentification sera requise.
+        </div>
+    </div>
+
+    <script>
+        // Vérifier si l'utilisateur est déjà connecté en tant qu'admin
+        document.addEventListener('DOMContentLoaded', function() {
+            const token = localStorage.getItem('token') || localStorage.getItem('authToken');
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            
+            if (token && (user.isAdmin || user.is_admin)) {
+                // L'utilisateur est déjà connecté en tant qu'admin
+                console.log('✅ Admin déjà connecté, redirection automatique disponible');
+                
+                // Ajouter un bouton de redirection rapide
+                const quickAccess = document.createElement('div');
+                quickAccess.innerHTML = `
+                    <div style="background: #d4edda; border: 1px solid #c3e6cb; border-radius: 8px; padding: 1rem; margin-top: 1rem; color: #155724;">
+                        <i class="fas fa-check-circle"></i>
+                        <strong>Connecté en tant qu'admin :</strong> ${user.firstName} ${user.lastName}
+                        <br>
+                        <button onclick="window.location.href='/admin-modern.html'" style="margin-top: 0.5rem; padding: 0.5rem 1rem; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                            Accéder au Dashboard
+                        </button>
+                    </div>
+                `;
+                document.querySelector('.admin-access-container').appendChild(quickAccess);
+            }
+        });
+    </script>
+</body>
+</html>

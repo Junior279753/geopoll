@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Affichage Coordonnées Utilisateurs - GeoPoll</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+            margin: 0;
+        }
+        
+        .test-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .feature-showcase {
+            margin: 2rem 0;
+            padding: 2rem;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            background: #f8f9fa;
+        }
+        
+        .feature-showcase h3 {
+            color: #495057;
+            margin-top: 0;
+        }
+        
+        .preview-user-card {
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+        
+        .user-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .contact-details {
+            display: grid;
+            gap: 0.75rem;
+        }
+        
+        .detail-row {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .detail-label {
+            font-weight: 500;
+            color: #495057;
+            min-width: 100px;
+        }
+        
+        .detail-value {
+            flex: 1;
+            font-family: monospace;
+            background: #f8f9fa;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+        }
+        
+        .copy-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        
+        .copy-btn:hover {
+            background: #218838;
+        }
+        
+        .copy-all-btn {
+            background: #17a2b8;
+            color: white;
+            border: none;
+            padding: 0.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .copy-all-btn:hover {
+            background: #138496;
+        }
+        
+        .test-link {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            text-align: center;
+            transition: background 0.3s ease;
+            margin: 0.5rem;
+            font-weight: 500;
+        }
+        
+        .test-link:hover {
+            background: #5a6fd8;
+            color: white;
+        }
+        
+        .test-link.primary {
+            background: #28a745;
+            font-size: 1.1rem;
+        }
+        
+        .test-link.primary:hover {
+            background: #218838;
+        }
+        
+        .credentials {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+        
+        .credentials h4 {
+            margin-top: 0;
+            color: #0c5460;
+        }
+        
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .feature-list li {
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #dee2e6;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .feature-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            color: white;
+            background: #28a745;
+        }
+        
+        .instructions {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-left: 4px solid #ffc107;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .instructions h4 {
+            margin-top: 0;
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1><i class="fas fa-address-card"></i> Test Affichage Coordonnées Utilisateurs</h1>
+        
+        <!-- Aperçu des nouvelles fonctionnalités -->
+        <div class="feature-showcase">
+            <h3>🆕 Nouvelles fonctionnalités d'affichage des coordonnées</h3>
+            
+            <ul class="feature-list">
+                <li>
+                    <span class="feature-icon"><i class="fas fa-address-card"></i></span>
+                    <div>
+                        <strong>Coordonnées complètes visibles</strong>
+                        <div style="font-size: 0.9rem; color: #666;">Email, téléphone, pays, profession affichés clairement</div>
+                    </div>
+                </li>
+                <li>
+                    <span class="feature-icon"><i class="fas fa-copy"></i></span>
+                    <div>
+                        <strong>Boutons de copie individuels</strong>
+                        <div style="font-size: 0.9rem; color: #666;">Copier email, téléphone ou toutes les infos en un clic</div>
+                    </div>
+                </li>
+                <li>
+                    <span class="feature-icon"><i class="fas fa-user-circle"></i></span>
+                    <div>
+                        <strong>Avatars personnalisés</strong>
+                        <div style="font-size: 0.9rem; color: #666;">Initiales des utilisateurs dans des avatars colorés</div>
+                    </div>
+                </li>
+                <li>
+                    <span class="feature-icon"><i class="fas fa-info-circle"></i></span>
+                    <div>
+                        <strong>Statuts détaillés</strong>
+                        <div style="font-size: 0.9rem; color: #666;">Statut d'activité, vérification email, dernière connexion</div>
+                    </div>
+                </li>
+                <li>
+                    <span class="feature-icon"><i class="fas fa-download"></i></span>
+                    <div>
+                        <strong>Export des données</strong>
+                        <div style="font-size: 0.9rem; color: #666;">Bouton d'export pour sauvegarder les informations</div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        
+        <!-- Aperçu visuel -->
+        <div class="feature-showcase">
+            <h3>👀 Aperçu de l'affichage des coordonnées</h3>
+            
+            <div class="preview-user-card">
+                <div class="user-header">
+                    <div class="user-avatar">JD</div>
+                    <div style="flex: 1;">
+                        <div style="font-size: 1.1rem; font-weight: bold; color: #333;">John Doe</div>
+                        <div style="font-size: 0.9rem; color: #666;">ID: 123</div>
+                    </div>
+                    <button class="copy-all-btn" title="Copier toutes les informations">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                </div>
+                
+                <div class="contact-details">
+                    <div class="detail-row">
+                        <span class="detail-label">📧 Email :</span>
+                        <span class="detail-value">john.doe@example.com</span>
+                        <button class="copy-btn" title="Copier email">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="detail-row">
+                        <span class="detail-label">📱 Téléphone :</span>
+                        <span class="detail-value">+225 01 23 45 67 89</span>
+                        <button class="copy-btn" title="Copier téléphone">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="detail-row">
+                        <span class="detail-label">🌍 Pays :</span>
+                        <span class="detail-value">Côte d'Ivoire (CI)</span>
+                    </div>
+                    
+                    <div class="detail-row">
+                        <span class="detail-label">💼 Profession :</span>
+                        <span class="detail-value">Employé</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Instructions de test -->
+        <div class="instructions">
+            <h4><i class="fas fa-clipboard-list"></i> Instructions de test</h4>
+            <ol>
+                <li><strong>Connectez-vous en tant qu'admin</strong> avec les identifiants ci-dessous</li>
+                <li><strong>Accédez à la section "Utilisateurs"</strong> dans le menu latéral</li>
+                <li><strong>Vérifiez l'affichage</strong> des coordonnées complètes pour chaque utilisateur</li>
+                <li><strong>Testez les boutons de copie</strong> pour email et téléphone</li>
+                <li><strong>Testez le bouton "Copier tout"</strong> pour les informations complètes</li>
+                <li><strong>Vérifiez les statuts</strong> (actif/inactif, email vérifié, dernière connexion)</li>
+            </ol>
+        </div>
+        
+        <!-- Identifiants admin -->
+        <div class="credentials">
+            <h4><i class="fas fa-key"></i> Identifiants Admin</h4>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div>
+                    <strong>Email :</strong><br>
+                    <code>admin@geopoll.ci</code>
+                </div>
+                <div>
+                    <strong>Mot de passe :</strong><br>
+                    <code>admin123</code>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Liens de test -->
+        <div style="text-align: center; margin-top: 3rem;">
+            <h3>🔗 Liens de test</h3>
+            
+            <a href="/admin-modern.html" class="test-link primary">
+                <i class="fas fa-shield-alt"></i>
+                Tester l'Interface Admin
+            </a>
+            
+            <a href="/guide-test-interactif.html" class="test-link">
+                <i class="fas fa-clipboard-check"></i>
+                Guide de Test Complet
+            </a>
+            
+            <a href="/test-complet-geopoll.html" class="test-link">
+                <i class="fas fa-rocket"></i>
+                Plan de Test Global
+            </a>
+        </div>
+        
+        <!-- Points de vérification -->
+        <div class="feature-showcase">
+            <h3>✅ Points de vérification</h3>
+            <ul class="feature-list">
+                <li>
+                    <span class="feature-icon"><i class="fas fa-check"></i></span>
+                    <div>Les coordonnées complètes sont visibles pour chaque utilisateur</div>
+                </li>
+                <li>
+                    <span class="feature-icon"><i class="fas fa-check"></i></span>
+                    <div>Les boutons de copie fonctionnent et affichent des notifications</div>
+                </li>
+                <li>
+                    <span class="feature-icon"><i class="fas fa-check"></i></span>
+                    <div>Les avatars avec initiales s'affichent correctement</div>
+                </li>
+                <li>
+                    <span class="feature-icon"><i class="fas fa-check"></i></span>
+                    <div>Les statuts détaillés sont visibles (actif, email vérifié, etc.)</div>
+                </li>
+                <li>
+                    <span class="feature-icon"><i class="fas fa-check"></i></span>
+                    <div>La séparation entre utilisateurs en attente et approuvés est claire</div>
+                </li>
+                <li>
+                    <span class="feature-icon"><i class="fas fa-check"></i></span>
+                    <div>Le bouton d'export est présent et fonctionnel</div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

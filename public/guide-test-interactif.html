@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guide de Test Interactif - GeoPoll</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+            margin: 0;
+        }
+        
+        .guide-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 2rem;
+            text-align: center;
+            font-size: 2.5rem;
+        }
+        
+        .test-step {
+            margin: 2rem 0;
+            padding: 2rem;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            background: #f8f9fa;
+            position: relative;
+        }
+        
+        .test-step.completed {
+            border-color: #28a745;
+            background: #d4edda;
+        }
+        
+        .test-step h3 {
+            color: #495057;
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .step-number {
+            background: #667eea;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        .step-number.completed {
+            background: #28a745;
+        }
+        
+        .test-actions {
+            display: flex;
+            gap: 1rem;
+            margin: 1rem 0;
+            flex-wrap: wrap;
+        }
+        
+        .test-link {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: background 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .test-link:hover {
+            background: #5a6fd8;
+            color: white;
+        }
+        
+        .test-link.primary {
+            background: #28a745;
+        }
+        
+        .test-link.primary:hover {
+            background: #218838;
+        }
+        
+        .complete-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+        }
+        
+        .complete-btn:hover {
+            background: #218838;
+        }
+        
+        .checklist {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .checklist li {
+            padding: 0.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .checklist li input[type="checkbox"] {
+            margin-right: 0.5rem;
+        }
+        
+        .progress-bar {
+            background: #e9ecef;
+            border-radius: 10px;
+            height: 20px;
+            margin: 2rem 0;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            background: linear-gradient(90deg, #28a745, #20c997);
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+        
+        .credentials {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .credentials h4 {
+            margin-top: 0;
+            color: #0c5460;
+        }
+        
+        .credential-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.25rem 0;
+        }
+        
+        .copy-btn {
+            background: #17a2b8;
+            color: white;
+            border: none;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        
+        .copy-btn:hover {
+            background: #138496;
+        }
+        
+        .summary {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-left: 4px solid #ffc107;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .summary h4 {
+            margin-top: 0;
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <div class="guide-container">
+        <h1><i class="fas fa-clipboard-check"></i> Guide de Test Interactif</h1>
+        
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill">0%</div>
+        </div>
+        
+        <!-- Étape 1: Page d'accueil -->
+        <div class="test-step" id="step1">
+            <button class="complete-btn" onclick="completeStep(1)">✓ Terminé</button>
+            <h3>
+                <span class="step-number">1</span>
+                Test de la Page d'Accueil
+            </h3>
+            <p>Vérifiez que la page d'accueil se charge correctement avec tous les éléments.</p>
+            
+            <div class="test-actions">
+                <a href="/" class="test-link primary" target="_blank">
+                    <i class="fas fa-home"></i> Ouvrir la Page d'Accueil
+                </a>
+            </div>
+            
+            <ul class="checklist">
+                <li><input type="checkbox" onchange="updateProgress()"> La page se charge sans erreur</li>
+                <li><input type="checkbox" onchange="updateProgress()"> Le design est correct</li>
+                <li><input type="checkbox" onchange="updateProgress()"> Les liens de navigation fonctionnent</li>
+                <li><input type="checkbox" onchange="updateProgress()"> Les animations sont fluides</li>
+            </ul>
+        </div>
+        
+        <!-- Étape 2: Inscription -->
+        <div class="test-step" id="step2">
+            <button class="complete-btn" onclick="completeStep(2)">✓ Terminé</button>
+            <h3>
+                <span class="step-number">2</span>
+                Test d'Inscription Utilisateur
+            </h3>
+            <p>Créez un nouveau compte utilisateur avec des données valides.</p>
+            
+            <div class="credentials">
+                <h4>Données de test suggérées :</h4>
+                <div class="credential-item">
+                    <span><strong>Email :</strong></span>
+                    <span>test.user@example.com <button class="copy-btn" onclick="copyToClipboard('test.user@example.com')">Copier</button></span>
+                </div>
+                <div class="credential-item">
+                    <span><strong>Mot de passe :</strong></span>
+                    <span>Test123! <button class="copy-btn" onclick="copyToClipboard('Test123!')">Copier</button></span>
+                </div>
+                <div class="credential-item">
+                    <span><strong>Profession :</strong></span>
+                    <span>employe (ou: etudiant, fonctionnaire, entrepreneur, etc.)</span>
+                </div>
+            </div>
+            
+            <div class="test-actions">
+                <a href="/register.html" class="test-link primary" target="_blank">
+                    <i class="fas fa-user-plus"></i> Page d'Inscription
+                </a>
+            </div>
+            
+            <ul class="checklist">
+                <li><input type="checkbox" onchange="updateProgress()"> Le formulaire s'affiche correctement</li>
+                <li><input type="checkbox" onchange="updateProgress()"> La validation fonctionne</li>
+                <li><input type="checkbox" onchange="updateProgress()"> L'inscription réussit</li>
+                <li><input type="checkbox" onchange="updateProgress()"> Message de confirmation affiché</li>
+            </ul>
+        </div>
+        
+        <!-- Étape 3: Connexion utilisateur -->
+        <div class="test-step" id="step3">
+            <button class="complete-btn" onclick="completeStep(3)">✓ Terminé</button>
+            <h3>
+                <span class="step-number">3</span>
+                Test de Connexion Utilisateur
+            </h3>
+            <p>Connectez-vous avec le compte créé (devrait afficher "En attente d'approbation").</p>
+            
+            <div class="test-actions">
+                <a href="/login.html" class="test-link primary" target="_blank">
+                    <i class="fas fa-sign-in-alt"></i> Page de Connexion
+                </a>
+            </div>
+            
+            <ul class="checklist">
+                <li><input type="checkbox" onchange="updateProgress()"> La connexion fonctionne</li>
+                <li><input type="checkbox" onchange="updateProgress()"> Redirection vers le dashboard</li>
+                <li><input type="checkbox" onchange="updateProgress()"> Message "En attente d'approbation" affiché</li>
+                <li><input type="checkbox" onchange="updateProgress()"> Interface utilisateur correcte</li>
+            </ul>
+        </div>
+        
+        <!-- Étape 4: Interface admin -->
+        <div class="test-step" id="step4">
+            <button class="complete-btn" onclick="completeStep(4)">✓ Terminé</button>
+            <h3>
+                <span class="step-number">4</span>
+                Test de l'Interface Admin
+            </h3>
+            <p>Connectez-vous en tant qu'administrateur et vérifiez toutes les fonctionnalités.</p>
+            
+            <div class="credentials">
+                <h4>Identifiants Admin :</h4>
+                <div class="credential-item">
+                    <span><strong>Email :</strong></span>
+                    <span>admin@geopoll.ci <button class="copy-btn" onclick="copyToClipboard('admin@geopoll.ci')">Copier</button></span>
+                </div>
+                <div class="credential-item">
+                    <span><strong>Mot de passe :</strong></span>
+                    <span>admin123 <button class="copy-btn" onclick="copyToClipboard('admin123')">Copier</button></span>
+                </div>
+            </div>
+            
+            <div class="test-actions">
+                <a href="/admin-modern.html" class="test-link primary" target="_blank">
+                    <i class="fas fa-shield-alt"></i> Interface Admin
+                </a>
+                <a href="/test-notifications.html" class="test-link" target="_blank">
+                    <i class="fas fa-bell"></i> Test Notifications
+                </a>
+            </div>
+            
+            <ul class="checklist">
+                <li><input type="checkbox" onchange="updateProgress()"> Connexion admin réussie</li>
+                <li><input type="checkbox" onchange="updateProgress()"> Dashboard admin s'affiche</li>
+                <li><input type="checkbox" onchange="updateProgress()"> Carte "Demandes d'approbation" visible</li>
+                <li><input type="checkbox" onchange="updateProgress()"> Notifications fonctionnent (icône cloche)</li>
+                <li><input type="checkbox" onchange="updateProgress()"> Section Paramètres accessible</li>
+            </ul>
+        </div>
+        
+        <!-- Étape 5: Approbation utilisateur -->
+        <div class="test-step" id="step5">
+            <button class="complete-btn" onclick="completeStep(5)">✓ Terminé</button>
+            <h3>
+                <span class="step-number">5</span>
+                Test d'Approbation Utilisateur
+            </h3>
+            <p>Approuvez l'utilisateur créé à l'étape 2 depuis l'interface admin.</p>
+            
+            <ul class="checklist">
+                <li><input type="checkbox" onchange="updateProgress()"> Section "Utilisateurs" accessible</li>
+                <li><input type="checkbox" onchange="updateProgress()"> Utilisateur de test visible dans la liste</li>
+                <li><input type="checkbox" onchange="updateProgress()"> Bouton "Approuver" fonctionne</li>
+                <li><input type="checkbox" onchange="updateProgress()"> Notification de succès affichée</li>
+                <li><input type="checkbox" onchange="updateProgress()"> Statut utilisateur mis à jour</li>
+            </ul>
+        </div>
+        
+        <!-- Étape 6: Vérification finale -->
+        <div class="test-step" id="step6">
+            <button class="complete-btn" onclick="completeStep(6)">✓ Terminé</button>
+            <h3>
+                <span class="step-number">6</span>
+                Vérification du Cycle Complet
+            </h3>
+            <p>Retournez sur le compte utilisateur pour vérifier que l'approbation a pris effet.</p>
+            
+            <div class="test-actions">
+                <a href="/dashboard.html" class="test-link primary" target="_blank">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard Utilisateur
+                </a>
+            </div>
+            
+            <ul class="checklist">
+                <li><input type="checkbox" onchange="updateProgress()"> Reconnexion utilisateur réussie</li>
+                <li><input type="checkbox" onchange="updateProgress()"> Plus de message "En attente"</li>
+                <li><input type="checkbox" onchange="updateProgress()"> Accès aux fonctionnalités débloqué</li>
+                <li><input type="checkbox" onchange="updateProgress()"> Interface utilisateur complète</li>
+            </ul>
+        </div>
+        
+        <!-- Résumé -->
+        <div class="summary">
+            <h4><i class="fas fa-trophy"></i> Résumé du Test</h4>
+            <p id="summaryText">Complétez toutes les étapes pour voir le résumé.</p>
+            <div id="completionStats" style="display: none;">
+                <p><strong>✅ Test terminé avec succès !</strong></p>
+                <p>L'application GeoPoll fonctionne correctement du début à la fin :</p>
+                <ul>
+                    <li>✅ Inscription utilisateur</li>
+                    <li>✅ Système d'approbation admin</li>
+                    <li>✅ Interface d'administration</li>
+                    <li>✅ Notifications et alertes</li>
+                    <li>✅ Cycle complet utilisateur → admin → approbation</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let completedSteps = 0;
+        const totalSteps = 6;
+        
+        function completeStep(stepNumber) {
+            const step = document.getElementById(`step${stepNumber}`);
+            const stepNumberEl = step.querySelector('.step-number');
+            
+            if (!step.classList.contains('completed')) {
+                step.classList.add('completed');
+                stepNumberEl.classList.add('completed');
+                completedSteps++;
+                updateProgress();
+                
+                if (completedSteps === totalSteps) {
+                    showCompletionSummary();
+                }
+            }
+        }
+        
+        function updateProgress() {
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            const checkedBoxes = document.querySelectorAll('input[type="checkbox"]:checked');
+            const progressPercentage = Math.round((checkedBoxes.length / checkboxes.length) * 100);
+            
+            const progressFill = document.getElementById('progressFill');
+            progressFill.style.width = progressPercentage + '%';
+            progressFill.textContent = progressPercentage + '%';
+        }
+        
+        function showCompletionSummary() {
+            document.getElementById('summaryText').style.display = 'none';
+            document.getElementById('completionStats').style.display = 'block';
+        }
+        
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                // Feedback visuel
+                event.target.textContent = 'Copié !';
+                setTimeout(() => {
+                    event.target.textContent = 'Copier';
+                }, 1000);
+            });
+        }
+        
+        // Initialiser la barre de progression
+        updateProgress();
+    </script>
+</body>
+</html>

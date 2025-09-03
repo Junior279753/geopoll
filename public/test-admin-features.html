@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Fonctionnalités Admin - GeoPoll</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+            margin: 0;
+        }
+        
+        .test-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .test-section {
+            margin: 2rem 0;
+            padding: 1.5rem;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            background: #f8f9fa;
+        }
+        
+        .test-section h3 {
+            margin-top: 0;
+            color: #495057;
+        }
+        
+        .test-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .test-link {
+            display: block;
+            padding: 1rem;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            text-align: center;
+            transition: background 0.3s ease;
+        }
+        
+        .test-link:hover {
+            background: #5a6fd8;
+            color: white;
+        }
+        
+        .test-link i {
+            margin-right: 0.5rem;
+        }
+        
+        .checklist {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .checklist li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .checklist li:last-child {
+            border-bottom: none;
+        }
+        
+        .status {
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        .status.fixed {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status.pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .info-box {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            border-radius: 6px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .info-box h4 {
+            margin-top: 0;
+            color: #0c5460;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1><i class="fas fa-tools"></i> Test des Fonctionnalités Admin Corrigées</h1>
+        
+        <!-- Section 1: Liens de test -->
+        <div class="test-section">
+            <h3>🔗 Liens de test</h3>
+            <div class="test-links">
+                <a href="/admin-modern.html" class="test-link">
+                    <i class="fas fa-tachometer-alt"></i>
+                    Interface Admin Moderne
+                </a>
+                <a href="/test-admin-auth.html" class="test-link">
+                    <i class="fas fa-shield-alt"></i>
+                    Test Authentification
+                </a>
+                <a href="/test-notifications.html" class="test-link">
+                    <i class="fas fa-bell"></i>
+                    Test Notifications
+                </a>
+                <a href="/admin-access.html" class="test-link">
+                    <i class="fas fa-door-open"></i>
+                    Page d'accès admin
+                </a>
+            </div>
+        </div>
+        
+        <!-- Section 2: Problèmes corrigés -->
+        <div class="test-section">
+            <h3>✅ Problèmes corrigés</h3>
+            <ul class="checklist">
+                <li>
+                    <span class="status fixed">CORRIGÉ</span>
+                    <strong>Section Paramètres manquante</strong> - Ajoutée dans le menu et le contenu
+                </li>
+                <li>
+                    <span class="status fixed">CORRIGÉ</span>
+                    <strong>Notifications non fonctionnelles</strong> - Styles CSS et fonctions JavaScript corrigés
+                </li>
+                <li>
+                    <span class="status fixed">CORRIGÉ</span>
+                    <strong>Erreur 403 sur APIs admin</strong> - Middleware d'authentification corrigé
+                </li>
+                <li>
+                    <span class="status fixed">CORRIGÉ</span>
+                    <strong>Utilisateurs en attente non visibles</strong> - Alerte et carte ajoutées au dashboard
+                </li>
+                <li>
+                    <span class="status fixed">CORRIGÉ</span>
+                    <strong>Actualisation automatique</strong> - Fonction corrigée avec logs détaillés
+                </li>
+                <li>
+                    <span class="status fixed">CORRIGÉ</span>
+                    <strong>Badges de navigation</strong> - Compteurs en temps réel fonctionnels
+                </li>
+            </ul>
+        </div>
+        
+        <!-- Section 3: Nouvelles fonctionnalités -->
+        <div class="test-section">
+            <h3>🆕 Nouvelles fonctionnalités ajoutées</h3>
+            <ul class="checklist">
+                <li>
+                    <span class="status fixed">NOUVEAU</span>
+                    <strong>Alerte demandes d'approbation</strong> - Carte visible dans le dashboard
+                </li>
+                <li>
+                    <span class="status fixed">NOUVEAU</span>
+                    <strong>Notification de bienvenue</strong> - À la connexion admin
+                </li>
+                <li>
+                    <span class="status fixed">NOUVEAU</span>
+                    <strong>Logs détaillés</strong> - Pour debugging des problèmes d'auth
+                </li>
+                <li>
+                    <span class="status fixed">NOUVEAU</span>
+                    <strong>Pages de test</strong> - Pour vérifier les fonctionnalités
+                </li>
+                <li>
+                    <span class="status fixed">NOUVEAU</span>
+                    <strong>Gestion complète des utilisateurs</strong> - Approbation/rejet avec interface
+                </li>
+            </ul>
+        </div>
+        
+        <!-- Section 4: Instructions de test -->
+        <div class="test-section">
+            <h3>🧪 Instructions de test</h3>
+            
+            <div class="info-box">
+                <h4>1. Test de l'authentification admin</h4>
+                <p><strong>Email :</strong> admin@geopoll.ci</p>
+                <p><strong>Mot de passe :</strong> admin123</p>
+                <p>Utilisez ces informations pour vous connecter à l'interface admin.</p>
+            </div>
+            
+            <div class="info-box">
+                <h4>2. Test des notifications</h4>
+                <p>Cliquez sur l'icône cloche dans le header de l'interface admin pour tester toutes les notifications.</p>
+            </div>
+            
+            <div class="info-box">
+                <h4>3. Test des demandes d'approbation</h4>
+                <p>Si des utilisateurs sont en attente, vous verrez :</p>
+                <ul>
+                    <li>Une carte jaune dans le dashboard</li>
+                    <li>Un badge avec le nombre sur "Utilisateurs" dans le menu</li>
+                    <li>Une alerte flottante après 3 secondes</li>
+                </ul>
+            </div>
+            
+            <div class="info-box">
+                <h4>4. Test de la section Paramètres</h4>
+                <p>Cliquez sur "Paramètres" dans le menu latéral pour accéder à la configuration système.</p>
+            </div>
+        </div>
+        
+        <!-- Section 5: Vérifications -->
+        <div class="test-section">
+            <h3>🔍 Vérifications à effectuer</h3>
+            <ul class="checklist">
+                <li>✅ L'interface admin se charge sans erreur 403</li>
+                <li>✅ Les notifications apparaissent et disparaissent correctement</li>
+                <li>✅ La section Paramètres est accessible et fonctionnelle</li>
+                <li>✅ Les demandes d'approbation sont visibles dans le dashboard</li>
+                <li>✅ L'actualisation automatique fonctionne (toutes les 30 secondes)</li>
+                <li>✅ Les badges de navigation affichent les bons compteurs</li>
+                <li>✅ Le menu utilisateur (profil, aide, déconnexion) fonctionne</li>
+            </ul>
+        </div>
+        
+        <!-- Section 6: Support -->
+        <div class="test-section">
+            <h3>📞 Support et debugging</h3>
+            <p>Si vous rencontrez des problèmes :</p>
+            <ol>
+                <li>Ouvrez la console développeur (F12)</li>
+                <li>Vérifiez les logs dans l'onglet Console</li>
+                <li>Regardez les requêtes dans l'onglet Network</li>
+                <li>Vérifiez les logs du serveur dans votre terminal</li>
+            </ol>
+            
+            <p><strong>Logs serveur à surveiller :</strong></p>
+            <ul>
+                <li>🔍 Logs d'authentification détaillés</li>
+                <li>✅ Confirmations d'accès admin</li>
+                <li>📊 Requêtes API traitées</li>
+                <li>🔄 Messages d'actualisation automatique</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

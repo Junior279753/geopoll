@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Authentification Admin - GeoPoll</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+        }
+        
+        .test-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 90%;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        
+        .test-section {
+            margin: 1.5rem 0;
+            padding: 1rem;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+        }
+        
+        .test-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .test-btn:hover {
+            background: #5a6fd8;
+        }
+        
+        .test-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .result {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 0.85rem;
+            white-space: pre-wrap;
+        }
+        
+        .result.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .result.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .result.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        .login-form {
+            display: grid;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .login-form input {
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+        
+        .token-display {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 6px;
+            margin: 1rem 0;
+            word-break: break-all;
+            font-family: monospace;
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1><i class="fas fa-shield-alt"></i> Test Authentification Admin</h1>
+        
+        <!-- Section 1: Connexion -->
+        <div class="test-section">
+            <h3>1. Connexion Admin</h3>
+            <div class="login-form">
+                <input type="email" id="email" placeholder="Email admin" value="admin@geopoll.ci">
+                <input type="password" id="password" placeholder="Mot de passe" value="admin123">
+                <button class="test-btn" onclick="testLogin()">Se connecter</button>
+            </div>
+            <div id="loginResult"></div>
+        </div>
+        
+        <!-- Section 2: Test des APIs Admin -->
+        <div class="test-section">
+            <h3>2. Test des APIs Admin</h3>
+            <button class="test-btn" onclick="testAdminStats()" id="statsBtn" disabled>Test /api/admin/stats</button>
+            <button class="test-btn" onclick="testAdminUsers()" id="usersBtn" disabled>Test /api/admin/users</button>
+            <button class="test-btn" onclick="testAdminLogs()" id="logsBtn" disabled>Test /api/admin/logs</button>
+            <div id="apiResults"></div>
+        </div>
+        
+        <!-- Section 3: Token -->
+        <div class="test-section">
+            <h3>3. Token JWT</h3>
+            <div id="tokenDisplay" class="token-display">Aucun token</div>
+            <button class="test-btn" onclick="clearToken()">Effacer token</button>
+        </div>
+        
+        <!-- Section 4: Liens utiles -->
+        <div class="test-section">
+            <h3>4. Liens utiles</h3>
+            <a href="/admin-modern.html" class="test-btn" style="text-decoration: none; display: inline-block;">Interface Admin</a>
+            <a href="/test-notifications.html" class="test-btn" style="text-decoration: none; display: inline-block;">Test Notifications</a>
+        </div>
+    </div>
+
+    <script>
+        let authToken = null;
+        
+        function showResult(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            element.innerHTML = `<div class="result ${type}">${message}</div>`;
+        }
+        
+        async function testLogin() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            try {
+                showResult('loginResult', 'Connexion en cours...', 'info');
+                
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    authToken = data.token;
+                    localStorage.setItem('authToken', authToken);
+                    
+                    showResult('loginResult', 
+                        `✅ Connexion réussie !\n` +
+                        `👤 Nom: ${data.user.firstName} ${data.user.lastName}\n` +
+                        `📧 Email: ${data.user.email}\n` +
+                        `🛡️  Admin: ${data.user.isAdmin ? 'Oui' : 'Non'}\n` +
+                        `🎫 Token: ${authToken.substring(0, 50)}...`, 
+                        'success'
+                    );
+                    
+                    // Activer les boutons de test
+                    document.getElementById('statsBtn').disabled = false;
+                    document.getElementById('usersBtn').disabled = false;
+                    document.getElementById('logsBtn').disabled = false;
+                    
+                    // Afficher le token
+                    document.getElementById('tokenDisplay').textContent = authToken;
+                    
+                } else {
+                    showResult('loginResult', `❌ Erreur de connexion:\n${data.error}`, 'error');
+                }
+                
+            } catch (error) {
+                showResult('loginResult', `❌ Erreur réseau:\n${error.message}`, 'error');
+            }
+        }
+        
+        async function testAdminStats() {
+            if (!authToken) {
+                showResult('apiResults', '❌ Aucun token disponible', 'error');
+                return;
+            }
+            
+            try {
+                showResult('apiResults', 'Test /api/admin/stats...', 'info');
+                
+                const response = await fetch('/api/admin/stats', {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showResult('apiResults', 
+                        `✅ /api/admin/stats - Succès !\n` +
+                        `📊 Données reçues:\n${JSON.stringify(data, null, 2)}`, 
+                        'success'
+                    );
+                } else {
+                    showResult('apiResults', 
+                        `❌ /api/admin/stats - Erreur ${response.status}:\n${JSON.stringify(data, null, 2)}`, 
+                        'error'
+                    );
+                }
+                
+            } catch (error) {
+                showResult('apiResults', `❌ Erreur réseau:\n${error.message}`, 'error');
+            }
+        }
+        
+        async function testAdminUsers() {
+            if (!authToken) {
+                showResult('apiResults', '❌ Aucun token disponible', 'error');
+                return;
+            }
+            
+            try {
+                showResult('apiResults', 'Test /api/admin/users...', 'info');
+                
+                const response = await fetch('/api/admin/users?limit=5', {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showResult('apiResults', 
+                        `✅ /api/admin/users - Succès !\n` +
+                        `👥 ${data.users ? data.users.length : 0} utilisateurs récupérés`, 
+                        'success'
+                    );
+                } else {
+                    showResult('apiResults', 
+                        `❌ /api/admin/users - Erreur ${response.status}:\n${JSON.stringify(data, null, 2)}`, 
+                        'error'
+                    );
+                }
+                
+            } catch (error) {
+                showResult('apiResults', `❌ Erreur réseau:\n${error.message}`, 'error');
+            }
+        }
+        
+        async function testAdminLogs() {
+            if (!authToken) {
+                showResult('apiResults', '❌ Aucun token disponible', 'error');
+                return;
+            }
+            
+            try {
+                showResult('apiResults', 'Test /api/admin/logs...', 'info');
+                
+                const response = await fetch('/api/admin/logs?limit=5', {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showResult('apiResults', 
+                        `✅ /api/admin/logs - Succès !\n` +
+                        `📋 ${data.logs ? data.logs.length : 0} logs récupérés`, 
+                        'success'
+                    );
+                } else {
+                    showResult('apiResults', 
+                        `❌ /api/admin/logs - Erreur ${response.status}:\n${JSON.stringify(data, null, 2)}`, 
+                        'error'
+                    );
+                }
+                
+            } catch (error) {
+                showResult('apiResults', `❌ Erreur réseau:\n${error.message}`, 'error');
+            }
+        }
+        
+        function clearToken() {
+            authToken = null;
+            localStorage.removeItem('authToken');
+            document.getElementById('tokenDisplay').textContent = 'Aucun token';
+            document.getElementById('statsBtn').disabled = true;
+            document.getElementById('usersBtn').disabled = true;
+            document.getElementById('logsBtn').disabled = true;
+            showResult('apiResults', 'Token effacé', 'info');
+        }
+        
+        // Charger le token existant au démarrage
+        window.addEventListener('load', () => {
+            const savedToken = localStorage.getItem('authToken');
+            if (savedToken) {
+                authToken = savedToken;
+                document.getElementById('tokenDisplay').textContent = authToken;
+                document.getElementById('statsBtn').disabled = false;
+                document.getElementById('usersBtn').disabled = false;
+                document.getElementById('logsBtn').disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administration - GeoPoll</title>
+    <link rel="stylesheet" href="/css/admin-modern.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <a href="#" class="brand">
+                <i class="fas fa-chart-line"></i>
+                <span>GeoPoll Admin</span>
+            </a>
+        </div>
+        
+        <nav class="nav">
+            <div class="nav-section">
+                <div class="nav-title">Principal</div>
+                <a href="#dashboard" class="nav-item active" data-section="dashboard">
+                    <i class="fas fa-home"></i>
+                    <span>Tableau de bord</span>
+                </a>
+                <a href="#users" class="nav-item" data-section="users">
+                    <i class="fas fa-users"></i>
+                    <span>Utilisateurs</span>
+                    <span class="badge" id="pendingUsersBadge">0</span>
+                </a>
+                <a href="#surveys" class="nav-item" data-section="surveys">
+                    <i class="fas fa-poll"></i>
+                    <span>Sondages</span>
+                </a>
+                <a href="#payments" class="nav-item" data-section="payments">
+                    <i class="fas fa-credit-card"></i>
+                    <span>Paiements</span>
+                </a>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-title">Système</div>
+                <a href="#settings" class="nav-item" data-section="settings">
+                    <i class="fas fa-cog"></i>
+                    <span>Paramètres</span>
+                </a>
+                <a href="#logs" class="nav-item" data-section="logs">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Logs</span>
+                </a>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Contenu principal -->
+    <main class="main">
+        <header class="header">
+            <div class="header-left">
+                <h1 id="pageTitle">Administration GeoPoll</h1>
+            </div>
+            <div class="header-right">
+                <div class="user-info">
+                    <div class="avatar">
+                        <i class="fas fa-user-shield"></i>
+                    </div>
+                    <div class="user-details">
+                        <span class="user-name" id="adminName">Administrateur</span>
+                        <span class="user-status">Admin</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="content">
+            <!-- Section Dashboard -->
+            <section id="dashboard" class="section active">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon primary">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="totalUsers">0</div>
+                            <div class="stat-label">Utilisateurs totaux</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon warning">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="pendingUsers">0</div>
+                            <div class="stat-label">En attente</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon success">
+                            <i class="fas fa-poll"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="totalSurveys">0</div>
+                            <div class="stat-label">Sondages actifs</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon info">
+                            <i class="fas fa-euro-sign"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="totalPayments">0€</div>
+                            <div class="stat-label">Paiements totaux</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Activité récente</h3>
+                        <button class="btn btn-sm btn-primary" onclick="refreshDashboard()">
+                            <i class="fas fa-sync-alt"></i>
+                            Actualiser
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div id="recentActivity" class="loading">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            Chargement des données...
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section Utilisateurs -->
+            <section id="users" class="section">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Gestion des utilisateurs</h3>
+                        <button class="btn btn-sm btn-primary" onclick="refreshUsers()">
+                            <i class="fas fa-sync-alt"></i>
+                            Actualiser
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div id="usersTable" class="loading">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            Chargement des utilisateurs...
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section Sondages -->
+            <section id="surveys" class="section">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Gestion des sondages</h3>
+                        <button class="btn btn-sm btn-primary" onclick="refreshSurveys()">
+                            <i class="fas fa-sync-alt"></i>
+                            Actualiser
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div id="surveysTable" class="loading">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            Chargement des sondages...
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section Paiements -->
+            <section id="payments" class="section">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Gestion des paiements</h3>
+                        <button class="btn btn-sm btn-primary" onclick="refreshPayments()">
+                            <i class="fas fa-sync-alt"></i>
+                            Actualiser
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div id="paymentsTable" class="loading">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            Chargement des paiements...
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section Paramètres -->
+            <section id="settings" class="section">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Paramètres système</h3>
+                    </div>
+                    <div class="card-body">
+                        <p>Configuration du système en cours de développement...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section Logs -->
+            <section id="logs" class="section">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Journaux système</h3>
+                        <button class="btn btn-sm btn-primary" onclick="refreshLogs()">
+                            <i class="fas fa-sync-alt"></i>
+                            Actualiser
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div id="logsTable" class="loading">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            Chargement des logs...
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Modal de confirmation -->
+    <div id="confirmModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="confirmTitle">Confirmation</h3>
+                <button class="modal-close" onclick="closeConfirmModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="confirmMessage">Êtes-vous sûr de vouloir effectuer cette action ?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeConfirmModal()">Annuler</button>
+                <button class="btn btn-primary" id="confirmButton">Confirmer</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Variables globales
+        let currentSection = 'dashboard';
+        let authToken = localStorage.getItem('authToken');
+
+        // Vérification de l'authentification
+        if (!authToken) {
+            window.location.href = '/admin-access.html';
+        }
+
+        // Navigation
+        document.addEventListener('DOMContentLoaded', function() {
+            // Gestion de la navigation
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const section = this.getAttribute('data-section');
+                    showSection(section);
+                });
+            });
+
+            // Chargement initial
+            loadDashboard();
+        });
+
+        function showSection(sectionName) {
+            // Masquer toutes les sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+
+            // Afficher la section demandée
+            const targetSection = document.getElementById(sectionName);
+            if (targetSection) {
+                targetSection.classList.add('active');
+            }
+
+            // Mettre à jour la navigation
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            document.querySelector(`[data-section="${sectionName}"]`).classList.add('active');
+
+            // Mettre à jour le titre
+            const titles = {
+                'dashboard': 'Tableau de bord',
+                'users': 'Gestion des utilisateurs',
+                'surveys': 'Gestion des sondages',
+                'payments': 'Gestion des paiements',
+                'settings': 'Paramètres système',
+                'logs': 'Journaux système'
+            };
+            document.getElementById('pageTitle').textContent = titles[sectionName] || 'Administration GeoPoll';
+
+            currentSection = sectionName;
+        }
+
+        function logout() {
+            localStorage.removeItem('authToken');
+            window.location.href = '/';
+        }
+
+        function closeConfirmModal() {
+            document.getElementById('confirmModal').style.display = 'none';
+        }
+
+        // Fonctions de chargement des données (à implémenter)
+        function loadDashboard() {
+            console.log('Chargement du dashboard...');
+        }
+
+        function refreshDashboard() {
+            loadDashboard();
+        }
+
+        function refreshUsers() {
+            console.log('Actualisation des utilisateurs...');
+        }
+
+        function refreshSurveys() {
+            console.log('Actualisation des sondages...');
+        }
+
+        function refreshPayments() {
+            console.log('Actualisation des paiements...');
+        }
+
+        function refreshLogs() {
+            console.log('Actualisation des logs...');
+        }
+    </script>
+</body>
+</html>

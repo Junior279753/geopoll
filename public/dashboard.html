@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - GeoPoll</title>
+    <link rel="stylesheet" href="/css/modern-style.css">
+    <link rel="stylesheet" href="/css/dashboard-modern.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="dashboard-body">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="brand">
+                <div class="brand-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <span class="brand-text">GeoPoll</span>
+            </div>
+            <button class="sidebar-toggle" id="sidebarToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <div class="nav-section">
+                <div class="nav-title">Principal</div>
+                <a href="#dashboard" class="nav-item active" data-section="dashboard">
+                    <i class="fas fa-home"></i>
+                    <span>Tableau de bord</span>
+                </a>
+                <a href="#surveys" class="nav-item" data-section="surveys">
+                    <i class="fas fa-poll"></i>
+                    <span>Sondages</span>
+                </a>
+                <a href="#payments" class="nav-item" data-section="payments">
+                    <i class="fas fa-credit-card"></i>
+                    <span>Paiements</span>
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-title">Compte</div>
+                <a href="#profile" class="nav-item" data-section="profile">
+                    <i class="fas fa-user"></i>
+                    <span>Mon Profil</span>
+                </a>
+                <a href="#help" class="nav-item" data-section="help">
+                    <i class="fas fa-question-circle"></i>
+                    <span>Centre d'aide</span>
+                </a>
+            </div>
+        </nav>
+        
+        <div class="sidebar-footer">
+            <div class="user-profile">
+                <div class="user-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="user-info">
+                    <h4 id="sidebarUserName">Chargement...</h4>
+                    <p id="sidebarUserId">GP------</p>
+                </div>
+            </div>
+            <button class="logout-btn" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Déconnexion</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="header-left">
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1 class="page-title">Tableau de bord</h1>
+            </div>
+            <div class="header-right">
+                <div class="user-info">
+                    <div class="user-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="user-details">
+                        <span class="user-name" id="userName">Chargement...</span>
+                        <span class="user-id" id="userUniqueId">GP------</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Content Sections -->
+        <div class="content-wrapper">
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="content-section active">
+                <!-- Welcome Banner -->
+                <div class="welcome-banner">
+                    <div class="welcome-content">
+                        <div class="welcome-icon">
+                            <i class="fas fa-gift"></i>
+                        </div>
+                        <div class="welcome-text">
+                            <h2>Félicitations !</h2>
+                            <p>Vous bénéficiez d'une subvention de <strong>500 000 F CFA</strong> pour accomplir votre mission.</p>
+                            <p class="welcome-subtitle">Commencez dès maintenant à répondre aux sondages et gagnez de l'argent !</p>
+                        </div>
+                        <div class="welcome-actions">
+                            <button class="btn btn-primary" onclick="showSection('surveys')">
+                                <i class="fas fa-play"></i>
+                                Commencer les sondages
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon primary">
+                            <i class="fas fa-coins"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="totalBalance">500 000 FCFA</h3>
+                            <p>Solde disponible</p>
+                            <small class="balance-note">Subvention incluse</small>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon success">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="completedSurveys">0</h3>
+                            <p>Sondages réussis</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon info">
+                            <i class="fas fa-percentage"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="successRate">0%</h3>
+                            <p>Taux de réussite</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon warning">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="pendingEarnings">0 FCFA</h3>
+                            <p>Gains en attente</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="quick-actions">
+                    <h3>Actions rapides</h3>
+                    <div class="actions-grid">
+                        <button class="action-card" onclick="showSection('surveys')">
+                            <div class="action-icon">
+                                <i class="fas fa-poll"></i>
+                            </div>
+                            <div class="action-content">
+                                <h4>Nouveau sondage</h4>
+                                <p>Commencer un nouveau sondage</p>
+                            </div>
+                        </button>
+                        
+                        <button class="action-card" onclick="showSection('payments')">
+                            <div class="action-icon">
+                                <i class="fas fa-money-bill-wave"></i>
+                            </div>
+                            <div class="action-content">
+                                <h4>Retirer des fonds</h4>
+                                <p>Effectuer un retrait</p>
+                            </div>
+                        </button>
+                        
+                        <button class="action-card" onclick="showSection('payments')">
+                            <div class="action-icon">
+                                <i class="fas fa-credit-card"></i>
+                            </div>
+                            <div class="action-content">
+                                <h4>Moyens de paiement</h4>
+                                <p>Gérer vos moyens de paiement</p>
+                            </div>
+                        </button>
+                        
+                        <button class="action-card" onclick="showSection('profile')">
+                            <div class="action-icon">
+                                <i class="fas fa-user-edit"></i>
+                            </div>
+                            <div class="action-content">
+                                <h4>Modifier le profil</h4>
+                                <p>Mettre à jour vos informations</p>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="recent-activity">
+                    <h3>Activité récente</h3>
+                    <div class="activity-list" id="recentActivity">
+                        <div class="activity-item">
+                            <div class="activity-icon success">
+                                <i class="fas fa-gift"></i>
+                            </div>
+                            <div class="activity-content">
+                                <h4>Subvention reçue</h4>
+                                <p>Vous avez reçu votre subvention de démarrage</p>
+                                <span class="activity-time">Aujourd'hui</span>
+                            </div>
+                            <div class="activity-amount success">
+                                +500 000 FCFA
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Surveys Section -->
+            <section id="surveys" class="content-section">
+                <div class="section-header">
+                    <h2>Sondages disponibles</h2>
+                    <p>Choisissez un thème et commencez à gagner de l'argent</p>
+                </div>
+                
+                <div class="surveys-grid" id="surveysGrid">
+                    <!-- Les sondages seront chargés ici -->
+                </div>
+            </section>
+
+            <!-- Payments Section -->
+            <section id="payments" class="content-section">
+                <div class="section-header">
+                    <h2>Gestion des paiements</h2>
+                    <p>Gérez vos moyens de paiement et effectuez des retraits</p>
+                </div>
+                
+                <div class="payments-grid">
+                    <div class="payment-card">
+                        <h3>Moyens de paiement</h3>
+                        <div id="paymentMethods">
+                            <!-- Les moyens de paiement seront chargés ici -->
+                        </div>
+                        <button class="btn btn-primary" onclick="showAddPaymentModal()">
+                            <i class="fas fa-plus"></i>
+                            Ajouter un moyen de paiement
+                        </button>
+                    </div>
+                    
+                    <div class="payment-card">
+                        <h3>Effectuer un retrait</h3>
+                        <form id="withdrawalForm">
+                            <div class="form-group">
+                                <label class="form-label">Montant (FCFA)</label>
+                                <input type="number" class="form-input" name="amount" min="1000" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Moyen de paiement</label>
+                                <select class="form-select" name="paymentMethodId" id="withdrawalMethod" required>
+                                    <option value="">Sélectionnez un moyen</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-secondary">
+                                <i class="fas fa-money-bill-wave"></i>
+                                Demander le retrait
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Profile Section -->
+            <section id="profile" class="content-section">
+                <div class="section-header">
+                    <h2>Mon profil</h2>
+                    <p>Gérez vos informations personnelles</p>
+                </div>
+                
+                <div class="profile-card">
+                    <form id="profileForm">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label">Prénom</label>
+                                <input type="text" class="form-input" name="firstName" id="profileFirstName">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Nom</label>
+                                <input type="text" class="form-input" name="lastName" id="profileLastName">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-input" name="email" id="profileEmail" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Téléphone</label>
+                                <input type="tel" class="form-input" name="phone" id="profilePhone">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Pays</label>
+                                <input type="text" class="form-input" name="country" id="profileCountry" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">ID GeoPoll</label>
+                                <input type="text" class="form-input" id="profileUniqueId" readonly>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i>
+                                Sauvegarder
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Help Section -->
+            <section id="help" class="content-section">
+                <div class="section-header">
+                    <h2>Centre d'aide</h2>
+                    <p>Trouvez des réponses à vos questions</p>
+                </div>
+                
+                <div class="help-grid">
+                    <div class="help-card">
+                        <div class="help-icon">
+                            <i class="fas fa-question-circle"></i>
+                        </div>
+                        <h3>FAQ</h3>
+                        <p>Questions fréquemment posées</p>
+                        <button class="btn btn-ghost">Consulter</button>
+                    </div>
+                    
+                    <div class="help-card">
+                        <div class="help-icon">
+                            <i class="fas fa-headset"></i>
+                        </div>
+                        <h3>Support</h3>
+                        <p>Contactez notre équipe</p>
+                        <button class="btn btn-ghost">Contacter</button>
+                    </div>
+                    
+                    <div class="help-card">
+                        <div class="help-icon">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <h3>Guide</h3>
+                        <p>Guide d'utilisation</p>
+                        <button class="btn btn-ghost">Lire</button>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="/js/app.js"></script>
+    <script src="/js/dashboard.js"></script>
+    <script src="/js/dashboard-modern.js"></script>
+</body>
+</html>

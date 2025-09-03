@@ -1,0 +1,1500 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administration - GeoPoll</title>
+    <link rel="stylesheet" href="/css/admin.css?v=1.0">
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* CSS de secours intégré */
+        :root {
+            --admin-primary: #1e40af;
+            --admin-primary-light: #3b82f6;
+            --admin-primary-dark: #1e3a8a;
+            --admin-secondary: #059669;
+            --admin-accent: #dc2626;
+            --admin-warning: #d97706;
+            --admin-info: #0891b2;
+
+            --admin-bg: #f8fafc;
+            --admin-surface: #ffffff;
+            --admin-border: #e2e8f0;
+            --admin-text: #1e293b;
+            --admin-text-light: #64748b;
+            --admin-text-muted: #94a3b8;
+
+            --sidebar-width: 280px;
+            --header-height: 70px;
+            --border-radius: 12px;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body.admin-body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--admin-bg);
+            color: var(--admin-text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .admin-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .admin-sidebar {
+            width: var(--sidebar-width);
+            background: linear-gradient(180deg, var(--admin-primary) 0%, var(--admin-primary-dark) 100%);
+            color: white;
+            position: fixed;
+            height: 100vh;
+            left: 0;
+            top: 0;
+            z-index: 1000;
+            overflow-y: auto;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .admin-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: white;
+            text-decoration: none;
+        }
+
+        .admin-brand i {
+            font-size: 1.5rem;
+            color: #60a5fa;
+        }
+
+        .sidebar-nav {
+            padding: 1rem 0;
+        }
+
+        .nav-section {
+            margin-bottom: 2rem;
+        }
+
+        .nav-section-title {
+            padding: 0 1.5rem 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1.5rem;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border-left: 3px solid transparent;
+            position: relative;
+        }
+
+        .nav-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-left-color: #60a5fa;
+        }
+
+        .nav-item.active {
+            background-color: rgba(255, 255, 255, 0.15);
+            color: white;
+            border-left-color: #60a5fa;
+        }
+
+        .nav-item i {
+            width: 20px;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+
+        .nav-badge {
+            background-color: var(--admin-accent);
+            color: white;
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 10px;
+            margin-left: auto;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        .admin-main {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .admin-header {
+            height: var(--header-height);
+            background: var(--admin-surface);
+            border-bottom: 1px solid var(--admin-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--admin-text);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .admin-user {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .admin-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--admin-primary), var(--admin-primary-light));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .admin-user-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .admin-user-name {
+            font-weight: 500;
+            color: var(--admin-text);
+            font-size: 0.875rem;
+        }
+
+        .admin-user-role {
+            font-size: 0.75rem;
+            color: var(--admin-text-light);
+        }
+
+        .admin-content {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--admin-surface);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--admin-border);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .stat-icon.primary { background: linear-gradient(135deg, var(--admin-primary), var(--admin-primary-light)); }
+        .stat-icon.success { background: linear-gradient(135deg, var(--admin-secondary), #10b981); }
+        .stat-icon.warning { background: linear-gradient(135deg, var(--admin-warning), #f59e0b); }
+        .stat-icon.danger { background: linear-gradient(135deg, var(--admin-accent), #ef4444); }
+        .stat-icon.info { background: linear-gradient(135deg, var(--admin-info), #06b6d4); }
+
+        .stat-content {
+            flex: 1;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--admin-text);
+            line-height: 1;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--admin-text-light);
+            margin: 0;
+        }
+
+        .admin-card {
+            background: var(--admin-surface);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--admin-border);
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .card-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--admin-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .card-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--admin-text);
+            margin: 0;
+        }
+
+        .card-content {
+            padding: 1.5rem;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background-color: var(--admin-primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--admin-primary-dark);
+            transform: translateY(-1px);
+        }
+
+        @media (max-width: 1024px) {
+            .admin-sidebar {
+                transform: translateX(-100%);
+            }
+
+            .admin-main {
+                margin-left: 0;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 1rem;
+            }
+
+            .admin-content {
+                padding: 1rem;
+            }
+        }
+
+        /* Styles pour les utilisateurs en attente */
+        .section-header {
+            margin: 1rem 0;
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid;
+        }
+
+        .section-header.pending {
+            background: #fff3cd;
+            border-left-color: #ffc107;
+        }
+
+        .section-header.approved {
+            background: #d1edff;
+            border-left-color: #0d6efd;
+        }
+
+        .pending-table tbody tr {
+            background: #fffbf0 !important;
+        }
+
+        .pending-badge {
+            color: #856404;
+            font-weight: bold;
+        }
+
+        .nav-badge {
+            background: #dc3545;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 0.75rem;
+            margin-left: 0.5rem;
+            min-width: 18px;
+            text-align: center;
+        }
+
+        .actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-success {
+            background: #198754;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            color: #000;
+        }
+
+        /* Menu déroulant utilisateur */
+        .admin-user {
+            position: relative;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: background 0.3s ease;
+        }
+
+        .admin-user:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .user-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            min-width: 200px;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+        }
+
+        .user-dropdown.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-header {
+            padding: 1rem;
+            border-bottom: 1px solid #e9ecef;
+            background: #f8f9fa;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .dropdown-user-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.25rem;
+        }
+
+        .dropdown-user-email {
+            font-size: 0.875rem;
+            color: #666;
+        }
+
+        .dropdown-menu {
+            padding: 0.5rem 0;
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: #333;
+            text-decoration: none;
+            transition: background 0.2s ease;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .dropdown-item:hover {
+            background: #f8f9fa;
+        }
+
+        .dropdown-item.danger {
+            color: #dc3545;
+        }
+
+        .dropdown-item.danger:hover {
+            background: #f8d7da;
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background: #e9ecef;
+            margin: 0.5rem 0;
+        }
+
+        /* Animation pour les notifications */
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Responsive pour le menu utilisateur */
+        @media (max-width: 768px) {
+            .user-dropdown {
+                right: -1rem;
+                min-width: 250px;
+            }
+
+            .admin-user-info {
+                display: none;
+            }
+        }
+
+        /* Styles pour les badges et statuts */
+        .badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .badge-success { background: #d4edda; color: #155724; }
+        .badge-warning { background: #fff3cd; color: #856404; }
+        .badge-danger { background: #f8d7da; color: #721c24; }
+        .badge-info { background: #d1ecf1; color: #0c5460; }
+        .badge-secondary { background: #e2e3e5; color: #383d41; }
+
+        .score-badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .score-badge.high { background: #d4edda; color: #155724; }
+        .score-badge.medium { background: #fff3cd; color: #856404; }
+        .score-badge.low { background: #f8d7da; color: #721c24; }
+
+        .action-badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .action-badge.success { background: #d4edda; color: #155724; }
+        .action-badge.danger { background: #f8d7da; color: #721c24; }
+        .action-badge.warning { background: #fff3cd; color: #856404; }
+        .action-badge.info { background: #d1ecf1; color: #0c5460; }
+        .action-badge.secondary { background: #e2e3e5; color: #383d41; }
+
+        /* Styles pour les cartes de statistiques */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid #e9ecef;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .stat-icon.primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .stat-icon.success { background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%); }
+        .stat-icon.warning { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+        .stat-icon.info { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+
+        .stat-content {
+            flex: 1;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.875rem;
+        }
+
+        /* Styles pour les paramètres */
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .settings-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+
+        .setting-item {
+            margin-bottom: 1rem;
+        }
+
+        .setting-item label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .setting-item input[type="text"],
+        .setting-item input[type="number"] {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .setting-item input[type="checkbox"] {
+            margin-right: 0.5rem;
+        }
+
+        /* Styles pour les boutons outline */
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #ddd;
+            color: #333;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline:hover {
+            background: #f8f9fa;
+            border-color: #adb5bd;
+        }
+
+        /* Animation pulse pour les éléments en attente */
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.7);
+            }
+            70% {
+                transform: scale(1.05);
+                box-shadow: 0 0 0 10px rgba(255, 193, 7, 0);
+            }
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(255, 193, 7, 0);
+            }
+        }
+
+        /* Styles pour l'affichage des coordonnées utilisateurs */
+        .user-full-details {
+            width: 100%;
+        }
+
+        .user-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .contact-details {
+            display: grid;
+            gap: 0.75rem;
+        }
+
+        .detail-row {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .detail-label {
+            font-weight: 500;
+            color: #495057;
+            min-width: 100px;
+            flex-shrink: 0;
+        }
+
+        .detail-value {
+            flex: 1;
+            font-family: 'Courier New', monospace;
+            background: #f8f9fa;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            border: 1px solid #e9ecef;
+            min-width: 200px;
+        }
+
+        .copy-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: background 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .copy-btn:hover {
+            background: #218838;
+            transform: translateY(-1px);
+        }
+
+        .copy-all-btn {
+            background: #17a2b8;
+            color: white;
+            border: none;
+            padding: 0.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .copy-all-btn:hover {
+            background: #138496;
+            transform: translateY(-1px);
+        }
+
+        .status-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+
+        .table-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 2rem;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .admin-table th {
+            background: #f8f9fa;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: #495057;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .admin-table td {
+            padding: 1.5rem 1rem;
+            border-bottom: 1px solid #e9ecef;
+            vertical-align: top;
+        }
+
+        .admin-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .action-buttons .btn {
+            font-size: 0.8rem;
+            padding: 0.5rem 0.75rem;
+            white-space: nowrap;
+        }
+
+        /* Responsive design pour les coordonnées */
+        @media (max-width: 768px) {
+            .detail-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.25rem;
+            }
+
+            .detail-label {
+                min-width: auto;
+            }
+
+            .detail-value {
+                min-width: auto;
+                width: 100%;
+            }
+
+            .user-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .table-header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .admin-table {
+                font-size: 0.9rem;
+            }
+
+            .admin-table th,
+            .admin-table td {
+                padding: 0.75rem 0.5rem;
+            }
+        }
+
+        /* Styles pour les notifications */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            min-width: 300px;
+            max-width: 400px;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            animation: slideInRight 0.3s ease;
+            border-left: 4px solid;
+        }
+
+        .notification-success {
+            background: #d4edda;
+            color: #155724;
+            border-left-color: #28a745;
+        }
+
+        .notification-error {
+            background: #f8d7da;
+            color: #721c24;
+            border-left-color: #dc3545;
+        }
+
+        .notification-warning {
+            background: #fff3cd;
+            color: #856404;
+            border-left-color: #ffc107;
+        }
+
+        .notification-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border-left-color: #17a2b8;
+        }
+
+        .notification-content {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .notification-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            opacity: 0.7;
+            font-size: 1.2rem;
+            padding: 0;
+            margin-left: auto;
+            transition: opacity 0.2s ease;
+        }
+
+        .notification-close:hover {
+            opacity: 1;
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOutRight {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+
+        .notification.slide-out {
+            animation: slideOutRight 0.3s ease forwards;
+        }
+
+        /* Container pour empiler les notifications */
+        .notifications-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+            pointer-events: none;
+        }
+
+        .notifications-container .notification {
+            position: relative;
+            top: auto;
+            right: auto;
+            margin-bottom: 0.5rem;
+            pointer-events: all;
+        }
+
+        /* Styles pour les sections d'utilisateurs */
+        .section-header {
+            background: #f8f9fa;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid #0d6efd;
+        }
+
+        .section-header h3 {
+            margin: 0;
+            color: #495057;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-header p {
+            margin: 0.5rem 0 0 0;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        /* Styles pour les badges de statut */
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            display: inline-block;
+        }
+
+        .status-badge.approved {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status-badge.pending {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .status-badge.rejected {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .status-badge.inactive {
+            background: #f8f9fa;
+            color: #6c757d;
+            border: 1px solid #dee2e6;
+        }
+
+        /* Amélioration des boutons d'action */
+        .btn-sm {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.875rem;
+            border-radius: 0.375rem;
+        }
+
+        .btn-success {
+            background: #28a745;
+            border-color: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+            border-color: #1e7e34;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            border-color: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+            border-color: #bd2130;
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            border-color: #ffc107;
+            color: #000;
+        }
+
+        .btn-warning:hover {
+            background: #e0a800;
+            border-color: #d39e00;
+        }
+
+        .btn-info {
+            background: #17a2b8;
+            border-color: #17a2b8;
+            color: white;
+        }
+
+        .btn-info:hover {
+            background: #138496;
+            border-color: #117a8b;
+        }
+
+        /* Animation pour les notifications de copie */
+        .copy-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #28a745;
+            color: white;
+            padding: 0.75rem 1rem;
+            border-radius: 6px;
+            z-index: 10000;
+            animation: slideInRight 0.3s ease, fadeOut 0.3s ease 2.7s;
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+            }
+            to {
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body class="admin-body">
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar" id="adminSidebar">
+            <div class="sidebar-header">
+                <a href="#" class="admin-brand">
+                    <i class="fas fa-globe-africa"></i>
+                    <span>GeoPoll Admin</span>
+                </a>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Principal</div>
+                    <a href="#dashboard" class="nav-item active" data-section="dashboard">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="#users" class="nav-item" data-section="users">
+                        <i class="fas fa-users"></i>
+                        <span>Utilisateurs</span>
+                        <span class="nav-badge" id="pendingUsersBadge">0</span>
+                    </a>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-section-title">Contenu</div>
+                    <a href="#surveys" class="nav-item" data-section="surveys">
+                        <i class="fas fa-poll"></i>
+                        <span>Sondages</span>
+                    </a>
+                    <a href="#quiz" class="nav-item" data-section="quiz">
+                        <i class="fas fa-gamepad"></i>
+                        <span>Quiz</span>
+                    </a>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-section-title">Finances</div>
+                    <a href="#withdrawals" class="nav-item" data-section="withdrawals">
+                        <i class="fas fa-money-bill-wave"></i>
+                        <span>Retraits</span>
+                        <span class="nav-badge" id="pendingWithdrawalsBadge">0</span>
+                    </a>
+                    <a href="#transactions" class="nav-item" data-section="transactions">
+                        <i class="fas fa-exchange-alt"></i>
+                        <span>Transactions</span>
+                    </a>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-section-title">Système</div>
+                    <a href="#logs" class="nav-item" data-section="logs">
+                        <i class="fas fa-list-alt"></i>
+                        <span>Logs d'activité</span>
+                    </a>
+                    <a href="#settings" class="nav-item" data-section="settings">
+                        <i class="fas fa-cog"></i>
+                        <span>Paramètres</span>
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Contenu principal -->
+        <main class="admin-main">
+            <!-- Header -->
+            <header class="admin-header">
+                <div class="header-left">
+                    <button class="sidebar-toggle" id="sidebarToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1 class="page-title" id="pageTitle">Dashboard</h1>
+                </div>
+                
+                <div class="header-right">
+                    <button class="header-notifications" id="notificationsBtn" onclick="testNotifications()" title="Test des notifications">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge" id="notificationCount">Test</span>
+                    </button>
+                    
+                    <div class="admin-user" id="adminUser" onclick="toggleUserDropdown()">
+                        <div class="admin-avatar">
+                            <i class="fas fa-user-shield"></i>
+                        </div>
+                        <div class="admin-user-info">
+                            <div class="admin-user-name" id="adminName">Administrateur</div>
+                            <div class="admin-user-role">Super Admin</div>
+                        </div>
+                        <i class="fas fa-chevron-down" style="margin-left: 0.5rem; font-size: 0.8rem; opacity: 0.7;"></i>
+
+                        <!-- Menu déroulant -->
+                        <div class="user-dropdown" id="userDropdown">
+                            <div class="dropdown-header">
+                                <div class="dropdown-user-name" id="dropdownUserName">Administrateur</div>
+                                <div class="dropdown-user-email" id="dropdownUserEmail">admin@geopoll.com</div>
+                            </div>
+
+                            <div class="dropdown-menu">
+                                <button class="dropdown-item" onclick="showProfile()">
+                                    <i class="fas fa-user"></i>
+                                    Mon profil
+                                </button>
+
+                                <button class="dropdown-item" onclick="showSettings()">
+                                    <i class="fas fa-cog"></i>
+                                    Paramètres
+                                </button>
+
+                                <div class="dropdown-divider"></div>
+
+                                <button class="dropdown-item" onclick="showHelp()">
+                                    <i class="fas fa-question-circle"></i>
+                                    Aide
+                                </button>
+
+                                <button class="dropdown-item" onclick="showAbout()">
+                                    <i class="fas fa-info-circle"></i>
+                                    À propos
+                                </button>
+
+                                <div class="dropdown-divider"></div>
+
+                                <button class="dropdown-item danger" onclick="logout()">
+                                    <i class="fas fa-sign-out-alt"></i>
+                                    Déconnexion
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Contenu -->
+            <div class="admin-content">
+                <!-- Section Dashboard -->
+                <section id="dashboard" class="content-section active">
+                    <!-- Alerte pour les demandes d'approbation -->
+                    <div id="pendingApprovalsCard" style="display: none; background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%); border: 1px solid #ffeaa7; border-left: 4px solid #ffc107; border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem; box-shadow: 0 4px 12px rgba(255, 193, 7, 0.2);">
+                        <div style="display: flex; align-items: center; justify-content: between;">
+                            <div style="flex: 1;">
+                                <h4 style="margin: 0 0 0.5rem 0; color: #856404; display: flex; align-items: center; gap: 0.5rem;">
+                                    <div style="width: 40px; height: 40px; background: #ffc107; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #000;">
+                                        <i class="fas fa-user-clock"></i>
+                                    </div>
+                                    Demandes d'approbation en attente
+                                </h4>
+                                <p style="margin: 0; color: #856404; font-size: 1.1rem;" id="pendingApprovalsText">
+                                    Des utilisateurs attendent votre approbation pour accéder à la plateforme.
+                                </p>
+                                <div style="margin-top: 0.5rem;">
+                                    <span style="background: #856404; color: #fff3cd; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.9rem; font-weight: 500;">
+                                        <i class="fas fa-clock"></i> Action requise
+                                    </span>
+                                </div>
+                            </div>
+                            <button onclick="showSection('users')" style="background: #ffc107; color: #000; border: none; padding: 1rem 2rem; border-radius: 8px; cursor: pointer; font-weight: 600; margin-left: 1rem; font-size: 1.1rem; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(255, 193, 7, 0.3);" onmouseover="this.style.background='#e0a800'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='#ffc107'; this.style.transform='translateY(0)'">
+                                <i class="fas fa-users"></i> Gérer les demandes
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon primary">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="totalUsers">0</div>
+                                <div class="stat-label">Utilisateurs totaux</div>
+                                <div class="stat-change positive">
+                                    <i class="fas fa-arrow-up"></i>
+                                    <span>+12% ce mois</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card" id="pendingUsersCard" style="cursor: pointer; transition: all 0.3s ease; position: relative;" onclick="showSection('users')" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 8px 25px rgba(255, 193, 7, 0.3)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(0, 0, 0, 0.1)'">
+                            <div class="stat-icon warning" style="background: linear-gradient(135deg, #ffc107 0%, #ff8f00 100%);">
+                                <i class="fas fa-user-clock"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="pendingUsers" style="color: #ff8f00;">0</div>
+                                <div class="stat-label">En attente d'approbation</div>
+                                <div class="stat-change">
+                                    <i class="fas fa-hand-pointer"></i>
+                                    <span>Cliquez pour gérer</span>
+                                </div>
+                            </div>
+                            <div id="pendingUsersBadgeCard" style="position: absolute; top: -8px; right: -8px; background: #dc3545; color: white; border-radius: 50%; width: 24px; height: 24px; display: none; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: bold; animation: pulse 2s infinite;">
+                                0
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon success">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="activeUsers">0</div>
+                                <div class="stat-label">Utilisateurs actifs</div>
+                                <div class="stat-change positive">
+                                    <i class="fas fa-arrow-up"></i>
+                                    <span>+8% cette semaine</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon info">
+                                <i class="fas fa-coins"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="totalRevenue">0 FCFA</div>
+                                <div class="stat-label">Revenus totaux</div>
+                                <div class="stat-change positive">
+                                    <i class="fas fa-arrow-up"></i>
+                                    <span>+15% ce mois</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="admin-card">
+                        <div class="card-header">
+                            <div>
+                                <h3 class="card-title">Actions rapides</h3>
+                                <p class="card-subtitle">Tâches administratives courantes</p>
+                            </div>
+                        </div>
+                        <div class="card-content">
+                            <div class="quick-actions">
+                                <button class="quick-action-btn" onclick="showSection('users')">
+                                    <i class="fas fa-user-plus"></i>
+                                    <span>Gérer les utilisateurs</span>
+                                </button>
+                                <button class="quick-action-btn" onclick="showSection('withdrawals')">
+                                    <i class="fas fa-money-bill-wave"></i>
+                                    <span>Traiter les retraits</span>
+                                </button>
+                                <button class="quick-action-btn" onclick="showSection('surveys')">
+                                    <i class="fas fa-poll"></i>
+                                    <span>Créer un sondage</span>
+                                </button>
+                                <button class="quick-action-btn" onclick="showSection('logs')">
+                                    <i class="fas fa-chart-bar"></i>
+                                    <span>Voir les rapports</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="admin-card">
+                        <div class="card-header">
+                            <div>
+                                <h3 class="card-title">Activité récente</h3>
+                                <p class="card-subtitle">Dernières actions sur la plateforme</p>
+                            </div>
+                        </div>
+                        <div class="card-content">
+                            <div id="recentActivity">
+                                <p>Chargement de l'activité récente...</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section Utilisateurs -->
+                <section id="users" class="content-section">
+                    <div class="admin-card">
+                        <div class="card-header">
+                            <div>
+                                <h3 class="card-title">Gestion des utilisateurs</h3>
+                                <p class="card-subtitle">Approuver, gérer et surveiller les comptes utilisateurs</p>
+                            </div>
+                            <div class="card-actions">
+                                <button class="btn btn-primary" onclick="refreshUsers()">
+                                    <i class="fas fa-sync-alt"></i>
+                                    Actualiser
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-content">
+                            <div class="users-filters">
+                                <div class="filter-group">
+                                    <label>Statut :</label>
+                                    <select id="userStatusFilter" onchange="filterUsers()">
+                                        <option value="">Tous</option>
+                                        <option value="pending">En attente</option>
+                                        <option value="approved">Approuvés</option>
+                                        <option value="active">Actifs</option>
+                                        <option value="inactive">Inactifs</option>
+                                    </select>
+                                </div>
+                                <div class="filter-group">
+                                    <label>Recherche :</label>
+                                    <input type="text" id="userSearchInput" placeholder="Nom, email..." onkeyup="searchUsers()">
+                                </div>
+                            </div>
+                            <div id="usersTable">
+                                <p>Chargement des utilisateurs...</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Autres sections seront ajoutées -->
+                <section id="surveys" class="content-section">
+                    <div class="admin-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Gestion des sondages</h3>
+                        </div>
+                        <div class="card-content">
+                            <p>Section en développement...</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="withdrawals" class="content-section">
+                    <div class="admin-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Demandes de retrait</h3>
+                        </div>
+                        <div class="card-content">
+                            <p>Section en développement...</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="logs" class="content-section">
+                    <div class="admin-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Logs d'activité</h3>
+                        </div>
+                        <div class="card-content" id="logsTable">
+                            <p>Chargement des logs...</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="settings" class="content-section">
+                    <div class="admin-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Paramètres système</h3>
+                        </div>
+                        <div class="card-content" id="settingsContainer">
+                            <p>Chargement des paramètres...</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script src="/js/admin-modern.js"></script>
+</body>
+</html>

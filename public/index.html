@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GeoPoll - Plateforme de Sondages Rémunérés</title>
+    <link rel="stylesheet" href="/css/modern-style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <div class="brand-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <span class="brand-text">GeoPoll</span>
+            </div>
+            <div class="nav-menu" id="navMenu">
+                <a href="#home" class="nav-link active">Accueil</a>
+                <a href="#features" class="nav-link">Avantages</a>
+                <a href="#how-it-works" class="nav-link">Comment ça marche</a>
+                <a href="#testimonials" class="nav-link">Témoignages</a>
+                <div class="nav-buttons">
+                    <button class="btn btn-ghost" onclick="showLoginModal()">
+                        <i class="fas fa-sign-in-alt"></i>
+                        Connexion
+                    </button>
+                    <button class="btn btn-primary" onclick="showRegisterModal()">
+                        <i class="fas fa-user-plus"></i>
+                        Commencer
+                    </button>
+                </div>
+            </div>
+            <div class="nav-toggle" id="navToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    Transformez vos opinions en 
+                    <span class="text-gradient">revenus</span>
+                </h1>
+                <p class="hero-subtitle">
+                    Rejoignez la première plateforme de sondages rémunérés en Afrique. 
+                    Gagnez jusqu'à 22 500 FCFA par sondage réussi et bénéficiez d'une subvention de démarrage de 500 000 FCFA.
+                </p>
+                <div class="hero-cta">
+                    <button class="btn btn-primary btn-lg" onclick="showRegisterModal()">
+                        <i class="fas fa-rocket"></i>
+                        Commencer maintenant
+                    </button>
+                    <button class="btn btn-ghost btn-lg" onclick="scrollToSection('how-it-works')">
+                        <i class="fas fa-play-circle"></i>
+                        Voir comment ça marche
+                    </button>
+                </div>
+                <div class="hero-stats">
+                    <div class="hero-stat">
+                        <span class="hero-stat-number">500K</span>
+                        <span class="hero-stat-label">Subvention de démarrage</span>
+                    </div>
+                    <div class="hero-stat">
+                        <span class="hero-stat-number">22.5K</span>
+                        <span class="hero-stat-label">FCFA par sondage</span>
+                    </div>
+                    <div class="hero-stat">
+                        <span class="hero-stat-number">10+</span>
+                        <span class="hero-stat-label">Thèmes disponibles</span>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div style="width: 100%; height: 400px; background: linear-gradient(135deg, #6366f1, #8b5cf6); border-radius: 24px; display: flex; align-items: center; justify-content: center; color: white; font-size: 4rem;">
+                    <i class="fas fa-chart-bar"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="section features">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Pourquoi choisir GeoPoll ?</h2>
+                <p class="section-subtitle">
+                    Découvrez tous les avantages de notre plateforme innovante
+                </p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-gift"></i>
+                    </div>
+                    <h3 class="feature-title">Subvention de démarrage</h3>
+                    <p class="feature-description">
+                        Recevez automatiquement 500 000 FCFA dès l'activation de votre compte pour commencer vos activités.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-coins"></i>
+                    </div>
+                    <h3 class="feature-title">Rémunération attractive</h3>
+                    <p class="feature-description">
+                        Gagnez jusqu'à 22 500 FCFA pour chaque sondage réussi. Plus vous participez, plus vous gagnez.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3 class="feature-title">Interface moderne</h3>
+                    <p class="feature-description">
+                        Profitez d'une expérience utilisateur optimisée sur tous vos appareils, mobile et desktop.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3 class="feature-title">Sécurité garantie</h3>
+                    <p class="feature-description">
+                        Vos données et vos gains sont protégés par nos systèmes de sécurité de niveau bancaire.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h3 class="feature-title">Flexibilité totale</h3>
+                    <p class="feature-description">
+                        Participez aux sondages quand vous voulez, où vous voulez, selon votre disponibilité.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <h3 class="feature-title">Support 24/7</h3>
+                    <p class="feature-description">
+                        Notre équipe de support est disponible 24h/24 pour répondre à toutes vos questions.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Comment ça marche ?</h2>
+                <p class="section-subtitle">
+                    Commencez à gagner de l'argent en 3 étapes simples
+                </p>
+            </div>
+            <div class="how-it-works-grid">
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <h3 class="step-title">Inscrivez-vous</h3>
+                    <p class="step-description">
+                        Créez votre compte gratuitement en quelques minutes. Remplissez vos informations de base.
+                    </p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <h3 class="step-title">Obtenez votre ID</h3>
+                    <p class="step-description">
+                        Contactez votre leader GeoPoll pour recevoir votre ID unique et votre subvention de 500 000 FCFA.
+                    </p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">3</div>
+                    <h3 class="step-title">Commencez à gagner</h3>
+                    <p class="step-description">
+                        Répondez aux sondages disponibles et gagnez jusqu'à 22 500 FCFA par sondage réussi.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section id="testimonials" class="section testimonials">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Ce que disent nos utilisateurs</h2>
+                <p class="section-subtitle">
+                    Découvrez les témoignages de notre communauté
+                </p>
+            </div>
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <p class="testimonial-quote">
+                        "Grâce à GeoPoll, j'ai pu générer un revenu complémentaire significatif. La plateforme est intuitive et les paiements sont rapides."
+                    </p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">AM</div>
+                        <div class="testimonial-info">
+                            <h4>Aminata Diallo</h4>
+                            <p>Étudiante, Dakar</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <p class="testimonial-quote">
+                        "La subvention de démarrage m'a vraiment aidé à commencer. Maintenant je gagne régulièrement avec les sondages."
+                    </p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">KT</div>
+                        <div class="testimonial-info">
+                            <h4>Kouame Yves</h4>
+                            <p>Entrepreneur, Abidjan</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <p class="testimonial-quote">
+                        "Interface moderne et facile à utiliser. Je recommande GeoPoll à tous ceux qui veulent gagner de l'argent en ligne."
+                    </p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">FN</div>
+                        <div class="testimonial-info">
+                            <h4>Fatou Ndiaye</h4>
+                            <p>Consultante, Bamako</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="section cta">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Prêt à commencer ?</h2>
+                <p class="section-subtitle">
+                    Rejoignez des milliers d'utilisateurs qui gagnent déjà de l'argent avec GeoPoll
+                </p>
+                <button class="btn btn-secondary btn-lg" onclick="showRegisterModal()" style="margin-top: 2rem;">
+                    <i class="fas fa-rocket"></i>
+                    Créer mon compte gratuitement
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>GeoPoll</h3>
+                <p>La première plateforme de sondages rémunérés en Afrique. Transformez vos opinions en revenus.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Liens rapides</h3>
+                <a href="#home">Accueil</a>
+                <a href="#features">Avantages</a>
+                <a href="#how-it-works">Comment ça marche</a>
+                <a href="#testimonials">Témoignages</a>
+            </div>
+            <div class="footer-section">
+                <h3>Support</h3>
+                <a href="#contact">Contact</a>
+                <a href="#faq">FAQ</a>
+                <a href="#help">Aide</a>
+            </div>
+            <div class="footer-section">
+                <h3>Légal</h3>
+                <a href="#privacy">Confidentialité</a>
+                <a href="#terms">Conditions d'utilisation</a>
+                <a href="/admin-modern.html" style="color: #666; font-size: 0.8rem; opacity: 0.7;" title="Accès administrateur">Admin</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 GeoPoll. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+    <!-- Modal de Connexion -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Connexion</h2>
+                <button class="modal-close" onclick="closeModal('loginModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label class="form-label" for="loginEmail">Email ou ID GeoPoll</label>
+                        <input type="text" id="loginEmail" name="email" class="form-input" placeholder="votre@email.com ou GP123456" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="loginPassword">Mot de passe</label>
+                        <input type="password" id="loginPassword" name="password" class="form-input" placeholder="••••••••" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-ghost" onclick="closeModal('loginModal')">
+                            Annuler
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-sign-in-alt"></i>
+                            Se connecter
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal d'Inscription -->
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Créer un compte</h2>
+                <button class="modal-close" onclick="closeModal('registerModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="registrationSteps">
+                    <!-- Étape 1: Identité -->
+                    <div id="step1" class="registration-step active">
+                        <div style="text-align: center; margin-bottom: 2rem;">
+                            <div style="display: flex; justify-content: center; gap: 0.5rem; margin-bottom: 1rem;">
+                                <div class="step-indicator active"></div>
+                                <div class="step-indicator"></div>
+                                <div class="step-indicator"></div>
+                            </div>
+                            <h3>👤 Identité</h3>
+                            <p style="color: var(--gray-600); margin: 0;">Étape 1 sur 3</p>
+                        </div>
+                        <form id="step1Form">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                <div class="form-group">
+                                    <label class="form-label" for="lastName">Nom de famille *</label>
+                                    <input type="text" id="lastName" name="lastName" class="form-input" placeholder="KOUASSI" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="firstName">Prénom(s) *</label>
+                                    <input type="text" id="firstName" name="firstName" class="form-input" placeholder="Jean-Baptiste" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="email">Adresse email *</label>
+                                <input type="email" id="email" name="email" class="form-input" placeholder="votre@email.com" required>
+                                <div class="form-hint">
+                                    📧 Utilisée pour la connexion et les notifications
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-ghost" onclick="closeModal('registerModal')">
+                                    <i class="fas fa-times"></i>
+                                    Annuler
+                                </button>
+                                <button type="button" class="btn btn-primary" onclick="nextStep(2)">
+                                    Suivant
+                                    <i class="fas fa-arrow-right"></i>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Étape 2: Localisation & Contact -->
+                    <div id="step2" class="registration-step">
+                        <div style="text-align: center; margin-bottom: 2rem;">
+                            <div style="display: flex; justify-content: center; gap: 0.5rem; margin-bottom: 1rem;">
+                                <div class="step-indicator completed"></div>
+                                <div class="step-indicator active"></div>
+                                <div class="step-indicator"></div>
+                            </div>
+                            <h3>🌍 Localisation & Contact</h3>
+                            <p style="color: var(--gray-600); margin: 0;">Étape 2 sur 3</p>
+                        </div>
+                        <form id="step2Form">
+                            <div class="form-group">
+                                <label class="form-label" for="country">Pays de résidence *</label>
+                                <div class="country-select-wrapper">
+                                    <select id="country" name="country" class="form-select" required>
+                                        <option value="">🌍 Sélectionnez votre pays</option>
+                                        <!-- Les options seront chargées dynamiquement -->
+                                    </select>
+                                </div>
+                                <div class="form-hint">
+                                    🌍 Détermine les sondages disponibles dans votre région
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="phone">Numéro de téléphone *</label>
+                                <div class="phone-input-wrapper">
+                                    <div class="phone-code-display" id="phoneCodeDisplay">
+                                        <span class="flag-icon">🌍</span>
+                                        <span class="phone-code">+000</span>
+                                    </div>
+                                    <input type="tel" id="phone" name="phone" class="form-input phone-input" placeholder="07 00 00 00 00" required>
+                                </div>
+                                <div class="phone-format-hint" id="phoneFormatHint">
+                                    Format: XX XX XX XX XX
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="profession">Profession *</label>
+                                <select id="profession" name="profession" class="form-select" required>
+                                    <option value="">💼 Sélectionnez votre profession</option>
+                                    <option value="etudiant">🎓 Étudiant(e)</option>
+                                    <option value="employe">👔 Employé(e)</option>
+                                    <option value="fonctionnaire">🏛️ Fonctionnaire</option>
+                                    <option value="entrepreneur">🚀 Entrepreneur</option>
+                                    <option value="commercant">🏪 Commerçant(e)</option>
+                                    <option value="artisan">🔨 Artisan</option>
+                                    <option value="agriculteur">🌾 Agriculteur</option>
+                                    <option value="enseignant">📚 Enseignant(e)</option>
+                                    <option value="sante">⚕️ Professionnel de santé</option>
+                                    <option value="transport">🚗 Transport</option>
+                                    <option value="retraite">🏡 Retraité(e)</option>
+                                    <option value="sans_emploi">🔍 Sans emploi</option>
+                                    <option value="autre">🔧 Autre</option>
+                                </select>
+                                <div class="form-hint">
+                                    💼 Aide à personnaliser les sondages selon votre profil
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-ghost" onclick="previousStep(1)">
+                                    <i class="fas fa-arrow-left"></i>
+                                    Précédent
+                                </button>
+                                <button type="button" class="btn btn-primary" onclick="nextStep(3)">
+                                    Suivant
+                                    <i class="fas fa-arrow-right"></i>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Étape 3: Sécurité -->
+                    <div id="step3" class="registration-step">
+                        <div style="text-align: center; margin-bottom: 2rem;">
+                            <div style="display: flex; justify-content: center; gap: 0.5rem; margin-bottom: 1rem;">
+                                <div class="step-indicator completed"></div>
+                                <div class="step-indicator completed"></div>
+                                <div class="step-indicator active"></div>
+                            </div>
+                            <h3>🔐 Sécurité</h3>
+                            <p style="color: var(--gray-600); margin: 0;">Étape 3 sur 3</p>
+                        </div>
+                        <form id="step3Form">
+                            <div class="form-group">
+                                <label class="form-label" for="password">Mot de passe *</label>
+                                <div class="password-input-wrapper">
+                                    <input type="password" id="password" name="password" class="form-input" placeholder="••••••••" required>
+                                    <button type="button" class="password-toggle" onclick="togglePassword('password')">
+                                        <i class="fas fa-eye" id="passwordToggleIcon"></i>
+                                    </button>
+                                </div>
+                                <div class="password-requirements">
+                                    <div class="requirement" id="req-length">
+                                        <i class="fas fa-times"></i> Au moins 8 caractères
+                                    </div>
+                                    <div class="requirement" id="req-uppercase">
+                                        <i class="fas fa-times"></i> Une majuscule
+                                    </div>
+                                    <div class="requirement" id="req-lowercase">
+                                        <i class="fas fa-times"></i> Une minuscule
+                                    </div>
+                                    <div class="requirement" id="req-number">
+                                        <i class="fas fa-times"></i> Un chiffre
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="confirmPassword">Confirmer le mot de passe *</label>
+                                <div class="password-input-wrapper">
+                                    <input type="password" id="confirmPassword" name="confirmPassword" class="form-input" placeholder="••••••••" required>
+                                    <button type="button" class="password-toggle" onclick="togglePassword('confirmPassword')">
+                                        <i class="fas fa-eye" id="confirmPasswordToggleIcon"></i>
+                                    </button>
+                                </div>
+                                <div class="form-hint" id="passwordMatch">
+                                    🔄 Retapez le même mot de passe
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="checkbox-container">
+                                    <input type="checkbox" id="acceptTerms" name="acceptTerms" required>
+                                    <span class="checkmark"></span>
+                                    J'accepte les <a href="#" onclick="showTerms()">conditions d'utilisation</a> et la <a href="#" onclick="showPrivacy()">politique de confidentialité</a>
+                                </label>
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-ghost" onclick="previousStep(2)">
+                                    <i class="fas fa-arrow-left"></i>
+                                    Précédent
+                                </button>
+                                <button type="submit" class="btn btn-primary" id="createAccountBtn">
+                                    <i class="fas fa-user-plus"></i>
+                                    Créer mon compte
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+
+
+                    <!-- Étape finale: Succès -->
+                    <div id="stepFinal" class="registration-step">
+                        <div style="text-align: center;">
+                            <div style="width: 80px; height: 80px; background: var(--success-500); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 2rem; color: white; font-size: 2rem;">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <h3>🎉 Inscription réussie !</h3>
+                            <p style="color: var(--gray-600); margin-bottom: 2rem;">
+                                Votre compte GeoPoll a été créé avec succès. Il est maintenant en attente d'approbation par un administrateur.
+                            </p>
+                            <div style="background: var(--primary-50); padding: 1.5rem; border-radius: 1rem; margin-bottom: 2rem; border: 1px solid var(--primary-200);">
+                                <h4 style="color: var(--primary-600); margin-bottom: 1rem;">
+                                    <i class="fas fa-clock"></i>
+                                    Prochaines étapes
+                                </h4>
+                                <ol style="text-align: left; color: var(--gray-700); line-height: 1.8;">
+                                    <li>📧 Vous recevrez un email de confirmation</li>
+                                    <li>⏳ Un administrateur examinera votre demande</li>
+                                    <li>✅ Vous serez notifié de l'approbation</li>
+                                    <li>🚀 Vous pourrez alors vous connecter et commencer</li>
+                                </ol>
+                            </div>
+                            <div style="background: var(--gray-50); padding: 1rem; border-radius: 0.5rem; margin-bottom: 2rem;">
+                                <p style="font-size: 0.875rem; color: var(--gray-600); margin: 0;">
+                                    💡 <strong>Astuce :</strong> L'approbation prend généralement 24-48 heures
+                                </p>
+                            </div>
+                            <button class="btn btn-primary" onclick="closeModal('registerModal')">
+                                <i class="fas fa-check"></i>
+                                Compris
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/js/countries.js"></script>
+    <script src="/js/app.js"></script>
+    <script src="/js/modern-app.js"></script>
+</body>
+</html>

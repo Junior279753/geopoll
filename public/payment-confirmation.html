@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmation de Paiement - GeoPoll</title>
+    <link rel="stylesheet" href="/css/modern-style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="confirmation-container">
+        <div class="confirmation-card">
+            <!-- Animation de succès -->
+            <div class="success-animation">
+                <div class="success-circle">
+                    <div class="checkmark">
+                        <i class="fas fa-check"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Titre principal -->
+            <h1 class="confirmation-title">
+                🎉 Félicitations !
+            </h1>
+            
+            <p class="confirmation-subtitle">
+                Votre identifiant personnel a été attribué avec succès
+            </p>
+            
+            <!-- Informations de confirmation -->
+            <div class="confirmation-details">
+                <div class="detail-card primary">
+                    <div class="detail-icon">
+                        <i class="fas fa-id-card"></i>
+                    </div>
+                    <div class="detail-content">
+                        <h3>Votre ID GeoPoll</h3>
+                        <p class="detail-value" id="uniqueId">GP123456</p>
+                        <button class="copy-btn" onclick="copyUniqueId()">
+                            <i class="fas fa-copy"></i>
+                            Copier
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="detail-card success">
+                    <div class="detail-icon">
+                        <i class="fas fa-gift"></i>
+                    </div>
+                    <div class="detail-content">
+                        <h3>Subvention accordée</h3>
+                        <p class="detail-value">500 000 F CFA</p>
+                        <p class="detail-note">Équivalent : 762,25 €</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Prochaines étapes -->
+            <div class="next-steps">
+                <h3>
+                    <i class="fas fa-route"></i>
+                    Prochaines étapes
+                </h3>
+                <div class="steps-list">
+                    <div class="step-item">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h4>Connectez-vous avec votre ID</h4>
+                            <p>Utilisez votre ID GeoPoll pour vous connecter</p>
+                        </div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h4>Accédez à votre tableau de bord</h4>
+                            <p>Découvrez votre interface personnalisée</p>
+                        </div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h4>Commencez les sondages</h4>
+                            <p>Gagnez jusqu'à 22 500 FCFA par sondage</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Note importante -->
+            <div class="important-note">
+                <div class="note-icon">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <div class="note-content">
+                    <h4>Important</h4>
+                    <p>
+                        Conservez précieusement votre ID GeoPoll. 
+                        Vous en aurez besoin pour vous connecter à votre compte et accéder à vos gains.
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Actions -->
+            <div class="confirmation-actions">
+                <button class="btn btn-primary btn-lg" onclick="goToLogin()">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Se connecter maintenant
+                </button>
+                <button class="btn btn-ghost btn-lg" onclick="goToHome()">
+                    <i class="fas fa-home"></i>
+                    Retour à l'accueil
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .confirmation-container {
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--spacing-6);
+        }
+
+        .confirmation-card {
+            background: var(--white);
+            border-radius: var(--border-radius-2xl);
+            padding: var(--spacing-12);
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+            box-shadow: var(--shadow-2xl);
+            position: relative;
+            overflow: hidden;
+            animation: slideInUp 0.8s ease-out;
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .success-animation {
+            margin-bottom: var(--spacing-8);
+        }
+
+        .success-circle {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, var(--secondary-color), #059669);
+            border-radius: var(--border-radius-full);
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: scaleIn 0.6s ease-out 0.3s both;
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0);
+            }
+            to {
+                transform: scale(1);
+            }
+        }
+
+        .checkmark {
+            color: var(--white);
+            font-size: var(--font-size-4xl);
+            animation: checkmarkPop 0.4s ease-out 0.8s both;
+        }
+
+        @keyframes checkmarkPop {
+            from {
+                opacity: 0;
+                transform: scale(0.5);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .confirmation-title {
+            font-size: var(--font-size-4xl);
+            font-weight: 800;
+            color: var(--gray-900);
+            margin-bottom: var(--spacing-4);
+        }
+
+        .confirmation-subtitle {
+            font-size: var(--font-size-lg);
+            color: var(--gray-600);
+            margin-bottom: var(--spacing-8);
+        }
+
+        .confirmation-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--spacing-6);
+            margin-bottom: var(--spacing-8);
+        }
+
+        .detail-card {
+            background: var(--gray-50);
+            border-radius: var(--border-radius-xl);
+            padding: var(--spacing-6);
+            border: 2px solid transparent;
+            transition: var(--transition-normal);
+        }
+
+        .detail-card.primary {
+            border-color: var(--primary-color);
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        .detail-card.success {
+            border-color: var(--secondary-color);
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .detail-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: var(--border-radius-xl);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto var(--spacing-4);
+            font-size: var(--font-size-2xl);
+            color: var(--white);
+        }
+
+        .detail-card.primary .detail-icon {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+        }
+
+        .detail-card.success .detail-icon {
+            background: linear-gradient(135deg, var(--secondary-color), #059669);
+        }
+
+        .detail-content h3 {
+            font-size: var(--font-size-lg);
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: var(--spacing-2);
+        }
+
+        .detail-value {
+            font-size: var(--font-size-2xl);
+            font-weight: 800;
+            color: var(--gray-900);
+            margin-bottom: var(--spacing-2);
+        }
+
+        .detail-note {
+            font-size: var(--font-size-sm);
+            color: var(--gray-500);
+            margin: 0;
+        }
+
+        .copy-btn {
+            background: var(--primary-color);
+            color: var(--white);
+            border: none;
+            border-radius: var(--border-radius);
+            padding: var(--spacing-2) var(--spacing-4);
+            font-size: var(--font-size-sm);
+            cursor: pointer;
+            transition: var(--transition-fast);
+            margin-top: var(--spacing-2);
+        }
+
+        .copy-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .next-steps {
+            text-align: left;
+            margin-bottom: var(--spacing-8);
+        }
+
+        .next-steps h3 {
+            font-size: var(--font-size-xl);
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: var(--spacing-6);
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-2);
+        }
+
+        .steps-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-4);
+        }
+
+        .step-item {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-4);
+            padding: var(--spacing-4);
+            background: var(--gray-50);
+            border-radius: var(--border-radius-lg);
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            border-radius: var(--border-radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-weight: 700;
+            font-size: var(--font-size-lg);
+        }
+
+        .step-content h4 {
+            font-size: var(--font-size-base);
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: var(--spacing-1);
+        }
+
+        .step-content p {
+            font-size: var(--font-size-sm);
+            color: var(--gray-600);
+            margin: 0;
+        }
+
+        .important-note {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid var(--warning);
+            border-radius: var(--border-radius-lg);
+            padding: var(--spacing-6);
+            margin-bottom: var(--spacing-8);
+            display: flex;
+            align-items: flex-start;
+            gap: var(--spacing-4);
+            text-align: left;
+        }
+
+        .note-icon {
+            color: var(--warning);
+            font-size: var(--font-size-xl);
+            margin-top: var(--spacing-1);
+        }
+
+        .note-content h4 {
+            font-size: var(--font-size-base);
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: var(--spacing-2);
+        }
+
+        .note-content p {
+            color: var(--gray-700);
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        .confirmation-actions {
+            display: flex;
+            gap: var(--spacing-4);
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        @media (max-width: 768px) {
+            .confirmation-card {
+                padding: var(--spacing-8);
+            }
+            
+            .confirmation-title {
+                font-size: var(--font-size-3xl);
+            }
+            
+            .confirmation-details {
+                grid-template-columns: 1fr;
+            }
+            
+            .confirmation-actions {
+                flex-direction: column;
+            }
+            
+            .confirmation-actions .btn {
+                width: 100%;
+            }
+        }
+    </style>
+
+    <script>
+        // Récupérer l'ID unique depuis l'URL
+        function getUniqueId() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const uniqueId = urlParams.get('id') || localStorage.getItem('assignedUniqueId') || 'GP123456';
+            document.getElementById('uniqueId').textContent = uniqueId;
+            return uniqueId;
+        }
+
+        // Copier l'ID unique
+        function copyUniqueId() {
+            const uniqueId = document.getElementById('uniqueId').textContent;
+            navigator.clipboard.writeText(uniqueId).then(() => {
+                const button = event.target.closest('button');
+                const originalHTML = button.innerHTML;
+                button.innerHTML = '<i class="fas fa-check"></i> Copié !';
+                button.style.background = 'var(--secondary-color)';
+                
+                setTimeout(() => {
+                    button.innerHTML = originalHTML;
+                    button.style.background = 'var(--primary-color)';
+                }, 2000);
+            }).catch(err => {
+                console.error('Erreur copie:', err);
+                alert('ID copié : ' + uniqueId);
+            });
+        }
+
+        // Aller à la page de connexion
+        function goToLogin() {
+            window.location.href = '/index-modern.html#login';
+        }
+
+        // Retour à l'accueil
+        function goToHome() {
+            window.location.href = '/index-modern.html';
+        }
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            getUniqueId();
+        });
+    </script>
+</body>
+</html>

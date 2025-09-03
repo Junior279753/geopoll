@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test CSS Utilisateurs - GeoPoll</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #f8f9fa;
+            margin: 0;
+            padding: 2rem;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        /* Styles copiés de admin-modern.html */
+        .user-full-details {
+            width: 100%;
+        }
+        
+        .user-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+        
+        .contact-details {
+            display: grid;
+            gap: 0.75rem;
+        }
+        
+        .detail-row {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .detail-label {
+            font-weight: 500;
+            color: #495057;
+            min-width: 100px;
+            flex-shrink: 0;
+        }
+        
+        .detail-value {
+            flex: 1;
+            font-family: 'Courier New', monospace;
+            background: #f8f9fa;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            border: 1px solid #e9ecef;
+            min-width: 200px;
+        }
+        
+        .copy-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: background 0.3s ease;
+            flex-shrink: 0;
+        }
+        
+        .copy-btn:hover {
+            background: #218838;
+            transform: translateY(-1px);
+        }
+        
+        .copy-all-btn {
+            background: #17a2b8;
+            color: white;
+            border: none;
+            padding: 0.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+        
+        .copy-all-btn:hover {
+            background: #138496;
+            transform: translateY(-1px);
+        }
+        
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 2rem;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .admin-table th {
+            background: #f8f9fa;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: #495057;
+            border-bottom: 2px solid #e9ecef;
+        }
+        
+        .admin-table td {
+            padding: 1.5rem 1rem;
+            border-bottom: 1px solid #e9ecef;
+            vertical-align: top;
+        }
+        
+        .admin-table tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .status-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            display: inline-block;
+        }
+        
+        .status-badge.approved {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status-badge.pending {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+        
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #218838;
+        }
+        
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #c82333;
+        }
+        
+        .btn-outline {
+            background: transparent;
+            color: #6c757d;
+            border: 1px solid #6c757d;
+        }
+        
+        .btn-outline:hover {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .test-section {
+            margin: 2rem 0;
+            padding: 1.5rem;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            background: #f8f9fa;
+        }
+        
+        .test-link {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            margin: 0.5rem;
+            transition: background 0.3s ease;
+        }
+        
+        .test-link:hover {
+            background: #5a6fd8;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fas fa-palette"></i> Test CSS - Affichage Utilisateurs</h1>
+        
+        <div class="test-section">
+            <h3>🎨 Aperçu du style des coordonnées utilisateurs</h3>
+            <p>Voici comment les coordonnées s'affichent dans l'interface admin :</p>
+        </div>
+        
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th style="width: 50%;">Coordonnées Complètes</th>
+                    <th style="width: 20%;">Statut & Activité</th>
+                    <th style="width: 15%;">Inscription</th>
+                    <th style="width: 15%;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Utilisateur en attente -->
+                <tr style="background: #fffbf0;">
+                    <td>
+                        <div class="user-full-details">
+                            <div class="user-header">
+                                <div class="user-avatar">JD</div>
+                                <div style="flex: 1;">
+                                    <div style="font-size: 1.1rem; font-weight: bold; color: #333;">John Doe</div>
+                                    <div style="font-size: 0.9rem; color: #666;">ID: 123</div>
+                                </div>
+                                <button class="copy-all-btn" onclick="alert('Fonction de copie')" title="Copier toutes les informations">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                            
+                            <div class="contact-details">
+                                <div class="detail-row">
+                                    <span class="detail-label">📧 Email :</span>
+                                    <span class="detail-value">john.doe@example.com</span>
+                                    <button class="copy-btn" onclick="alert('Email copié')" title="Copier email">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                </div>
+                                
+                                <div class="detail-row">
+                                    <span class="detail-label">📱 Téléphone :</span>
+                                    <span class="detail-value">+225 01 23 45 67 89</span>
+                                    <button class="copy-btn" onclick="alert('Téléphone copié')" title="Copier téléphone">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                </div>
+                                
+                                <div class="detail-row">
+                                    <span class="detail-label">🌍 Pays :</span>
+                                    <span class="detail-value">Côte d'Ivoire (CI)</span>
+                                </div>
+                                
+                                <div class="detail-row">
+                                    <span class="detail-label">💼 Profession :</span>
+                                    <span class="detail-value">Employé</span>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="status-info">
+                            <span class="status-badge pending">⏳ En attente</span>
+                            <div style="font-size: 0.8rem; color: #28a745;">
+                                <i class="fas fa-circle" style="font-size: 0.6rem;"></i> Actif
+                            </div>
+                            <div style="font-size: 0.8rem; color: #ffc107;">
+                                <i class="fas fa-exclamation-triangle" style="font-size: 0.6rem;"></i> Email non vérifié
+                            </div>
+                            <div style="font-size: 0.8rem; color: #6c757d;">
+                                <i class="fas fa-clock" style="font-size: 0.6rem;"></i> Jamais connecté
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div style="font-size: 0.9rem; color: #495057;">12/08/2025</div>
+                        <div style="font-size: 0.8rem; color: #6c757d;">Il y a 2 heures</div>
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn btn-success" onclick="alert('Utilisateur approuvé')">
+                                <i class="fas fa-check"></i> Approuver
+                            </button>
+                            <button class="btn btn-danger" onclick="alert('Utilisateur rejeté')">
+                                <i class="fas fa-times"></i> Rejeter
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                
+                <!-- Utilisateur approuvé -->
+                <tr>
+                    <td>
+                        <div class="user-full-details">
+                            <div class="user-header">
+                                <div class="user-avatar">MS</div>
+                                <div style="flex: 1;">
+                                    <div style="font-size: 1.1rem; font-weight: bold; color: #333;">Marie Smith</div>
+                                    <div style="font-size: 0.9rem; color: #666;">ID: 124</div>
+                                </div>
+                                <button class="copy-all-btn" onclick="alert('Fonction de copie')" title="Copier toutes les informations">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                            
+                            <div class="contact-details">
+                                <div class="detail-row">
+                                    <span class="detail-label">📧 Email :</span>
+                                    <span class="detail-value">marie.smith@example.com</span>
+                                    <button class="copy-btn" onclick="alert('Email copié')" title="Copier email">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                </div>
+                                
+                                <div class="detail-row">
+                                    <span class="detail-label">📱 Téléphone :</span>
+                                    <span class="detail-value">+225 07 89 12 34 56</span>
+                                    <button class="copy-btn" onclick="alert('Téléphone copié')" title="Copier téléphone">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                </div>
+                                
+                                <div class="detail-row">
+                                    <span class="detail-label">🌍 Pays :</span>
+                                    <span class="detail-value">Côte d'Ivoire (CI)</span>
+                                </div>
+                                
+                                <div class="detail-row">
+                                    <span class="detail-label">💼 Profession :</span>
+                                    <span class="detail-value">Enseignant</span>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="status-info">
+                            <span class="status-badge approved">✅ Approuvé</span>
+                            <div style="font-size: 0.8rem; color: #28a745;">
+                                <i class="fas fa-circle" style="font-size: 0.6rem;"></i> Actif
+                            </div>
+                            <div style="font-size: 0.8rem; color: #28a745;">
+                                <i class="fas fa-check" style="font-size: 0.6rem;"></i> Email vérifié
+                            </div>
+                            <div style="font-size: 0.8rem; color: #6c757d;">
+                                <i class="fas fa-clock" style="font-size: 0.6rem;"></i> Dernière connexion: 11/08/2025
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div style="font-size: 0.9rem; color: #495057;">10/08/2025</div>
+                        <div style="font-size: 0.8rem; color: #6c757d;">Il y a 2 jours</div>
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn btn-outline" onclick="alert('Voir détails')">
+                                <i class="fas fa-eye"></i> Détails
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <div class="test-section">
+            <h3>✅ Vérifications CSS</h3>
+            <ul>
+                <li>✅ Les avatars avec initiales s'affichent avec un dégradé coloré</li>
+                <li>✅ Les coordonnées sont bien alignées avec des labels clairs</li>
+                <li>✅ Les boutons de copie sont visibles et stylés</li>
+                <li>✅ Les statuts ont des couleurs appropriées</li>
+                <li>✅ Le tableau est responsive et bien structuré</li>
+                <li>✅ Les effets hover fonctionnent sur les boutons</li>
+            </ul>
+        </div>
+        
+        <div style="text-align: center; margin-top: 2rem;">
+            <a href="/admin-modern.html" class="test-link">
+                <i class="fas fa-shield-alt"></i> Tester dans l'Interface Admin
+            </a>
+            <a href="/test-user-coordinates.html" class="test-link">
+                <i class="fas fa-address-card"></i> Guide Complet
+            </a>
+        </div>
+    </div>
+</body>
+</html>
