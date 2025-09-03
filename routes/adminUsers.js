@@ -362,20 +362,23 @@ router.delete('/:id', authenticateToken, requireAdmin, async (req, res) => {
 // Obtenir les statistiques des utilisateurs
 router.get('/stats', authenticateToken, requireAdmin, async (req, res) => {
     try {
-        const stats = await Promise.all([
-            db.get('SELECT COUNT(*) as total FROM users WHERE is_admin = 0'),
-            db.get('SELECT COUNT(*) as pending FROM users WHERE admin_approved = 0 AND is_admin = 0'),
-            db.get('SELECT COUNT(*) as approved FROM users WHERE admin_approved = 1 AND is_admin = 0'),
-            db.get('SELECT COUNT(*) as active FROM users WHERE is_active = 1 AND is_admin = 0'),
-            db.get('SELECT COUNT(*) as inactive FROM users WHERE is_active = 0 AND is_admin = 0')
-        ]);
-        
+        const db = DatabaseFactory.create();
+
+        // Récupérer tous les utilisateurs non-admin
+        const allUsers = await db.all('users', { is_admin: false });
+
+        const total = allUsers.length;
+        const pending = allUsers.filter(u => !u.admin_approved).length;
+        const approved = allUsers.filter(u => u.admin_approved).length;
+        const active = allUsers.filter(u => u.is_active).length;
+        const inactive = allUsers.filter(u => !u.is_active).length;
+
         res.json({
-            total: stats[0].total,
-            pending: stats[1].pending,
-            approved: stats[2].approved,
-            active: stats[3].active,
-            inactive: stats[4].inactive
+            total,
+            pending,
+            approved,
+            active,
+            inactive
         });
         
     } catch (error) {

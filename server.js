@@ -70,11 +70,13 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/users', require('./routes/users'));
 app.use('/api/surveys', require('./routes/surveys'));
 app.use('/api/payments', require('./routes/payments'));
-app.use('/api/admin', require('./routes/admin'));
+// Routes admin spécifiques AVANT la route admin générale
 app.use('/api/admin/users', require('./routes/adminUsers'));
 app.use('/api/admin/notifications', require('./routes/adminNotifications'));
 app.use('/api/admin/surveys', require('./routes/adminSurveys'));
 app.use('/api/admin/quizzes', require('./routes/adminQuizzes'));
+// Route admin générale EN DERNIER
+app.use('/api/admin', require('./routes/admin'));
 app.use('/api/quiz-scheduling', require('./routes/quizScheduling'));
 
 // Route principale pour servir l'application frontend

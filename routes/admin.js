@@ -11,42 +11,57 @@ router.use(requireAdmin);
 // Route pour obtenir les statistiques générales
 router.get('/stats', async (req, res) => {
     try {
-        // Statistiques des utilisateurs
-        const userStats = await db.get(
-            `SELECT 
-                COUNT(*) as total_users,
-                SUM(CASE WHEN is_active = 1 THEN 1 ELSE 0 END) as active_users,
-                SUM(CASE WHEN created_at >= date('now', '-30 days') THEN 1 ELSE 0 END) as new_users_30d
-             FROM users`
-        );
+        const db = DatabaseFactory.create();
+
+        // Statistiques des utilisateurs avec Supabase
+        const allUsers = await db.all('users');
+        const activeUsers = allUsers.filter(u => u.is_active);
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+        const newUsers = allUsers.filter(u => new Date(u.created_at) >= thirtyDaysAgo);
+
+        const userStats = {
+            total_users: allUsers.length,
+            active_users: activeUsers.length,
+            new_users_30d: newUsers.length
+        };
 
         // Statistiques des abonnements
-        const subscriptionStats = await db.get(
-            `SELECT 
-                COUNT(*) as total_subscriptions,
-                SUM(CASE WHEN status = 'active' THEN 1 ELSE 0 END) as active_subscriptions,
-                SUM(amount) as total_revenue
-             FROM subscriptions`
-        );
+        const allSubscriptions = await db.all('subscriptions');
+        const activeSubscriptions = allSubscriptions.filter(s => s.status === 'active');
+        const totalRevenue = allSubscriptions.reduce((sum, s) => sum + (parseFloat(s.amount) || 0), 0);
+
+        const subscriptionStats = {
+            total_subscriptions: allSubscriptions.length,
+            active_subscriptions: activeSubscriptions.length,
+            total_revenue: totalRevenue
+        };
 
         // Statistiques des sondages
-        const surveyStats = await db.get(
-            `SELECT 
-                COUNT(*) as total_attempts,
-                SUM(CASE WHEN is_completed = 1 THEN 1 ELSE 0 END) as completed_attempts,
-                SUM(CASE WHEN is_passed = 1 THEN 1 ELSE 0 END) as passed_attempts,
-                SUM(reward_amount) as total_rewards_paid
-             FROM survey_attempts`
-        );
+        const allAttempts = await db.all('survey_attempts');
+        const completedAttempts = allAttempts.filter(a => a.is_completed);
+        const passedAttempts = allAttempts.filter(a => a.is_passed);
+        const totalRewards = allAttempts.reduce((sum, a) => sum + (parseFloat(a.reward_amount) || 0), 0);
+
+        const surveyStats = {
+            total_attempts: allAttempts.length,
+            completed_attempts: completedAttempts.length,
+            passed_attempts: passedAttempts.length,
+            total_rewards_paid: totalRewards
+        };
 
         // Statistiques des transactions
-        const transactionStats = await db.get(
-            `SELECT 
-                SUM(CASE WHEN type = 'withdrawal' AND status = 'pending' THEN ABS(amount) ELSE 0 END) as pending_withdrawals,
-                SUM(CASE WHEN type = 'withdrawal' AND status = 'completed' THEN ABS(amount) ELSE 0 END) as completed_withdrawals,
-                COUNT(CASE WHEN type = 'withdrawal' AND status = 'pending' THEN 1 END) as pending_withdrawal_count
-             FROM transactions`
-        );
+        const allTransactions = await db.all('transactions');
+        const pendingTransactions = allTransactions.filter(t => t.status === 'pending');
+        const completedTransactions = allTransactions.filter(t => t.status === 'completed');
+        const totalTransactionAmount = completedTransactions.reduce((sum, t) => sum + (parseFloat(t.amount) || 0), 0);
+
+        const transactionStats = {
+            pending_withdrawals: allTransactions.filter(t => t.type === 'withdrawal' && t.status === 'pending').reduce((sum, t) => sum + Math.abs(parseFloat(t.amount) || 0), 0),
+            completed_withdrawals: allTransactions.filter(t => t.type === 'withdrawal' && t.status === 'completed').reduce((sum, t) => sum + Math.abs(parseFloat(t.amount) || 0), 0),
+            pending_withdrawal_count: allTransactions.filter(t => t.type === 'withdrawal' && t.status === 'pending').length,
+            total_transactions: allTransactions.length
+        };
 
         res.json({
             users: userStats,
@@ -67,45 +82,43 @@ router.get('/stats', async (req, res) => {
 router.get('/users', async (req, res) => {
     try {
         const { page = 1, limit = 20, search, status } = req.query;
-        const offset = (page - 1) * limit;
+        const db = DatabaseFactory.create();
 
-        let whereClause = 'WHERE 1=1';
-        let params = [];
+        // Récupérer tous les utilisateurs
+        let users = await db.all('users', {},
+            'id, email, first_name, last_name, phone, country, is_active, is_admin, balance, created_at, last_login, admin_approved',
+            { column: 'created_at', ascending: false }
+        );
 
+        // Filtrer par recherche
         if (search) {
-            whereClause += ' AND (first_name LIKE ? OR last_name LIKE ? OR email LIKE ?)';
-            const searchTerm = `%${search}%`;
-            params.push(searchTerm, searchTerm, searchTerm);
+            const searchLower = search.toLowerCase();
+            users = users.filter(user =>
+                user.first_name?.toLowerCase().includes(searchLower) ||
+                user.last_name?.toLowerCase().includes(searchLower) ||
+                user.email?.toLowerCase().includes(searchLower)
+            );
         }
 
-        if (status) {
-            whereClause += ' AND is_active = ?';
-            params.push(status === 'active' ? 1 : 0);
+        // Filtrer par statut
+        if (status === 'active') {
+            users = users.filter(user => user.is_active);
+        } else if (status === 'inactive') {
+            users = users.filter(user => !user.is_active);
         }
 
-        const users = await db.all(
-            `SELECT 
-                id, email, first_name, last_name, phone, country, 
-                is_active, is_admin, balance, created_at, last_login
-             FROM users 
-             ${whereClause}
-             ORDER BY created_at DESC 
-             LIMIT ? OFFSET ?`,
-            [...params, limit, offset]
-        );
-
-        const total = await db.get(
-            `SELECT COUNT(*) as count FROM users ${whereClause}`,
-            params
-        );
+        // Pagination
+        const total = users.length;
+        const offset = (page - 1) * limit;
+        const paginatedUsers = users.slice(offset, offset + parseInt(limit));
 
         res.json({
-            users,
+            users: paginatedUsers,
             pagination: {
                 page: parseInt(page),
                 limit: parseInt(limit),
-                total: total.count,
-                pages: Math.ceil(total.count / limit)
+                total: total,
+                pages: Math.ceil(total / limit)
             }
         });
 
@@ -117,98 +130,9 @@ router.get('/users', async (req, res) => {
     }
 });
 
-// Route pour obtenir les détails d'un utilisateur
-router.get('/users/:userId', async (req, res) => {
-    try {
-        const userId = req.params.userId;
+// Route pour obtenir les détails d'un utilisateur - DÉPLACÉE vers adminUsers.js
 
-        // Informations de base de l'utilisateur
-        const user = await db.get(
-            'SELECT * FROM users WHERE id = ?',
-            [userId]
-        );
-
-        if (!user) {
-            return res.status(404).json({
-                error: 'Utilisateur non trouvé'
-            });
-        }
-
-        // Abonnement actuel
-        const subscription = await db.get(
-            'SELECT * FROM subscriptions WHERE user_id = ? AND status = "active" ORDER BY created_at DESC LIMIT 1',
-            [userId]
-        );
-
-        // Statistiques des sondages
-        const surveyStats = await db.get(
-            `SELECT 
-                COUNT(*) as total_attempts,
-                SUM(CASE WHEN is_passed = 1 THEN 1 ELSE 0 END) as passed_attempts,
-                SUM(reward_amount) as total_earnings
-             FROM survey_attempts 
-             WHERE user_id = ? AND is_completed = 1`,
-            [userId]
-        );
-
-        // Moyens de paiement
-        const paymentMethods = await db.all(
-            'SELECT id, type, account_number, account_name, is_default, is_active, created_at FROM payment_methods WHERE user_id = ?',
-            [userId]
-        );
-
-        // Masquer les numéros de compte
-        const maskedPaymentMethods = paymentMethods.map(method => ({
-            ...method,
-            account_number: method.account_number.replace(/(.{4}).*(.{4})/, '$1****$2')
-        }));
-
-        res.json({
-            user: {
-                ...user,
-                password_hash: undefined // Ne pas exposer le hash du mot de passe
-            },
-            subscription,
-            surveyStats,
-            paymentMethods: maskedPaymentMethods
-        });
-
-    } catch (error) {
-        console.error('Erreur lors de la récupération des détails utilisateur:', error);
-        res.status(500).json({
-            error: 'Erreur lors de la récupération des détails utilisateur'
-        });
-    }
-});
-
-// Route pour activer/désactiver un utilisateur
-router.put('/users/:userId/status', async (req, res) => {
-    try {
-        const userId = req.params.userId;
-        const { isActive } = req.body;
-
-        await db.run(
-            'UPDATE users SET is_active = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
-            [isActive ? 1 : 0, userId]
-        );
-
-        // Log de l'activité
-        await db.run(
-            'INSERT INTO activity_logs (user_id, action, ip_address, user_agent, details) VALUES (?, ?, ?, ?, ?)',
-            [req.user.id, 'USER_STATUS_CHANGED', req.ip, req.get('User-Agent'), `User ${userId} ${isActive ? 'activated' : 'deactivated'}`]
-        );
-
-        res.json({
-            message: `Utilisateur ${isActive ? 'activé' : 'désactivé'} avec succès`
-        });
-
-    } catch (error) {
-        console.error('Erreur lors de la modification du statut utilisateur:', error);
-        res.status(500).json({
-            error: 'Erreur lors de la modification du statut utilisateur'
-        });
-    }
-});
+// Route pour activer/désactiver un utilisateur - DÉPLACÉE vers adminUsers.js
 
 // Route pour obtenir les demandes de retrait en attente
 router.get('/withdrawals/pending', async (req, res) => {
