@@ -248,11 +248,18 @@ function loadSectionData(sectionName) {
         case 'surveys':
             loadAvailableSurveys();
             break;
+        case 'takeSurvey':
+            // Section de passage de sondage - pas de chargement nécessaire
+            console.log('📝 Section de passage de sondage active');
+            break;
         case 'payments':
             loadPayments();
             break;
         case 'profile':
             loadProfile();
+            break;
+        case 'help':
+            console.log('❓ Section d\'aide');
             break;
         default:
             console.log(`Section ${sectionName} non implémentée`);
@@ -408,8 +415,19 @@ async function startSurvey(surveyId) {
         });
 
         if (response.ok) {
-            const data = await response.json();
-            console.log('📊 Données reçues:', data);
+            const responseText = await response.text();
+            console.log('📊 Réponse brute:', responseText);
+
+            let data;
+            try {
+                data = JSON.parse(responseText);
+                console.log('📊 Données parsées:', data);
+            } catch (parseError) {
+                console.error('❌ Erreur parsing JSON:', parseError);
+                console.error('❌ Réponse reçue:', responseText);
+                showErrorPopup('Erreur de format de données du serveur');
+                return;
+            }
 
             currentSurveyData = {
                 id: surveyId,
@@ -475,13 +493,27 @@ function initializeSurveyInterface() {
 
 // Afficher la question actuelle
 function displayCurrentQuestion() {
-    if (!currentSurveyData || currentQuestionIndex >= currentSurveyData.questions.length) return;
+    console.log('🔄 Affichage question', currentQuestionIndex);
+
+    if (!currentSurveyData || currentQuestionIndex >= currentSurveyData.questions.length) {
+        console.error('❌ Pas de données de sondage ou index invalide');
+        return;
+    }
 
     const question = currentSurveyData.questions[currentQuestionIndex];
+    console.log('📝 Question actuelle:', question);
+
     const questionText = document.getElementById('questionText');
     const optionsContainer = document.getElementById('optionsContainer');
     const currentQuestionEl = document.getElementById('currentQuestion');
     const progressFill = document.getElementById('progressFill');
+
+    console.log('🎯 Éléments DOM:', {
+        questionText: !!questionText,
+        optionsContainer: !!optionsContainer,
+        currentQuestionEl: !!currentQuestionEl,
+        progressFill: !!progressFill
+    });
 
     // Mettre à jour le texte de la question
     if (questionText) {
@@ -503,12 +535,22 @@ function displayCurrentQuestion() {
     if (optionsContainer) {
         optionsContainer.innerHTML = '';
 
+        console.log('📋 Options disponibles:', question.options);
+
+        if (!question.options || question.options.length === 0) {
+            console.error('❌ Aucune option trouvée pour cette question');
+            optionsContainer.innerHTML = '<p style="color: red;">Aucune option disponible pour cette question</p>';
+            return;
+        }
+
         question.options.forEach((option, index) => {
+            console.log(`➡️ Création option ${index}: ${option}`);
+
             const optionElement = document.createElement('div');
             optionElement.className = 'option-item';
             optionElement.innerHTML = `
-                <input type="radio" id="option_${index}" name="question_${currentQuestionIndex}" value="${index}">
-                <label for="option_${index}">
+                <input type="radio" id="option_${currentQuestionIndex}_${index}" name="question_${currentQuestionIndex}" value="${index}">
+                <label for="option_${currentQuestionIndex}_${index}">
                     <span class="option-text">${option}</span>
                     <span class="option-check"><i class="fas fa-check"></i></span>
                 </label>
@@ -518,12 +560,17 @@ function displayCurrentQuestion() {
             const radio = optionElement.querySelector('input[type="radio"]');
             radio.addEventListener('change', function() {
                 if (this.checked) {
+                    console.log(`✅ Option ${index} sélectionnée: ${option}`);
                     selectOption(index);
                 }
             });
 
             optionsContainer.appendChild(optionElement);
         });
+
+        console.log(`✅ ${question.options.length} options créées`);
+    } else {
+        console.error('❌ Container des options non trouvé');
     }
 
     // Mettre à jour les boutons
@@ -555,27 +602,47 @@ function updateNavigationButtons() {
     const nextBtn = document.getElementById('nextBtn');
     const submitBtn = document.getElementById('submitBtn');
 
+    console.log('🔄 Mise à jour boutons navigation:', {
+        prevBtn: !!prevBtn,
+        nextBtn: !!nextBtn,
+        submitBtn: !!submitBtn,
+        currentQuestionIndex,
+        totalQuestions: currentSurveyData?.questions?.length,
+        hasAnswer: userAnswers[currentQuestionIndex] !== undefined
+    });
+
     // Bouton précédent
     if (prevBtn) {
         prevBtn.disabled = currentQuestionIndex === 0;
+        console.log('⬅️ Bouton précédent:', prevBtn.disabled ? 'désactivé' : 'activé');
     }
 
     // Bouton suivant / terminer
     const isLastQuestion = currentQuestionIndex === currentSurveyData.questions.length - 1;
     const hasAnswer = userAnswers[currentQuestionIndex] !== undefined;
 
+    console.log('🎯 État navigation:', { isLastQuestion, hasAnswer });
+
     if (isLastQuestion) {
-        if (nextBtn) nextBtn.style.display = 'none';
+        if (nextBtn) {
+            nextBtn.style.display = 'none';
+            console.log('➡️ Bouton suivant masqué (dernière question)');
+        }
         if (submitBtn) {
             submitBtn.style.display = 'inline-flex';
             submitBtn.disabled = !hasAnswer;
+            console.log('✅ Bouton terminer:', submitBtn.disabled ? 'désactivé' : 'activé');
         }
     } else {
         if (nextBtn) {
             nextBtn.style.display = 'inline-flex';
             nextBtn.disabled = !hasAnswer;
+            console.log('➡️ Bouton suivant:', nextBtn.disabled ? 'désactivé' : 'activé');
         }
-        if (submitBtn) submitBtn.style.display = 'none';
+        if (submitBtn) {
+            submitBtn.style.display = 'none';
+            console.log('✅ Bouton terminer masqué');
+        }
     }
 }
 
@@ -689,192 +756,13 @@ function initializeSurveyInterface() {
     displayCurrentQuestion();
 }
 
-function displayCurrentQuestion() {
-    if (!currentSurveyData || currentQuestionIndex >= currentSurveyData.questions.length) return;
 
-    const question = currentSurveyData.questions[currentQuestionIndex];
-    const questionNumber = currentQuestionIndex + 1;
-    const totalQuestions = currentSurveyData.questions.length;
 
-    // Mettre à jour les éléments de l'interface
-    document.getElementById('currentQuestion').textContent = questionNumber;
-    document.getElementById('questionText').textContent = question.question_text;
 
-    // Mettre à jour la barre de progression
-    const progressPercent = (questionNumber / totalQuestions) * 100;
-    document.getElementById('progressFill').style.width = `${progressPercent}%`;
 
-    // Générer les options
-    const optionsContainer = document.getElementById('optionsContainer');
-    const options = JSON.parse(question.options || '[]');
 
-    optionsContainer.innerHTML = options.map((option, index) => `
-        <div class="option-item" onclick="selectOption(${index})">
-            <input type="radio" name="question_${currentQuestionIndex}" value="${option}" id="option_${index}">
-            <label for="option_${index}">${option}</label>
-        </div>
-    `).join('');
 
-    // Mettre à jour les boutons
-    updateNavigationButtons();
-}
 
-function selectOption(optionIndex) {
-    // Désélectionner toutes les options
-    document.querySelectorAll('.option-item').forEach(item => item.classList.remove('selected'));
-
-    // Sélectionner l'option cliquée
-    const selectedOption = document.querySelectorAll('.option-item')[optionIndex];
-    selectedOption.classList.add('selected');
-
-    // Cocher le radio button
-    const radio = selectedOption.querySelector('input[type="radio"]');
-    radio.checked = true;
-
-    // Activer le bouton suivant
-    document.getElementById('nextBtn').disabled = false;
-}
-
-function updateNavigationButtons() {
-    const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
-    const submitBtn = document.getElementById('submitBtn');
-
-    // Bouton précédent
-    prevBtn.disabled = currentQuestionIndex === 0;
-
-    // Bouton suivant / terminer
-    const isLastQuestion = currentQuestionIndex === currentSurveyData.questions.length - 1;
-
-    if (isLastQuestion) {
-        nextBtn.style.display = 'none';
-        submitBtn.style.display = 'inline-block';
-    } else {
-        nextBtn.style.display = 'inline-block';
-        submitBtn.style.display = 'none';
-    }
-
-    // Désactiver le bouton suivant jusqu'à ce qu'une option soit sélectionnée
-    nextBtn.disabled = true;
-}
-
-function previousQuestion() {
-    if (currentQuestionIndex > 0) {
-        currentQuestionIndex--;
-        displayCurrentQuestion();
-
-        // Restaurer la réponse précédente si elle existe
-        if (userAnswers[currentQuestionIndex]) {
-            const savedAnswer = userAnswers[currentQuestionIndex];
-            const options = document.querySelectorAll('.option-item');
-            options.forEach((option, index) => {
-                const radio = option.querySelector('input[type="radio"]');
-                if (radio.value === savedAnswer) {
-                    option.classList.add('selected');
-                    radio.checked = true;
-                    document.getElementById('nextBtn').disabled = false;
-                }
-            });
-        }
-    }
-}
-
-function nextQuestion() {
-    // Sauvegarder la réponse actuelle
-    const selectedOption = document.querySelector('input[name="question_' + currentQuestionIndex + '"]:checked');
-    if (!selectedOption) {
-        alert('Veuillez sélectionner une réponse');
-        return;
-    }
-
-    userAnswers[currentQuestionIndex] = selectedOption.value;
-
-    // Passer à la question suivante
-    if (currentQuestionIndex < currentSurveyData.questions.length - 1) {
-        currentQuestionIndex++;
-        displayCurrentQuestion();
-    }
-}
-
-async function submitSurvey() {
-    // Sauvegarder la dernière réponse
-    const selectedOption = document.querySelector('input[name="question_' + currentQuestionIndex + '"]:checked');
-    if (!selectedOption) {
-        alert('Veuillez sélectionner une réponse');
-        return;
-    }
-
-    userAnswers[currentQuestionIndex] = selectedOption.value;
-
-    // Vérifier que toutes les questions ont une réponse
-    if (userAnswers.length !== currentSurveyData.questions.length) {
-        alert('Veuillez répondre à toutes les questions');
-        return;
-    }
-
-    try {
-        const token = localStorage.getItem('token') || localStorage.getItem('authToken');
-        const response = await fetch('/api/surveys/submit', {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                themeId: currentSurveyData.id,
-                answers: userAnswers.map((answer, index) => ({
-                    questionId: currentSurveyData.questions[index].id,
-                    answer: answer
-                }))
-            })
-        });
-
-        if (response.ok) {
-            const result = await response.json();
-            showSurveyResults(result);
-        } else {
-            alert('Erreur lors de la soumission du sondage');
-        }
-    } catch (error) {
-        console.error('❌ Erreur soumission sondage:', error);
-        alert('Erreur lors de la soumission du sondage');
-    }
-}
-
-function showSurveyResults(result) {
-    // TODO: Afficher les résultats du sondage
-    alert(`Sondage terminé ! Score: ${result.score || 0}/${result.maxScore || 0}. Récompense: ${result.reward || 0} FCFA`);
-
-    // Retourner à la liste des sondages
-    showSection('surveys');
-
-    // Recharger les données utilisateur
-    loadUserData();
-}
-
-async function loadProfile() {
-    console.log('👤 Chargement du profil...');
-    // TODO: Implémenter le chargement du profil
-}
-
-// ===== UTILITAIRES =====
-function logout() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('user');
-    window.location.href = '/';
-}
-
-// Fonction de déconnexion
-function logout() {
-    // Supprimer les tokens
-    localStorage.removeItem('token');
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('user');
-
-    // Rediriger vers la page d'accueil
-    window.location.href = '/';
-}
 
 // ===== SYSTÈME DE POPUP MODERNE =====
 function showPopup(title, message, type = 'info', confirmCallback = null) {

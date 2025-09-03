@@ -8,7 +8,21 @@ const DatabaseFactory = require('../models/databaseFactory');
 // Route pour obtenir tous les thèmes disponibles
 router.get('/themes', authenticateToken, async (req, res) => {
     try {
-        const themes = await Survey.getActiveThemes();
+        const db = DatabaseFactory.create();
+
+        // Obtenir tous les thèmes actifs
+        const allThemes = await db.all('survey_themes', { is_active: true });
+
+        // Filtrer seulement ceux qui ont des questions
+        const themesWithQuestions = [];
+        for (const theme of allThemes) {
+            const questions = await db.all('survey_questions', { theme_id: theme.id });
+            if (questions && questions.length > 0) {
+                themesWithQuestions.push(theme);
+            }
+        }
+
+        const themes = themesWithQuestions;
         
         // Pour chaque thème, ajouter des informations sur le statut de l'utilisateur
         const themesWithStatus = await Promise.all(themes.map(async (theme) => {

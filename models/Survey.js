@@ -1,11 +1,16 @@
 const db = require('./database');
 
 class Survey {
-    // Obtenir tous les thèmes actifs
+    // Obtenir tous les thèmes actifs qui ont des questions
     static async getActiveThemes() {
-        return await db.all(
-            'SELECT * FROM survey_themes WHERE is_active = 1 ORDER BY name'
-        );
+        return await db.all(`
+            SELECT st.*
+            FROM survey_themes st
+            INNER JOIN survey_questions sq ON st.id = sq.theme_id
+            WHERE st.is_active = 1
+            GROUP BY st.id, st.name, st.description, st.difficulty, st.reward_amount, st.is_active, st.created_at
+            ORDER BY st.name
+        `);
     }
 
     // Obtenir un thème par ID
