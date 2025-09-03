@@ -28,13 +28,21 @@ function initializeApp() {
 
 // ===== NAVIGATION =====
 function setupMobileNavigation() {
+    console.log('🍔 Initialisation du menu hamburger...');
+
     const navToggle = document.getElementById('navToggle');
     const navMenu = document.getElementById('navMenu');
 
+    console.log('🔍 navToggle:', navToggle);
+    console.log('🔍 navMenu:', navMenu);
+
     if (navToggle && navMenu) {
-        navToggle.addEventListener('click', () => {
+        navToggle.addEventListener('click', (e) => {
+            e.preventDefault();
+            console.log('🍔 Clic sur menu hamburger');
             navMenu.classList.toggle('active');
             navToggle.classList.toggle('active');
+            console.log('🔍 Menu actif:', navMenu.classList.contains('active'));
         });
 
         // Fermer le menu en cliquant sur un lien
@@ -53,6 +61,12 @@ function setupMobileNavigation() {
                 navToggle.classList.remove('active');
             }
         });
+
+        console.log('✅ Menu hamburger initialisé avec succès');
+    } else {
+        console.error('❌ Éléments du menu hamburger non trouvés');
+        console.error('- navToggle:', !!navToggle);
+        console.error('- navMenu:', !!navMenu);
     }
 }
 

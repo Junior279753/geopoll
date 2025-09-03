@@ -919,12 +919,40 @@ function openSidebar() {
 
 // Fermer la sidebar
 function closeSidebar() {
+    console.log('🔒 Fermeture de la sidebar...');
+
     const sidebar = document.querySelector('.sidebar');
     const overlay = document.getElementById('sidebarOverlay');
 
-    if (sidebar) sidebar.classList.remove('active');
-    if (overlay) overlay.classList.remove('active');
+    if (sidebar) {
+        sidebar.classList.remove('active');
+        console.log('✅ Classe active supprimée de la sidebar');
+    } else {
+        console.error('❌ Sidebar non trouvée');
+    }
+
+    if (overlay) {
+        overlay.classList.remove('active');
+        console.log('✅ Classe active supprimée de l\'overlay');
+    } else {
+        console.error('❌ Overlay non trouvé');
+    }
+
     document.body.style.overflow = ''; // Restaurer le scroll
+    console.log('✅ Scroll restauré');
+}
+
+// Fonction de déconnexion
+function logout() {
+    console.log('🚪 Déconnexion...');
+
+    // Supprimer les tokens
+    localStorage.removeItem('token');
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('user');
+
+    // Rediriger vers la page d'accueil
+    window.location.href = '/';
 }
 
 // Fermer le menu utilisateur en cliquant ailleurs
@@ -949,8 +977,21 @@ document.addEventListener('DOMContentLoaded', function() {
     // Bouton de fermeture dans la sidebar
     const sidebarToggle = document.getElementById('sidebarToggle');
     if (sidebarToggle) {
-        sidebarToggle.addEventListener('click', closeSidebar);
-        console.log('✅ Bouton fermeture sidebar attaché');
+        // Fonction de fermeture
+        const handleClose = function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('🔘 Clic sur bouton fermeture sidebar');
+            closeSidebar();
+        };
+
+        // Ajouter les événements pour desktop et mobile
+        sidebarToggle.addEventListener('click', handleClose);
+        sidebarToggle.addEventListener('touchstart', handleClose);
+
+        console.log('✅ Bouton fermeture sidebar attaché (click + touch)');
+    } else {
+        console.error('❌ Bouton sidebarToggle non trouvé');
     }
 
     // Fermer la sidebar en cliquant sur l'overlay
@@ -996,5 +1037,13 @@ window.nextQuestion = nextQuestion;
 window.submitSurvey = submitSurvey;
 window.selectOption = selectOption;
 window.closePopup = closePopup;
+
+// Test des fonctions exposées
+console.log('🔍 Test des fonctions exposées:');
+console.log('- showSection:', typeof window.showSection);
+console.log('- logout:', typeof window.logout);
+console.log('- closeSidebar:', typeof window.closeSidebar);
+console.log('- toggleSidebar:', typeof window.toggleSidebar);
+console.log('✅ Toutes les fonctions sont exposées');
 window.showSection = showSection;
 window.logout = logout;
