@@ -18,7 +18,8 @@
     "verify-admin": "node scripts/verifyAdmin.js",
     "deploy-prep": "node scripts/deploy.js",
     "test-api": "node test-api.js",
-    "test-supabase": "node scripts/testAPI.js"
+    "test-supabase": "node scripts/testAPI.js",
+    "build": "echo 'Build completed - ready for deployment'"
   },
   "keywords": [
     "sondages",

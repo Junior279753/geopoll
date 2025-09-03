@@ -20,7 +20,7 @@ class Database {
             if (err) {
                 console.error('❌ Erreur lors de la connexion à la base de données:', err.message);
             } else {
-                console.log('✅ Connexion à la base de données SQLite établie');
+                // Connexion SQLite établie silencieusement
                 this.createTables();
             }
         });
@@ -183,9 +183,8 @@ class Database {
             this.db.run(tableSQL, (err) => {
                 if (err) {
                     console.error(`❌ Erreur lors de la création de la table ${index + 1}:`, err.message);
-                } else {
-                    console.log(`✅ Table ${index + 1} créée avec succès`);
                 }
+                // Tables créées silencieusement
             });
         });
     }
@@ -244,4 +243,4 @@ class Database {
     }
 }
 
-module.exports = new Database();
+module.exports = Database;

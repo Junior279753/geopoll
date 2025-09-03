@@ -73,6 +73,8 @@ app.use('/api/payments', require('./routes/payments'));
 app.use('/api/admin', require('./routes/admin'));
 app.use('/api/admin/users', require('./routes/adminUsers'));
 app.use('/api/admin/notifications', require('./routes/adminNotifications'));
+app.use('/api/admin/surveys', require('./routes/adminSurveys'));
+app.use('/api/admin/quizzes', require('./routes/adminQuizzes'));
 app.use('/api/quiz-scheduling', require('./routes/quizScheduling'));
 
 // Route principale pour servir l'application frontend
