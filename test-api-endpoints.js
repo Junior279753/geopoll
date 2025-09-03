@@ -245,34 +245,86 @@ async function testUserApproval() {
     }
 }
 
-// Test 8: Vérification statut après approbation
-async function testUserStatusAfterApproval() {
-    console.log('\n8️⃣ Test statut après approbation...');
-    
+// Test 8: Reconnexion après approbation
+async function testUserReloginAfterApproval() {
+    console.log('\n8️⃣ Test reconnexion après approbation...');
+
     try {
-        const response = await makeRequest('GET', '/api/auth/profile', null, userToken);
-        
+        const response = await makeRequest('POST', '/api/auth/login', {
+            email: TEST_USER.email,
+            password: TEST_USER.password
+        });
+
         if (response.statusCode === 200) {
-            console.log('✅ Vérification statut réussie');
+            console.log('✅ Reconnexion après approbation réussie');
+            userToken = response.body.token;
             console.log(`   Statut approbation: ${response.body.user.adminApproved ? 'Approuvé' : 'En attente'}`);
             return response.body.user.adminApproved;
         } else {
-            console.log('❌ Échec vérification statut:', response.statusCode, response.body);
+            console.log('❌ Échec reconnexion:', response.statusCode, response.body);
             return false;
         }
     } catch (error) {
-        console.log('❌ Erreur vérification statut:', error.message);
+        console.log('❌ Erreur reconnexion:', error.message);
         return false;
     }
 }
 
-// Test 9: Paramètres admin
+// Test 9: Accès aux thèmes de sondage
+async function testSurveyThemes() {
+    console.log('\n9️⃣ Test accès thèmes de sondage...');
+
+    try {
+        const response = await makeRequest('GET', '/api/surveys/themes', null, userToken);
+
+        if (response.statusCode === 200) {
+            console.log('✅ Accès thèmes réussi');
+            console.log(`   Nombre de thèmes: ${response.body.length}`);
+            if (response.body.length > 0) {
+                console.log(`   Premier thème: ${response.body[0].name}`);
+                console.log(`   Peut commencer: ${response.body[0].canStart ? 'Oui' : 'Non'}`);
+            }
+            return true;
+        } else {
+            console.log('❌ Échec accès thèmes:', response.statusCode, response.body);
+            return false;
+        }
+    } catch (error) {
+        console.log('❌ Erreur accès thèmes:', error.message);
+        return false;
+    }
+}
+
+// Test 10: Démarrage d'un sondage
+async function testStartSurvey() {
+    console.log('\n🔟 Test démarrage sondage...');
+
+    try {
+        const response = await makeRequest('POST', '/api/surveys/themes/1/start', null, userToken);
+
+        if (response.statusCode === 200) {
+            console.log('✅ Démarrage sondage réussi');
+            console.log(`   ID tentative: ${response.body.attemptId}`);
+            console.log(`   Thème: ${response.body.theme.name}`);
+            console.log(`   Nombre de questions: ${response.body.totalQuestions}`);
+            return response.body.attemptId;
+        } else {
+            console.log('❌ Échec démarrage sondage:', response.statusCode, response.body);
+            return false;
+        }
+    } catch (error) {
+        console.log('❌ Erreur démarrage sondage:', error.message);
+        return false;
+    }
+}
+
+// Test 11: Paramètres admin
 async function testAdminSettings() {
-    console.log('\n9️⃣ Test paramètres admin...');
-    
+    console.log('\n1️⃣1️⃣ Test paramètres admin...');
+
     try {
         const response = await makeRequest('GET', '/api/admin/settings', null, adminToken);
-        
+
         if (response.statusCode === 200) {
             console.log('✅ Accès paramètres réussi');
             console.log(`   Plateforme: ${response.body.settings?.platform?.name || 'N/A'}`);
@@ -301,7 +353,9 @@ async function runAllTests() {
     results.push(await testAdminStats());
     results.push(await testAdminUsers());
     results.push(await testUserApproval());
-    results.push(await testUserStatusAfterApproval());
+    results.push(await testUserReloginAfterApproval());
+    results.push(await testSurveyThemes());
+    results.push(await testStartSurvey());
     results.push(await testAdminSettings());
     
     // Résumé

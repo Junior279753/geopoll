@@ -266,6 +266,13 @@ a:hover {
     font-size: var(--font-size-lg);
 }
 
+.brand-logo {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--border-radius-lg);
+    object-fit: cover;
+}
+
 .nav-menu {
     display: flex;
     align-items: center;
@@ -447,11 +454,50 @@ a:hover {
     z-index: 2;
 }
 
+.hero-image-container {
+    position: relative;
+    width: 100%;
+    height: 400px;
+    border-radius: var(--border-radius-2xl);
+    overflow: hidden;
+    box-shadow: var(--shadow-2xl);
+}
+
 .hero-image {
     width: 100%;
-    height: auto;
-    border-radius: var(--border-radius-2xl);
-    box-shadow: var(--shadow-2xl);
+    height: 100%;
+    object-fit: cover;
+    transition: var(--transition-slow);
+}
+
+.hero-image-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(30, 64, 175, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+    display: flex;
+    align-items: flex-end;
+    padding: var(--spacing-6);
+}
+
+.hero-badge {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    padding: var(--spacing-3) var(--spacing-4);
+    border-radius: var(--border-radius-full);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    color: var(--primary-color);
+    box-shadow: var(--shadow-md);
+}
+
+.hero-badge i {
+    color: #fbbf24;
 }
 
 /* ===== SECTIONS ===== */
@@ -887,8 +933,25 @@ a:hover {
 
     .features-grid,
     .how-it-works-grid,
-    .testimonials-grid {
+    .testimonials-grid,
+    .community-grid {
         grid-template-columns: 1fr;
+    }
+
+    .community-card {
+        margin-bottom: var(--spacing-6);
+    }
+
+    .community-image {
+        height: 200px;
+    }
+
+    .community-stats {
+        justify-content: center;
+    }
+
+    .hero-image-container {
+        height: 300px;
     }
 
     .form-actions {
@@ -905,12 +968,43 @@ a:hover {
         font-size: var(--font-size-3xl);
     }
 
+    .hero-image-container {
+        height: 250px;
+    }
+
+    .community-image {
+        height: 180px;
+    }
+
+    .community-content {
+        padding: var(--spacing-4);
+    }
+
+    .community-stats {
+        flex-direction: column;
+        gap: var(--spacing-4);
+    }
+
+    .brand-logo {
+        width: 32px;
+        height: 32px;
+    }
+
+    .brand-text {
+        font-size: var(--font-size-lg);
+    }
+
     .section {
         padding: var(--spacing-16) 0;
     }
 
     .modal-content {
         width: 95%;
+    }
+
+    .nav-container {
+        padding: 0 var(--spacing-4);
+        height: 70px;
     }
 }
 
@@ -1319,4 +1413,102 @@ a:hover {
 
 .modal-body {
     padding: var(--spacing-6);
+}
+
+/* ===== SECTION COMMUNAUTÉ ===== */
+.community {
+    background: var(--gray-50);
+}
+
+.community-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+    gap: var(--spacing-8);
+}
+
+.community-card {
+    background: var(--white);
+    border-radius: var(--border-radius-2xl);
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+    transition: var(--transition-normal);
+}
+
+.community-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-2xl);
+}
+
+.community-image {
+    width: 100%;
+    height: 250px;
+    overflow: hidden;
+}
+
+.community-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: var(--transition-slow);
+}
+
+.community-card:hover .community-image img {
+    transform: scale(1.05);
+}
+
+.community-content {
+    padding: var(--spacing-6);
+}
+
+.community-content h3 {
+    font-size: var(--font-size-xl);
+    font-weight: 700;
+    color: var(--gray-900);
+    margin-bottom: var(--spacing-3);
+}
+
+.community-content p {
+    color: var(--gray-600);
+    line-height: 1.6;
+    margin-bottom: var(--spacing-4);
+}
+
+.community-stats {
+    display: flex;
+    gap: var(--spacing-6);
+}
+
+.stat {
+    text-align: center;
+}
+
+.stat-number {
+    display: block;
+    font-size: var(--font-size-2xl);
+    font-weight: 800;
+    color: var(--primary-color);
+}
+
+.stat-label {
+    font-size: var(--font-size-sm);
+    color: var(--gray-500);
+}
+
+.community-features {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3);
+}
+
+.feature {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    color: var(--gray-700);
+    font-weight: 500;
+}
+
+.feature i {
+    color: var(--primary-color);
+    width: 20px;
 }
