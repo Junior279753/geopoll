@@ -1,7 +1,5 @@
 # Optimisation Mobile GeoPoll 📱
 
-## 🎯 Améliorations Apportées
-
 ### 1. **Intégration des Images** 🖼️
 
 #### Logo dans la Navigation
