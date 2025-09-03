@@ -8,6 +8,8 @@
     "dev": "nodemon server.js",
     "test": "jest",
     "init-db": "node scripts/initDatabase.js",
+    "init-supabase": "node scripts/initSupabaseDatabase.js",
+    "create-test-accounts": "node scripts/createTestAccounts.js",
     "create-admin": "node scripts/createAdmin.js",
     "delete-admins": "node scripts/deleteAllAdmins.js",
     "create-single-admin": "node scripts/createSingleAdmin.js",
@@ -15,7 +17,8 @@
     "create-custom-admin": "node scripts/createCustomAdmin.js",
     "verify-admin": "node scripts/verifyAdmin.js",
     "deploy-prep": "node scripts/deploy.js",
-    "test-api": "node test-api.js"
+    "test-api": "node test-api.js",
+    "test-supabase": "node scripts/testAPI.js"
   },
   "keywords": [
     "sondages",
@@ -26,6 +29,7 @@
   "author": "GeoPoll Team",
   "license": "MIT",
   "dependencies": {
+    "@supabase/supabase-js": "^2.57.0",
     "bcryptjs": "^2.4.3",
     "compression": "^1.7.4",
     "cors": "^2.8.5",

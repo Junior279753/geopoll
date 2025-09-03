@@ -108,7 +108,8 @@ if (process.env.NODE_ENV !== 'test') {
     app.listen(PORT, () => {
         console.log(`🚀 Serveur GeoPoll démarré sur le port ${PORT}`);
         console.log(`🌍 Environnement: ${process.env.NODE_ENV || 'development'}`);
-        console.log(`📊 Base de données: ${process.env.DB_PATH || './database/geopoll.db'}`);
+        const dbType = process.env.SUPABASE_URL ? 'Supabase' : 'SQLite';
+        console.log(`📊 Base de données: ${dbType}`);
     });
 }
 

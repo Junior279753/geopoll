@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { authenticateToken, requireAdmin } = require('../middleware/auth');
-const db = require('../models/database');
+const DatabaseFactory = require('../models/databaseFactory');
 
 // Route pour recevoir les notifications de nouvelles inscriptions
 router.post('/new-registration', async (req, res) => {

@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const { authenticateToken, requireAdmin } = require('../middleware/auth');
-const db = require('../models/database');
-const Survey = require('../models/Survey');
+const DatabaseFactory = require('../models/databaseFactory');
+const { Survey } = require('../models');
 
 // Middleware pour toutes les routes admin
 router.use(authenticateToken);

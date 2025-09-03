@@ -3,7 +3,7 @@
   "name": "geopoll",
   "builds": [
     {
-      "src": "api/index.js",
+      "src": "server.js",
       "use": "@vercel/node",
       "config": {
         "maxLambdaSize": "50mb"
@@ -17,7 +17,7 @@
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "/api/index.js"
+      "dest": "/server.js"
     },
     {
       "src": "/(.*\\.(css|js|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot))",
@@ -33,7 +33,7 @@
     },
     {
       "src": "/(.*)",
-      "dest": "/api/index.js"
+      "dest": "/server.js"
     }
   ],
   "env": {
@@ -43,7 +43,9 @@
     "RATE_LIMIT_WINDOW_MS": "900000",
     "RATE_LIMIT_MAX_REQUESTS": "100",
     "REWARD_AMOUNT": "22500",
-    "DB_PATH": "/tmp/geopoll.db"
+    "SUPABASE_URL": "@supabase_url",
+    "SUPABASE_ANON_KEY": "@supabase_anon_key",
+    "SUPABASE_SERVICE_ROLE_KEY": "@supabase_service_role_key"
   },
   "functions": {
     "server.js": {
@@ -53,7 +55,7 @@
   },
   "regions": ["fra1"],
   "installCommand": "npm ci --only=production",
-  "buildCommand": "npm run init-db",
+  "buildCommand": "npm run init-supabase",
   "outputDirectory": "public",
   "framework": null,
 

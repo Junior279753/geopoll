@@ -2,8 +2,8 @@ const express = require('express');
 const router = express.Router();
 const { authenticateToken } = require('../middleware/auth');
 const { validateSurveyAnswer } = require('../middleware/validation');
-const Survey = require('../models/Survey');
-const db = require('../models/database');
+const { Survey } = require('../models');
+const DatabaseFactory = require('../models/databaseFactory');
 
 // Route pour obtenir tous les thèmes disponibles
 router.get('/themes', authenticateToken, async (req, res) => {
@@ -19,16 +19,25 @@ router.get('/themes', authenticateToken, async (req, res) => {
             const stats = await Survey.getThemeStats(theme.id);
             
             // Vérifier si l'utilisateur a une tentative en cours
-            const ongoingAttempt = await db.get(
-                'SELECT id FROM survey_attempts WHERE user_id = ? AND theme_id = ? AND is_completed = 0',
-                [req.user.id, theme.id]
-            );
+            const db = DatabaseFactory.create();
+            const ongoingAttempt = await db.get('survey_attempts', {
+                user_id: req.user.id,
+                theme_id: theme.id,
+                is_completed: false
+            });
 
             // Obtenir la meilleure tentative de l'utilisateur
-            const bestAttempt = await db.get(
-                'SELECT score, is_passed, reward_amount FROM survey_attempts WHERE user_id = ? AND theme_id = ? AND is_completed = 1 ORDER BY score DESC LIMIT 1',
-                [req.user.id, theme.id]
-            );
+            const userAttempts = await db.all('survey_attempts', {
+                user_id: req.user.id,
+                theme_id: theme.id,
+                is_completed: true
+            });
+
+            const bestAttempt = userAttempts.length > 0
+                ? userAttempts.reduce((best, current) =>
+                    current.score > best.score ? current : best
+                  )
+                : null;
 
             return {
                 ...theme,

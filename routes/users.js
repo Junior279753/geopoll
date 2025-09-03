@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { authenticateToken } = require('../middleware/auth');
 const { validatePaymentMethod } = require('../middleware/validation');
-const db = require('../models/database');
+const DatabaseFactory = require('../models/databaseFactory');
 
 // Route pour obtenir l'historique des sondages
 router.get('/survey-history', authenticateToken, async (req, res) => {

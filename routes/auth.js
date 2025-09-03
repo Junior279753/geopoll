@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const User = require('../models/User');
+const { User } = require('../models');
+const DatabaseFactory = require('../models/databaseFactory');
 const { generateToken, authenticateToken } = require('../middleware/auth');
 const { validateRegistration, validateLogin, validatePasswordChange } = require('../middleware/validation');
-const db = require('../models/database');
 
 // Route d'inscription
 router.post('/register', validateRegistration, async (req, res) => {
@@ -36,10 +36,14 @@ router.post('/register', validateRegistration, async (req, res) => {
         const token = generateToken(user.id);
 
         // Log de l'activité
-        await db.run(
-            'INSERT INTO activity_logs (user_id, action, ip_address, user_agent) VALUES (?, ?, ?, ?)',
-            [user.id, 'USER_REGISTERED', req.ip, req.get('User-Agent')]
-        );
+        const db = DatabaseFactory.create();
+        await db.insert('activity_logs', {
+            user_id: user.id,
+            action: 'USER_REGISTERED',
+            ip_address: req.ip,
+            user_agent: req.get('User-Agent'),
+            created_at: new Date().toISOString()
+        });
 
         console.log('✅ Utilisateur créé avec succès:', user.toJSON());
 
@@ -97,10 +101,15 @@ router.post('/login', validateLogin, async (req, res) => {
         const isValidPassword = await user.verifyPassword(password);
         if (!isValidPassword) {
             // Log de tentative de connexion échouée
-            await db.run(
-                'INSERT INTO activity_logs (user_id, action, ip_address, user_agent, details) VALUES (?, ?, ?, ?, ?)',
-                [user.id, 'LOGIN_FAILED', req.ip, req.get('User-Agent'), 'Invalid password']
-            );
+            const db = DatabaseFactory.create();
+            await db.insert('activity_logs', {
+                user_id: user.id,
+                action: 'LOGIN_FAILED',
+                ip_address: req.ip,
+                user_agent: req.get('User-Agent'),
+                details: 'Invalid password',
+                created_at: new Date().toISOString()
+            });
 
             return res.status(401).json({
                 error: 'Identifiant ou mot de passe incorrect'
@@ -114,10 +123,14 @@ router.post('/login', validateLogin, async (req, res) => {
         const token = generateToken(user.id);
 
         // Log de connexion réussie
-        await db.run(
-            'INSERT INTO activity_logs (user_id, action, ip_address, user_agent) VALUES (?, ?, ?, ?)',
-            [user.id, 'LOGIN_SUCCESS', req.ip, req.get('User-Agent')]
-        );
+        const db = DatabaseFactory.create();
+        await db.insert('activity_logs', {
+            user_id: user.id,
+            action: 'LOGIN_SUCCESS',
+            ip_address: req.ip,
+            user_agent: req.get('User-Agent'),
+            created_at: new Date().toISOString()
+        });
 
         res.json({
             message: 'Connexion réussie',
@@ -165,10 +178,14 @@ router.put('/profile', authenticateToken, async (req, res) => {
         });
 
         // Log de l'activité
-        await db.run(
-            'INSERT INTO activity_logs (user_id, action, ip_address, user_agent) VALUES (?, ?, ?, ?)',
-            [req.user.id, 'PROFILE_UPDATED', req.ip, req.get('User-Agent')]
-        );
+        const db = DatabaseFactory.create();
+        await db.insert('activity_logs', {
+            user_id: req.user.id,
+            action: 'PROFILE_UPDATED',
+            ip_address: req.ip,
+            user_agent: req.get('User-Agent'),
+            created_at: new Date().toISOString()
+        });
 
         res.json({
             message: 'Profil mis à jour avec succès',
@@ -200,10 +217,14 @@ router.put('/change-password', authenticateToken, validatePasswordChange, async 
         await req.user.changePassword(newPassword);
 
         // Log de l'activité
-        await db.run(
-            'INSERT INTO activity_logs (user_id, action, ip_address, user_agent) VALUES (?, ?, ?, ?)',
-            [req.user.id, 'PASSWORD_CHANGED', req.ip, req.get('User-Agent')]
-        );
+        const db = DatabaseFactory.create();
+        await db.insert('activity_logs', {
+            user_id: req.user.id,
+            action: 'PASSWORD_CHANGED',
+            ip_address: req.ip,
+            user_agent: req.get('User-Agent'),
+            created_at: new Date().toISOString()
+        });
 
         res.json({
             message: 'Mot de passe changé avec succès'
@@ -229,10 +250,14 @@ router.get('/verify', authenticateToken, (req, res) => {
 router.post('/logout', authenticateToken, async (req, res) => {
     try {
         // Log de déconnexion
-        await db.run(
-            'INSERT INTO activity_logs (user_id, action, ip_address, user_agent) VALUES (?, ?, ?, ?)',
-            [req.user.id, 'LOGOUT', req.ip, req.get('User-Agent')]
-        );
+        const db = DatabaseFactory.create();
+        await db.insert('activity_logs', {
+            user_id: req.user.id,
+            action: 'LOGOUT',
+            ip_address: req.ip,
+            user_agent: req.get('User-Agent'),
+            created_at: new Date().toISOString()
+        });
 
         res.json({
             message: 'Déconnexion réussie'

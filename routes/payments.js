@@ -2,16 +2,18 @@ const express = require('express');
 const router = express.Router();
 const { authenticateToken } = require('../middleware/auth');
 const { validateSubscription, validateWithdrawal } = require('../middleware/validation');
-const db = require('../models/database');
+const DatabaseFactory = require('../models/databaseFactory');
 
 // Routes pour les moyens de paiement
 
 // Récupérer les moyens de paiement de l'utilisateur
 router.get('/methods', authenticateToken, async (req, res) => {
     try {
-        const methods = await db.all(
-            'SELECT id, type, account_number, account_name, is_active, created_at FROM payment_methods WHERE user_id = ? AND is_active = 1 ORDER BY created_at DESC',
-            [req.user.id]
+        const db = DatabaseFactory.create();
+        const methods = await db.all('payment_methods',
+            { user_id: req.user.id, is_active: true },
+            'id, type, account_number, account_name, is_active, created_at',
+            { column: 'created_at', ascending: false }
         );
 
         // Formater les données pour le frontend

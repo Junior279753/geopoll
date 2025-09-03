@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../models/database');
+const DatabaseFactory = require('../models/databaseFactory');
 const { authenticateToken, requireAdmin } = require('../middleware/auth');
 
 // Obtenir tous les utilisateurs avec filtres
