@@ -254,6 +254,136 @@
     gap: 1rem;
 }
 
+/* User Info dans le header */
+.header-right .user-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    position: relative;
+}
+
+.header-right .user-avatar {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.header-right .user-avatar:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.header-right .user-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.header-right .user-name {
+    font-weight: 600;
+    color: var(--dashboard-text);
+    font-size: 0.95rem;
+}
+
+.header-right .user-status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+}
+
+.header-right .user-status .fa-circle.online {
+    color: #10b981;
+    font-size: 0.6rem;
+}
+
+.header-right .user-id {
+    color: var(--dashboard-text-light);
+    font-family: 'Courier New', monospace;
+    font-weight: 500;
+}
+
+.user-actions {
+    display: flex;
+    align-items: center;
+}
+
+.user-menu-btn {
+    background: none;
+    border: none;
+    color: var(--dashboard-text-light);
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.user-menu-btn:hover {
+    background: var(--dashboard-border);
+    color: var(--dashboard-text);
+}
+
+/* Menu utilisateur */
+.user-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    border: 1px solid var(--dashboard-border);
+    min-width: 200px;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+    margin-top: 0.5rem;
+}
+
+.user-menu.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.user-menu a {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    color: var(--dashboard-text);
+    text-decoration: none;
+    transition: background 0.3s ease;
+    border-radius: 8px;
+    margin: 0.25rem;
+}
+
+.user-menu a:hover {
+    background: var(--dashboard-bg);
+}
+
+.user-menu a i {
+    width: 16px;
+    color: var(--dashboard-text-light);
+}
+
+.menu-divider {
+    height: 1px;
+    background: var(--dashboard-border);
+    margin: 0.5rem 0;
+}
+
 .notification-btn {
     position: relative;
     background: none;
@@ -1638,9 +1768,25 @@
         grid-template-columns: 1fr;
     }
 
+    .surveys-stats {
+        grid-template-columns: 1fr;
+    }
+
     .surveys-filters {
         flex-direction: column;
+        gap: 1rem;
+        padding: 1rem;
+    }
+
+    .filter-group {
+        flex-direction: column;
+        align-items: flex-start;
         gap: 0.5rem;
+    }
+
+    .filter-group select {
+        width: 100%;
+        min-width: auto;
     }
 
     .survey-meta {
@@ -1654,5 +1800,57 @@
 
     .survey-actions .btn {
         width: 100%;
+    }
+
+    /* Header responsive */
+    .header-right .user-details {
+        display: none;
+    }
+
+    .header-right .user-actions {
+        display: none;
+    }
+
+    .user-menu {
+        right: -50px;
+        min-width: 180px;
+    }
+
+    /* Sidebar responsive */
+    .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+    }
+
+    .sidebar.active {
+        transform: translateX(0);
+    }
+
+    .main-content {
+        margin-left: 0;
+    }
+
+    /* Stats responsive */
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .stat-card {
+        padding: 1.5rem;
+    }
+
+    /* Welcome banner responsive */
+    .welcome-banner {
+        padding: 1.5rem;
+        text-align: center;
+    }
+
+    .welcome-banner h2 {
+        font-size: 1.5rem;
+    }
+
+    .welcome-banner p {
+        font-size: 0.9rem;
     }
 }

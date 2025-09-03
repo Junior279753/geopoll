@@ -76,20 +76,42 @@
         <!-- Header -->
         <header class="dashboard-header">
             <div class="header-left">
-                <button class="mobile-menu-btn" id="mobileMenuBtn">
-                    <i class="fas fa-bars"></i>
-                </button>
                 <h1 class="page-title">Tableau de bord</h1>
             </div>
             <div class="header-right">
                 <div class="user-info">
-                    <div class="user-avatar">
-                        <i class="fas fa-user"></i>
+                    <div class="user-avatar" id="userAvatar">
+                        <span id="userInitials">JD</span>
                     </div>
                     <div class="user-details">
                         <span class="user-name" id="userName">Chargement...</span>
-                        <span class="user-id" id="userUniqueId">GP------</span>
+                        <span class="user-status">
+                            <i class="fas fa-circle online"></i>
+                            <span class="user-id" id="userUniqueId">GP------</span>
+                        </span>
                     </div>
+                    <div class="user-actions">
+                        <button class="user-menu-btn" onclick="toggleUserMenu()">
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Menu utilisateur -->
+                <div class="user-menu" id="userMenu">
+                    <a href="#" onclick="showSection('profile')">
+                        <i class="fas fa-user"></i>
+                        Mon Profil
+                    </a>
+                    <a href="#" onclick="showSection('payments')">
+                        <i class="fas fa-wallet"></i>
+                        Mes Paiements
+                    </a>
+                    <div class="menu-divider"></div>
+                    <a href="#" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Déconnexion
+                    </a>
                 </div>
             </div>
         </header>

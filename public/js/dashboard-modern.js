@@ -64,18 +64,46 @@ async function checkUserAuth() {
 }
 
 function updateUserInfo(user) {
+    if (!user) return;
+
     // Mettre à jour le nom d'utilisateur
     const userName = document.getElementById('userName');
     if (userName) {
         userName.textContent = `${user.firstName || user.first_name} ${user.lastName || user.last_name}`;
     }
-    
+
     // Mettre à jour l'ID unique
     const userUniqueId = document.getElementById('userUniqueId');
     if (userUniqueId) {
-        userUniqueId.textContent = user.uniqueId || user.unique_id || 'GP------';
+        userUniqueId.textContent = `GP${String(user.id).padStart(4, '0')}`;
     }
-    
+
+    // Mettre à jour les initiales dans l'avatar
+    const userInitials = document.getElementById('userInitials');
+    if (userInitials) {
+        const firstName = user.firstName || user.first_name || '';
+        const lastName = user.lastName || user.last_name || '';
+        const initials = `${firstName[0] || ''}${lastName[0] || ''}`.toUpperCase();
+        userInitials.textContent = initials;
+    }
+
+    // Générer une couleur d'avatar basée sur l'ID utilisateur
+    const userAvatar = document.getElementById('userAvatar');
+    if (userAvatar) {
+        const colors = [
+            'linear-gradient(135deg, #667eea, #764ba2)',
+            'linear-gradient(135deg, #f093fb, #f5576c)',
+            'linear-gradient(135deg, #4facfe, #00f2fe)',
+            'linear-gradient(135deg, #43e97b, #38f9d7)',
+            'linear-gradient(135deg, #fa709a, #fee140)',
+            'linear-gradient(135deg, #a8edea, #fed6e3)',
+            'linear-gradient(135deg, #ffecd2, #fcb69f)',
+            'linear-gradient(135deg, #ff9a9e, #fecfef)'
+        ];
+        const colorIndex = user.id % colors.length;
+        userAvatar.style.background = colors[colorIndex];
+    }
+
     console.log('✅ Utilisateur connecté:', user.email);
 
     // Mettre à jour la sidebar
@@ -241,7 +269,9 @@ async function loadAvailableSurveys() {
 
         if (response.ok) {
             const data = await response.json();
-            availableSurveys = data.themes || [];
+            // L'API retourne directement un tableau de sondages
+            availableSurveys = Array.isArray(data) ? data : (data.themes || []);
+            console.log(`✅ ${availableSurveys.length} sondages chargés`);
             displaySurveys(availableSurveys);
         } else {
             console.error('Erreur lors du chargement des sondages');
@@ -612,10 +642,60 @@ function logout() {
     window.location.href = '/';
 }
 
+// Fonction pour toggle le menu utilisateur
+function toggleUserMenu() {
+    const userMenu = document.getElementById('userMenu');
+    if (userMenu) {
+        userMenu.classList.toggle('active');
+    }
+}
+
+// Fonction pour toggle la sidebar sur mobile
+function toggleSidebar() {
+    const sidebar = document.querySelector('.sidebar');
+    if (sidebar) {
+        sidebar.classList.toggle('active');
+    }
+}
+
+// Fermer le menu utilisateur en cliquant ailleurs
+document.addEventListener('click', function(event) {
+    const userMenu = document.getElementById('userMenu');
+    const userInfo = document.querySelector('.user-info');
+
+    if (userMenu && userInfo && !userInfo.contains(event.target)) {
+        userMenu.classList.remove('active');
+    }
+});
+
+// Gestion du responsive
+document.addEventListener('DOMContentLoaded', function() {
+    // Toggle sidebar sur mobile
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    if (sidebarToggle) {
+        sidebarToggle.addEventListener('click', toggleSidebar);
+    }
+
+    // Fermer la sidebar en cliquant sur le contenu principal sur mobile
+    const mainContent = document.querySelector('.main-content');
+    if (mainContent) {
+        mainContent.addEventListener('click', function() {
+            if (window.innerWidth <= 768) {
+                const sidebar = document.querySelector('.sidebar');
+                if (sidebar && sidebar.classList.contains('active')) {
+                    sidebar.classList.remove('active');
+                }
+            }
+        });
+    }
+});
+
 // Exposer les fonctions globalement
 window.showSection = showSection;
 window.logout = logout;
 window.startSurvey = startSurvey;
 window.filterSurveys = filterSurveys;
+window.toggleUserMenu = toggleUserMenu;
+window.toggleSidebar = toggleSidebar;
 window.showSection = showSection;
 window.logout = logout;
