@@ -556,7 +556,13 @@ function displayUsers(usersList) {
     const container = document.getElementById('usersTable');
 
     if (!usersList || usersList.length === 0) {
-        container.innerHTML = '<p>Aucun utilisateur trouvé</p>';
+        container.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-users" style="font-size: 3rem; color: #ccc; margin-bottom: 1rem;"></i>
+                <h3>Aucun utilisateur trouvé</h3>
+                <p>Les nouveaux utilisateurs apparaîtront ici</p>
+            </div>
+        `;
         return;
     }
 
@@ -567,51 +573,129 @@ function displayUsers(usersList) {
     console.log(`👥 Affichage: ${pendingUsers.length} en attente, ${approvedUsers.length} approuvés`);
 
     const html = `
-        <div class="table-header" style="margin-bottom: 2rem;">
-            <h3>Gestion des Utilisateurs (${usersList.length} total)</h3>
-            <div class="table-actions">
-                <button class="btn btn-primary" onclick="refreshUsers()">
-                    <i class="fas fa-sync"></i> Actualiser
-                </button>
-                <button class="btn btn-outline" onclick="exportUsers()">
-                    <i class="fas fa-download"></i> Exporter
-                </button>
+        <!-- Statistiques rapides -->
+        <div class="users-stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+            <div class="stat-mini-card" style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem; border-radius: 8px;">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fas fa-clock" style="color: #856404;"></i>
+                    <span style="font-weight: bold; color: #856404;">En attente</span>
+                </div>
+                <div style="font-size: 1.5rem; font-weight: bold; color: #856404; margin-top: 0.5rem;">${pendingUsers.length}</div>
+            </div>
+            <div class="stat-mini-card" style="background: #d1edff; border-left: 4px solid #0d6efd; padding: 1rem; border-radius: 8px;">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fas fa-check-circle" style="color: #084298;"></i>
+                    <span style="font-weight: bold; color: #084298;">Approuvés</span>
+                </div>
+                <div style="font-size: 1.5rem; font-weight: bold; color: #084298; margin-top: 0.5rem;">${approvedUsers.length}</div>
+            </div>
+            <div class="stat-mini-card" style="background: #f8f9fa; border-left: 4px solid #6c757d; padding: 1rem; border-radius: 8px;">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fas fa-users" style="color: #495057;"></i>
+                    <span style="font-weight: bold; color: #495057;">Total</span>
+                </div>
+                <div style="font-size: 1.5rem; font-weight: bold; color: #495057; margin-top: 0.5rem;">${usersList.length}</div>
             </div>
         </div>
 
-        ${pendingUsers.length > 0 ? `
-            <div class="section-header" style="background: #fff3cd; padding: 1rem; margin-bottom: 1rem; border-radius: 8px; border-left: 4px solid #ffc107;">
-                <h3 style="margin: 0; color: #856404;"><i class="fas fa-clock"></i> Utilisateurs en attente d'approbation (${pendingUsers.length})</h3>
-                <p style="margin: 0.5rem 0 0 0; color: #856404; font-size: 0.9rem;">Ces utilisateurs nécessitent votre approbation pour accéder à la plateforme</p>
-            </div>
-            ${generateUserTable(pendingUsers, true)}
-        ` : ''}
+        <!-- Onglets pour séparer les types d'utilisateurs -->
+        <div class="users-tabs" style="margin-bottom: 1.5rem;">
+            <button class="tab-btn ${pendingUsers.length > 0 ? 'active' : ''}" onclick="switchUserTab('pending')" id="pendingTab">
+                <i class="fas fa-clock"></i> En attente (${pendingUsers.length})
+            </button>
+            <button class="tab-btn ${pendingUsers.length === 0 ? 'active' : ''}" onclick="switchUserTab('approved')" id="approvedTab">
+                <i class="fas fa-check-circle"></i> Approuvés (${approvedUsers.length})
+            </button>
+        </div>
 
-        ${approvedUsers.length > 0 ? `
-            <div class="section-header" style="background: #d1edff; padding: 1rem; margin-bottom: 1rem; border-radius: 8px; border-left: 4px solid #0d6efd;">
-                <h3 style="margin: 0; color: #084298;"><i class="fas fa-check-circle"></i> Utilisateurs approuvés (${approvedUsers.length})</h3>
-                <p style="margin: 0.5rem 0 0 0; color: #084298; font-size: 0.9rem;">Utilisateurs actifs avec accès complet à la plateforme</p>
-            </div>
-            ${generateUserTable(approvedUsers, false)}
-        ` : ''}
+        <!-- Contenu des onglets -->
+        <div id="pendingUsersContent" class="tab-content ${pendingUsers.length > 0 ? 'active' : ''}">
+            ${pendingUsers.length > 0 ? generateUserCards(pendingUsers, true) : '<div class="empty-tab"><i class="fas fa-check"></i><p>Aucun utilisateur en attente</p></div>'}
+        </div>
+
+        <div id="approvedUsersContent" class="tab-content ${pendingUsers.length === 0 ? 'active' : ''}">
+            ${approvedUsers.length > 0 ? generateUserCards(approvedUsers, false) : '<div class="empty-tab"><i class="fas fa-users"></i><p>Aucun utilisateur approuvé</p></div>'}
+        </div>
     `;
 
     container.innerHTML = html;
 }
 
-function generateUserTable(users, isPending) {
+function generateUserCards(users, isPending) {
     return `
-        <table class="admin-table" style="margin-bottom: 2rem;">
-            <thead>
-                <tr ${isPending ? 'style="background: #fff3cd;"' : ''}>
-                    <th style="width: 50%;">Coordonnées Complètes</th>
-                    <th style="width: 20%;">Statut & Activité</th>
-                    <th style="width: 15%;">Inscription</th>
-                    <th style="width: 15%;">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                ${users.map(user => `
+        <div class="users-grid" style="display: grid; gap: 1.5rem;">
+            ${users.map(user => `
+                <div class="user-card" style="background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border-left: 4px solid ${isPending ? '#ffc107' : '#28a745'};">
+                    <div class="user-card-header" style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                        <div class="user-avatar" style="width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #667eea, #764ba2); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.4rem;">
+                            ${(user.first_name?.[0] || '').toUpperCase()}${(user.last_name?.[0] || '').toUpperCase()}
+                        </div>
+                        <div style="flex: 1;">
+                            <h4 style="margin: 0; font-size: 1.2rem; color: #333;">${user.first_name} ${user.last_name}</h4>
+                            <p style="margin: 0.25rem 0 0 0; color: #666; font-size: 0.9rem;">ID: ${user.id} • ${user.profession || 'Non spécifié'}</p>
+                            ${isPending ? '<span style="background: #fff3cd; color: #856404; padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.8rem; font-weight: bold;"><i class="fas fa-clock"></i> En attente</span>' : '<span style="background: #d4edda; color: #155724; padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.8rem; font-weight: bold;"><i class="fas fa-check"></i> Approuvé</span>'}
+                        </div>
+                    </div>
+
+                    <div class="user-details" style="display: grid; gap: 0.75rem; margin-bottom: 1.5rem;">
+                        <div class="detail-item" style="display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="fas fa-envelope" style="color: #6c757d; width: 16px;"></i>
+                            <span style="font-size: 0.9rem; color: #495057; font-family: monospace; background: #f8f9fa; padding: 0.25rem 0.5rem; border-radius: 4px; flex: 1;">${user.email}</span>
+                            <button onclick="copyToClipboard('${user.email}')" style="background: #17a2b8; color: white; border: none; padding: 0.25rem 0.5rem; border-radius: 4px; cursor: pointer; font-size: 0.8rem;" title="Copier email">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+
+                        ${user.phone ? `
+                        <div class="detail-item" style="display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="fas fa-phone" style="color: #6c757d; width: 16px;"></i>
+                            <span style="font-size: 0.9rem; color: #495057; font-family: monospace; background: #f8f9fa; padding: 0.25rem 0.5rem; border-radius: 4px; flex: 1;">${user.phone}</span>
+                            <button onclick="copyToClipboard('${user.phone}')" style="background: #17a2b8; color: white; border: none; padding: 0.25rem 0.5rem; border-radius: 4px; cursor: pointer; font-size: 0.8rem;" title="Copier téléphone">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                        ` : ''}
+
+                        ${user.country ? `
+                        <div class="detail-item" style="display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="fas fa-globe" style="color: #6c757d; width: 16px;"></i>
+                            <span style="font-size: 0.9rem; color: #495057;">${user.country}</span>
+                        </div>
+                        ` : ''}
+
+                        <div class="detail-item" style="display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="fas fa-calendar" style="color: #6c757d; width: 16px;"></i>
+                            <span style="font-size: 0.9rem; color: #495057;">Inscrit le ${new Date(user.created_at).toLocaleDateString('fr-FR')}</span>
+                        </div>
+                    </div>
+
+                    <div class="user-actions" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                        ${isPending ? `
+                            <button onclick="approveUser(${user.id})" style="background: #28a745; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-size: 0.9rem; flex: 1; min-width: 120px;">
+                                <i class="fas fa-check"></i> Approuver
+                            </button>
+                            <button onclick="rejectUser(${user.id})" style="background: #dc3545; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-size: 0.9rem; flex: 1; min-width: 120px;">
+                                <i class="fas fa-times"></i> Rejeter
+                            </button>
+                        ` : `
+                            <button onclick="viewUserDetails(${user.id})" style="background: #17a2b8; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-size: 0.9rem; flex: 1;">
+                                <i class="fas fa-eye"></i> Détails
+                            </button>
+                            <button onclick="toggleUserStatus(${user.id})" style="background: #6c757d; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-size: 0.9rem; flex: 1;">
+                                <i class="fas fa-toggle-on"></i> ${user.is_active ? 'Désactiver' : 'Activer'}
+                            </button>
+                        `}
+                        <button onclick="copyAllUserInfo(${user.id}, '${user.first_name}', '${user.last_name}', '${user.email}', '${user.phone || ''}', '${user.country || ''}', '${user.profession || ''}')"
+                                style="background: #fd7e14; color: white; border: none; padding: 0.5rem; border-radius: 6px; cursor: pointer; font-size: 0.9rem;"
+                                title="Copier toutes les infos">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+    `;
+}
                     <tr ${isPending ? 'style="background: #fffbf0;"' : ''}>
                         <td>
                             <div class="user-full-details">
@@ -1462,6 +1546,96 @@ function setupEventListeners() {
 
 function refreshUsers() {
     loadUsers();
+}
+
+// Gestion des onglets utilisateurs
+function switchUserTab(tabName) {
+    // Désactiver tous les onglets
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+    // Activer l'onglet sélectionné
+    document.getElementById(tabName + 'Tab').classList.add('active');
+    document.getElementById(tabName + 'UsersContent').classList.add('active');
+}
+
+// Nouvelle fonction pour voir les détails d'un utilisateur
+function viewUserDetails(userId) {
+    const user = users.find(u => u.id === userId);
+    if (!user) return;
+
+    const modal = document.createElement('div');
+    modal.style.cssText = `
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.5); z-index: 1000; display: flex;
+        align-items: center; justify-content: center;
+    `;
+
+    modal.innerHTML = `
+        <div style="background: white; border-radius: 12px; padding: 2rem; max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto;">
+            <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 1.5rem;">
+                <h3 style="margin: 0;">Détails de ${user.first_name} ${user.last_name}</h3>
+                <button onclick="this.closest('.modal').remove()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #999;">×</button>
+            </div>
+
+            <div style="display: grid; gap: 1rem;">
+                <div><strong>Email:</strong> ${user.email}</div>
+                <div><strong>Téléphone:</strong> ${user.phone || 'Non renseigné'}</div>
+                <div><strong>Pays:</strong> ${user.country || 'Non renseigné'}</div>
+                <div><strong>Profession:</strong> ${user.profession || 'Non renseignée'}</div>
+                <div><strong>Statut:</strong> ${user.admin_approved ? 'Approuvé' : 'En attente'}</div>
+                <div><strong>Actif:</strong> ${user.is_active ? 'Oui' : 'Non'}</div>
+                <div><strong>Solde:</strong> ${user.balance || 0} FCFA</div>
+                <div><strong>Inscription:</strong> ${new Date(user.created_at).toLocaleString('fr-FR')}</div>
+                <div><strong>Dernière connexion:</strong> ${user.last_login ? new Date(user.last_login).toLocaleString('fr-FR') : 'Jamais'}</div>
+            </div>
+
+            <div style="margin-top: 1.5rem; display: flex; gap: 0.5rem;">
+                <button onclick="copyAllUserInfo(${user.id}, '${user.first_name}', '${user.last_name}', '${user.email}', '${user.phone || ''}', '${user.country || ''}', '${user.profession || ''}')"
+                        style="background: #17a2b8; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer;">
+                    <i class="fas fa-copy"></i> Copier infos
+                </button>
+                <button onclick="this.closest('.modal').remove()" style="background: #6c757d; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer;">
+                    Fermer
+                </button>
+            </div>
+        </div>
+    `;
+
+    modal.className = 'modal';
+    document.body.appendChild(modal);
+
+    // Fermer en cliquant à l'extérieur
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) modal.remove();
+    });
+}
+
+// Fonction pour activer/désactiver un utilisateur
+async function toggleUserStatus(userId) {
+    try {
+        const token = localStorage.getItem('token') || localStorage.getItem('authToken');
+        const user = users.find(u => u.id === userId);
+
+        const response = await fetch(`/api/admin/users/${userId}/toggle-status`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ isActive: !user.is_active })
+        });
+
+        if (response.ok) {
+            showNotification(`✅ Utilisateur ${user.is_active ? 'désactivé' : 'activé'} avec succès`, 'success');
+            loadUsers();
+        } else {
+            showNotification('❌ Erreur lors de la modification du statut', 'error');
+        }
+    } catch (error) {
+        console.error('Erreur:', error);
+        showNotification('❌ Erreur lors de la modification du statut', 'error');
+    }
 }
 
 function filterUsers() {

@@ -48,6 +48,109 @@
             overflow-x: hidden;
         }
 
+        /* Styles pour les onglets utilisateurs */
+        .users-tabs {
+            display: flex;
+            gap: 0.5rem;
+            border-bottom: 2px solid #e2e8f0;
+            margin-bottom: 1.5rem;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            border-radius: 8px 8px 0 0;
+            font-weight: 500;
+            color: #64748b;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .tab-btn:hover {
+            background: #f1f5f9;
+            color: var(--admin-primary);
+        }
+
+        .tab-btn.active {
+            background: var(--admin-primary);
+            color: white;
+            box-shadow: 0 -2px 0 var(--admin-primary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Styles pour les cartes utilisateurs */
+        .users-grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .user-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .user-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+        }
+
+        .empty-state, .empty-tab {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #64748b;
+        }
+
+        .empty-state i, .empty-tab i {
+            font-size: 3rem;
+            color: #cbd5e1;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .stat-mini-card {
+            transition: all 0.3s ease;
+        }
+
+        .stat-mini-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        /* Responsive pour les cartes utilisateurs */
+        @media (min-width: 768px) {
+            .users-grid {
+                grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            }
+        }
+
+        @media (max-width: 767px) {
+            .user-card {
+                padding: 1rem;
+            }
+
+            .user-card-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 0.5rem !important;
+            }
+
+            .user-actions {
+                flex-direction: column;
+            }
+        }
+
         .admin-layout {
             display: flex;
             min-height: 100vh;

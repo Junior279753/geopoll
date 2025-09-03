@@ -49,12 +49,6 @@
     "SUPABASE_SERVICE_ROLE_KEY": "@supabase_service_role_key"
   },
 
-  "regions": ["fra1"],
-  "installCommand": "npm ci --only=production",
-  "buildCommand": "npm run init-supabase",
-  "outputDirectory": "public",
-  "framework": null,
-
   "headers": [
     {
       "source": "/api/(.*)",
@@ -98,7 +92,5 @@
         }
       ]
     }
-  ],
-  "cleanUrls": true,
-  "trailingSlash": false
+  ]
 }
