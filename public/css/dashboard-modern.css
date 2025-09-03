@@ -96,10 +96,18 @@
     padding: 0.5rem;
     border-radius: 8px;
     transition: background-color 0.2s;
+    display: none; /* Masqué par défaut */
 }
 
 .sidebar-toggle:hover {
     background: rgba(255, 255, 255, 0.1);
+}
+
+/* Afficher le bouton de fermeture sur mobile */
+@media (max-width: 768px) {
+    .sidebar-toggle {
+        display: block;
+    }
 }
 
 /* Navigation sidebar */
@@ -2208,11 +2216,13 @@
         position: fixed;
         top: 0;
         left: 0;
+        width: var(--sidebar-width);
         height: 100vh;
         z-index: 1000;
         transform: translateX(-100%);
         transition: transform 0.3s ease;
         box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+        background: var(--dashboard-surface);
     }
 
     .sidebar.active {

@@ -395,7 +395,7 @@ router.post('/submit', authenticateToken, async (req, res) => {
             completed_at: new Date().toISOString()
         };
 
-        const attempt = await db.create('survey_attempts', attemptData);
+        const attempt = await db.insert('survey_attempts', attemptData);
 
         // Si réussi, ajouter la récompense au solde de l'utilisateur
         if (isPassed && rewardAmount > 0) {
