@@ -62,6 +62,40 @@ router.get('/themes', authenticateToken, async (req, res) => {
     }
 });
 
+// Route pour obtenir les questions d'un thème
+router.get('/:themeId/questions', authenticateToken, async (req, res) => {
+    try {
+        const themeId = parseInt(req.params.themeId);
+        const db = DatabaseFactory.create();
+
+        // Vérifier que le thème existe
+        const theme = await db.get('survey_themes', { id: themeId });
+        if (!theme) {
+            return res.status(404).json({
+                error: 'Thème non trouvé'
+            });
+        }
+
+        // Récupérer les questions du thème
+        const questions = await db.all('survey_questions',
+            { theme_id: themeId },
+            'id, question_text, question_type, options, points, order_index',
+            { column: 'order_index', ascending: true }
+        );
+
+        res.json({
+            success: true,
+            questions: questions
+        });
+
+    } catch (error) {
+        console.error('❌ Erreur récupération questions:', error);
+        res.status(500).json({
+            error: 'Erreur lors de la récupération des questions'
+        });
+    }
+});
+
 // Route pour commencer un nouveau sondage
 router.post('/themes/:themeId/start', authenticateToken, async (req, res) => {
     try {
@@ -291,6 +325,100 @@ router.get('/leaderboard', authenticateToken, async (req, res) => {
         console.error('Erreur lors de la récupération du classement:', error);
         res.status(500).json({
             error: 'Erreur lors de la récupération du classement'
+        });
+    }
+});
+
+// Route pour soumettre un sondage complet
+router.post('/submit', authenticateToken, async (req, res) => {
+    try {
+        const { themeId, answers } = req.body;
+        const db = DatabaseFactory.create();
+
+        // Vérifier que le thème existe
+        const theme = await db.get('survey_themes', { id: themeId });
+        if (!theme) {
+            return res.status(404).json({
+                error: 'Thème non trouvé'
+            });
+        }
+
+        // Récupérer les questions avec les bonnes réponses
+        const questions = await db.all('survey_questions',
+            { theme_id: themeId },
+            'id, correct_answer, points'
+        );
+
+        // Calculer le score
+        let score = 0;
+        let maxScore = 0;
+        let correctAnswers = 0;
+
+        for (const question of questions) {
+            maxScore += question.points;
+            const userAnswer = answers.find(a => a.questionId === question.id);
+
+            if (userAnswer && userAnswer.answer === question.correct_answer) {
+                score += question.points;
+                correctAnswers++;
+            }
+        }
+
+        // Déterminer si le sondage est réussi (70% minimum)
+        const successRate = (score / maxScore) * 100;
+        const isPassed = successRate >= 70;
+        const rewardAmount = isPassed ? theme.reward_amount : 0;
+
+        // Créer une tentative de sondage
+        const attemptData = {
+            user_id: req.user.id,
+            theme_id: themeId,
+            is_completed: true,
+            is_passed: isPassed,
+            score: score,
+            reward_amount: rewardAmount,
+            started_at: new Date().toISOString(),
+            completed_at: new Date().toISOString()
+        };
+
+        const attempt = await db.create('survey_attempts', attemptData);
+
+        // Si réussi, ajouter la récompense au solde de l'utilisateur
+        if (isPassed && rewardAmount > 0) {
+            const user = await db.get('users', { id: req.user.id });
+            const newBalance = (user.balance || 0) + rewardAmount;
+
+            await db.update('users', { id: req.user.id }, { balance: newBalance });
+
+            // Créer une transaction
+            await db.create('transactions', {
+                user_id: req.user.id,
+                type: 'survey_reward',
+                amount: rewardAmount,
+                status: 'completed',
+                description: `Récompense sondage: ${theme.name}`,
+                created_at: new Date().toISOString()
+            });
+        }
+
+        res.json({
+            success: true,
+            score: score,
+            maxScore: maxScore,
+            correctAnswers: correctAnswers,
+            totalQuestions: questions.length,
+            successRate: Math.round(successRate),
+            isPassed: isPassed,
+            reward: rewardAmount,
+            message: isPassed ?
+                `Félicitations ! Vous avez réussi le sondage et gagné ${rewardAmount} FCFA !` :
+                `Sondage terminé. Score: ${score}/${maxScore}. Essayez d'obtenir au moins 70% pour gagner la récompense.`
+        });
+
+    } catch (error) {
+        console.error('❌ Erreur soumission sondage:', error);
+        res.status(500).json({
+            error: 'Erreur lors de la soumission du sondage'
         });
     }
 });

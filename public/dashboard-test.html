@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Test - GeoPoll</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1e40af, #3b82f6);
+            color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .surveys-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .survey-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border: 1px solid #e2e8f0;
+            transition: transform 0.3s ease;
+        }
+        
+        .survey-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        .survey-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .survey-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #1e40af, #3b82f6);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+        }
+        
+        .survey-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .survey-badge.facile {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .survey-badge.moyen {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .survey-badge.difficile {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .survey-content h3 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1.2rem;
+            color: #1e293b;
+        }
+        
+        .survey-content p {
+            margin: 0 0 1rem 0;
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+        
+        .survey-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        .survey-reward {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            color: #059669;
+            font-size: 1.1rem;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #1e40af, #3b82f6);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3);
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: #64748b;
+        }
+        
+        .error {
+            text-align: center;
+            padding: 3rem;
+            color: #dc2626;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-chart-line"></i> GeoPoll Dashboard</h1>
+            <p>Bienvenue dans votre espace de sondages</p>
+        </div>
+        
+        <div id="surveysContainer">
+            <div class="loading">
+                <i class="fas fa-spinner fa-spin" style="font-size: 2rem; margin-bottom: 1rem;"></i>
+                <p>Chargement des sondages...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Test simple de chargement des sondages
+        async function loadSurveys() {
+            try {
+                const token = localStorage.getItem('token') || localStorage.getItem('authToken');
+                
+                if (!token) {
+                    document.getElementById('surveysContainer').innerHTML = `
+                        <div class="error">
+                            <i class="fas fa-exclamation-triangle" style="font-size: 2rem; margin-bottom: 1rem;"></i>
+                            <p>Vous devez être connecté pour voir les sondages</p>
+                            <a href="/" class="btn btn-primary" style="margin-top: 1rem;">Se connecter</a>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                const response = await fetch('/api/surveys/themes', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    displaySurveys(data);
+                } else {
+                    throw new Error('Erreur de chargement');
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+                document.getElementById('surveysContainer').innerHTML = `
+                    <div class="error">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 2rem; margin-bottom: 1rem;"></i>
+                        <p>Erreur lors du chargement des sondages</p>
+                        <button class="btn btn-primary" onclick="loadSurveys()">Réessayer</button>
+                    </div>
+                `;
+            }
+        }
+        
+        function displaySurveys(surveys) {
+            const container = document.getElementById('surveysContainer');
+            
+            if (!surveys || surveys.length === 0) {
+                container.innerHTML = `
+                    <div class="error">
+                        <i class="fas fa-poll" style="font-size: 2rem; margin-bottom: 1rem;"></i>
+                        <p>Aucun sondage disponible</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            const surveysHTML = surveys.map(survey => `
+                <div class="survey-card">
+                    <div class="survey-header">
+                        <div class="survey-icon">
+                            ${getSurveyIcon(survey.name)}
+                        </div>
+                        <div class="survey-badge ${survey.difficulty}">
+                            ${survey.difficulty}
+                        </div>
+                    </div>
+                    <div class="survey-content">
+                        <h3>${survey.name}</h3>
+                        <p>${survey.description}</p>
+                    </div>
+                    <div class="survey-footer">
+                        <div class="survey-reward">
+                            <i class="fas fa-coins" style="color: #ffd700;"></i>
+                            <span>${survey.reward_amount} FCFA</span>
+                        </div>
+                        <button class="btn btn-primary" onclick="startSurvey(${survey.id})">
+                            <i class="fas fa-play"></i>
+                            Commencer
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+            
+            container.innerHTML = `<div class="surveys-grid">${surveysHTML}</div>`;
+        }
+        
+        function getSurveyIcon(surveyName) {
+            const icons = {
+                'Habitudes Alimentaires': '<i class="fas fa-utensils"></i>',
+                'Technologie et Internet': '<i class="fas fa-laptop"></i>',
+                'Santé et Bien-être': '<i class="fas fa-heartbeat"></i>',
+                'Environnement et Écologie': '<i class="fas fa-leaf"></i>',
+                'Éducation et Formation': '<i class="fas fa-graduation-cap"></i>',
+                'Transport et Mobilité': '<i class="fas fa-car"></i>',
+                'Loisirs et Divertissement': '<i class="fas fa-gamepad"></i>',
+                'Économie et Finance': '<i class="fas fa-chart-line"></i>'
+            };
+            return icons[surveyName] || '<i class="fas fa-poll"></i>';
+        }
+        
+        function startSurvey(surveyId) {
+            alert(`Démarrage du sondage ${surveyId} - Fonctionnalité en cours de développement`);
+        }
+        
+        // Charger les sondages au démarrage
+        document.addEventListener('DOMContentLoaded', loadSurveys);
+    </script>
+</body>
+</html>

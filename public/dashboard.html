@@ -232,12 +232,117 @@
             <!-- Surveys Section -->
             <section id="surveys" class="content-section">
                 <div class="section-header">
-                    <h2>Sondages disponibles</h2>
-                    <p>Choisissez un thème et commencez à gagner de l'argent</p>
+                    <h2><i class="fas fa-poll"></i> Sondages disponibles</h2>
+                    <p>Choisissez un thème et commencez à gagner de l'argent facilement</p>
                 </div>
-                
+
+                <!-- Statistiques rapides des sondages -->
+                <div class="surveys-stats">
+                    <div class="survey-stat-card">
+                        <div class="survey-stat-icon">
+                            <i class="fas fa-tasks"></i>
+                        </div>
+                        <div class="survey-stat-content">
+                            <h4 id="totalSurveys">8</h4>
+                            <p>Sondages disponibles</p>
+                        </div>
+                    </div>
+                    <div class="survey-stat-card">
+                        <div class="survey-stat-icon">
+                            <i class="fas fa-coins"></i>
+                        </div>
+                        <div class="survey-stat-content">
+                            <h4 id="totalRewards">22 100</h4>
+                            <p>FCFA à gagner</p>
+                        </div>
+                    </div>
+                    <div class="survey-stat-card">
+                        <div class="survey-stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="survey-stat-content">
+                            <h4 id="avgTime">5</h4>
+                            <p>Minutes en moyenne</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filtres de sondages -->
+                <div class="surveys-filters">
+                    <div class="filter-group">
+                        <label><i class="fas fa-filter"></i> Difficulté :</label>
+                        <select id="difficultyFilter" onchange="filterSurveys()">
+                            <option value="">Toutes</option>
+                            <option value="facile">🟢 Facile</option>
+                            <option value="moyen">🟡 Moyen</option>
+                            <option value="difficile">🔴 Difficile</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label><i class="fas fa-money-bill-wave"></i> Récompense :</label>
+                        <select id="rewardFilter" onchange="filterSurveys()">
+                            <option value="">Toutes</option>
+                            <option value="low">💰 Moins de 2500 FCFA</option>
+                            <option value="medium">💎 2500 - 3500 FCFA</option>
+                            <option value="high">👑 Plus de 3500 FCFA</option>
+                        </select>
+                    </div>
+                </div>
+
                 <div class="surveys-grid" id="surveysGrid">
-                    <!-- Les sondages seront chargés ici -->
+                    <div class="loading-surveys">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Chargement des sondages...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Survey Taking Section -->
+            <section id="takeSurvey" class="content-section">
+                <div class="survey-container">
+                    <div class="survey-header">
+                        <button class="btn-back" onclick="showSection('surveys')">
+                            <i class="fas fa-arrow-left"></i> Retour aux sondages
+                        </button>
+                        <div class="survey-info">
+                            <h2 id="surveyTitle">Titre du sondage</h2>
+                            <div class="survey-meta">
+                                <span class="survey-progress">
+                                    <i class="fas fa-tasks"></i>
+                                    Question <span id="currentQuestion">1</span> sur <span id="totalQuestions">10</span>
+                                </span>
+                                <span class="survey-reward">
+                                    <i class="fas fa-coins"></i>
+                                    <span id="surveyReward">2500</span> FCFA
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+
+                    <div class="question-container">
+                        <div class="question-card">
+                            <h3 id="questionText">Question sera affichée ici</h3>
+                            <div class="options-container" id="optionsContainer">
+                                <!-- Options seront générées ici -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="survey-actions">
+                        <button class="btn btn-secondary" id="prevBtn" onclick="previousQuestion()" disabled>
+                            <i class="fas fa-chevron-left"></i> Précédent
+                        </button>
+                        <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()" disabled>
+                            Suivant <i class="fas fa-chevron-right"></i>
+                        </button>
+                        <button class="btn btn-success" id="submitBtn" onclick="submitSurvey()" style="display: none;">
+                            <i class="fas fa-check"></i> Terminer le sondage
+                        </button>
+                    </div>
                 </div>
             </section>
 
@@ -367,8 +472,7 @@
     </main>
 
     <!-- Scripts -->
-    <script src="/js/app.js"></script>
-    <script src="/js/dashboard.js"></script>
-    <script src="/js/dashboard-modern.js"></script>
+    <script src="/js/app.js?v=2.0"></script>
+    <script src="/js/dashboard-modern.js?v=2.0"></script>
 </body>
 </html>
