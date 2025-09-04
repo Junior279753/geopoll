@@ -127,7 +127,7 @@ GeoPoll/
 ### Pour les Utilisateurs
 - ✅ **Inscription en 3 étapes** avec validation
 - ✅ **Interface mobile-first** intuitive
-- ✅ **Sondages rémunérés** jusqu'à 22 500 FCFA
+- ✅ **Sondages rémunérés** jusqu'à 22 200 FCFA
 - ✅ **Subvention de démarrage** 500 000 FCFA
 - ✅ **Dashboard personnel** responsive
 - ✅ **Système de paiement** sécurisé

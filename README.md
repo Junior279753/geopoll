@@ -1,13 +1,13 @@
 # GeoPoll - Plateforme de Sondages Rémunérés
 
-GeoPoll est une plateforme web moderne qui permet aux utilisateurs de participer à des sondages thématiques et de gagner de l'argent. Chaque sondage réussi (10/10 bonnes réponses) rapporte 22 500 FCFA.
+GeoPoll est une plateforme web moderne qui permet aux utilisateurs de participer à des sondages thématiques et de gagner de l'argent. Chaque sondage réussi (10/10 bonnes réponses) rapporte 22 200 FCFA.
 
 ## 🚀 Fonctionnalités
 
 ### Pour les utilisateurs
 - **Inscription et authentification sécurisée**
 - **5 thèmes de sondages** : Culture générale, Technologie, Histoire, Environnement, Santé
-- **Système de récompenses** : 22 500 FCFA par sondage réussi
+- **Système de récompenses** : 22 200 FCFA par sondage réussi
 - **Gestion des moyens de paiement** : MTN MoMo, Moov Money, PayPal, Compte bancaire
 - **Dashboard complet** avec statistiques et historique
 - **Interface responsive** optimisée mobile et desktop
@@ -87,7 +87,7 @@ L'application sera accessible sur `http://localhost:3000`
 1. Souscrire un abonnement (mensuel, annuel ou à vie)
 2. Choisir un thème de sondage
 3. Répondre aux 10 questions
-4. Obtenir 22 500 FCFA si 10/10 bonnes réponses
+4. Obtenir 22 200 FCFA si 10/10 bonnes réponses
 
 ### Retirer ses gains
 1. Ajouter un moyen de paiement
