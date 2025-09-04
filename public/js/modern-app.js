@@ -458,6 +458,7 @@ async function handleRegistration(e) {
         country: registrationData.country,
         countryCode: getCountryCode(registrationData.country),
         postalCode: registrationData.postalCode,
+        profession: registrationData.profession,
         password: registrationData.password
     };
     
@@ -482,16 +483,100 @@ async function handleRegistration(e) {
         const data = await response.json();
         
         if (response.ok) {
-            showNotification('Compte créé avec succès !', 'success');
+            showRegistrationSuccess();
             showStep('Final');
         } else {
-            showNotification(data.error || 'Erreur lors de la création du compte', 'error');
+            // Afficher les erreurs de validation détaillées
+            if (data.details && Array.isArray(data.details)) {
+                const errorMessages = data.details.map(detail => detail.msg).join(', ');
+                showNotification(`Erreur de validation: ${errorMessages}`, 'error');
+            } else {
+                showNotification(data.error || 'Erreur lors de la création du compte', 'error');
+            }
         }
     } catch (error) {
         console.error('Erreur:', error);
         showNotification('Erreur de connexion', 'error');
     } finally {
         setButtonLoading(submitButton, false);
+    }
+}
+
+function showRegistrationSuccess() {
+    // Créer une notification de succès personnalisée
+    const successModal = document.createElement('div');
+    successModal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+    `;
+
+    successModal.innerHTML = `
+        <div style="
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            text-align: center;
+            max-width: 400px;
+            margin: 1rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        ">
+            <div style="
+                width: 60px;
+                height: 60px;
+                background: #10b981;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 0 auto 1rem;
+            ">
+                <i class="fas fa-check" style="color: white; font-size: 1.5rem;"></i>
+            </div>
+            <h3 style="color: #065f46; margin-bottom: 1rem; font-size: 1.5rem;">
+                Compte créé avec succès !
+            </h3>
+            <p style="color: #6b7280; margin-bottom: 1.5rem; line-height: 1.6;">
+                Votre compte a été créé et est en attente d'approbation par un administrateur.
+                Vous recevrez une notification par email une fois approuvé.
+            </p>
+            <button onclick="this.parentElement.parentElement.remove(); showLoginForm();" style="
+                background: #3b82f6;
+                color: white;
+                border: none;
+                padding: 0.75rem 1.5rem;
+                border-radius: 0.5rem;
+                cursor: pointer;
+                font-size: 1rem;
+                font-weight: 600;
+                transition: background 0.3s;
+            " onmouseover="this.style.background='#2563eb'" onmouseout="this.style.background='#3b82f6'">
+                <i class="fas fa-sign-in-alt"></i> Se connecter
+            </button>
+        </div>
+    `;
+
+    document.body.appendChild(successModal);
+}
+
+function showLoginForm() {
+    // Fermer le modal d'inscription et afficher le formulaire de connexion
+    const registrationModal = document.getElementById('registrationModal');
+    const loginModal = document.getElementById('loginModal');
+
+    if (registrationModal) {
+        registrationModal.style.display = 'none';
+    }
+
+    if (loginModal) {
+        loginModal.style.display = 'flex';
     }
 }
 
@@ -583,7 +668,7 @@ function setupScrollAnimations() {
         threshold: 0.1,
         rootMargin: '0px 0px -50px 0px'
     };
-    
+
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
@@ -591,9 +676,119 @@ function setupScrollAnimations() {
             }
         });
     }, observerOptions);
-    
+
     // Observer les cartes de fonctionnalités
     document.querySelectorAll('.feature-card, .step-card, .testimonial-card').forEach(card => {
         observer.observe(card);
     });
 }
+
+// ===== TÉMOIGNAGES =====
+const testimonials = [
+    {
+        name: "Aminata Diallo",
+        role: "Étudiante en Informatique",
+        company: "UAC Cotonou",
+        image: "https://images.unsplash.com/photo-1494790108755-2616b612b786?auto=format&fit=crop&q=80&w=200&h=200",
+        rating: 5,
+        testimonial: "Grâce à GeoPoll, j'ai pu générer un revenu complémentaire significatif. La plateforme est intuitive et les paiements sont rapides."
+    },
+    {
+        name: "Kouame Yves",
+        role: "Entrepreneur",
+        company: "Abidjan",
+        image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200&h=200",
+        rating: 5,
+        testimonial: "La subvention de démarrage m'a vraiment aidé à commencer mon entreprise. Maintenant je gagne régulièrement avec les sondages."
+    },
+    {
+        name: "Fatou Ndiaye",
+        role: "Consultante Marketing",
+        company: "Bamako",
+        image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=200&h=200",
+        rating: 5,
+        testimonial: "Interface moderne et facile à utiliser. Je recommande GeoPoll à tous ceux qui veulent gagner de l'argent en ligne."
+    },
+    {
+        name: "Marie Kouassi",
+        role: "Étudiante en Gestion",
+        company: "Université de Cocody",
+        image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=200&h=200",
+        rating: 5,
+        testimonial: "J'ai trouvé un stage parfait chez Orange Bénin grâce aux connexions que j'ai faites sur GeoPoll. Le processus était simple et efficace."
+    },
+    {
+        name: "Ibrahim Traoré",
+        role: "Enseignant",
+        company: "Ouagadougou",
+        image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=200&h=200",
+        rating: 5,
+        testimonial: "En tant qu'enseignant, GeoPoll me permet d'arrondir mes fins de mois. Les sondages sont pertinents et bien rémunérés."
+    },
+    {
+        name: "Dr. Aisha Camara",
+        role: "Médecin",
+        company: "Conakry",
+        image: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&q=80&w=200&h=200",
+        rating: 5,
+        testimonial: "La flexibilité de GeoPoll me permet de participer aux sondages entre mes consultations. Parfait pour les professionnels de santé."
+    }
+];
+
+const starSVG = `
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+</svg>
+`;
+
+function createTestimonialCard(testimonial) {
+    const card = document.createElement('div');
+    card.className = 'testimonial-card';
+
+    const img = document.createElement('img');
+    img.src = testimonial.image;
+    img.alt = testimonial.name;
+    img.className = 'testimonial-image';
+
+    const name = document.createElement('h3');
+    name.className = 'testimonial-name';
+    name.textContent = testimonial.name;
+
+    const role = document.createElement('p');
+    role.className = 'testimonial-role';
+    role.textContent = `${testimonial.role} @${testimonial.company}`;
+
+    const text = document.createElement('p');
+    text.className = 'testimonial-text';
+    text.textContent = `${testimonial.testimonial}`;
+
+    const rating = document.createElement('div');
+    rating.className = 'rating';
+
+    for (let i = 0; i < 5; i++) {
+        const star = document.createElement('div');
+        star.className = `star ${i < testimonial.rating ? 'filled' : 'empty'}`;
+        star.innerHTML = starSVG;
+        rating.appendChild(star);
+    }
+
+    card.append(img, name, role, text, rating);
+    return card;
+}
+
+function initTestimonials() {
+    const container = document.getElementById('testimonialsGrid');
+    if (!container) return;
+
+    // Dupliquer les témoignages 3 fois pour créer un effet de défilement infini horizontal
+    const allTestimonials = [...testimonials, ...testimonials, ...testimonials];
+
+    allTestimonials.forEach(testimonial => {
+        container.appendChild(createTestimonialCard(testimonial));
+    });
+}
+
+// Initialiser les témoignages quand le DOM est chargé
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(initTestimonials, 100);
+});

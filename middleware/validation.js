@@ -39,14 +39,14 @@ const validateRegistration = [
     body('country')
         .notEmpty()
         .withMessage('Le pays est requis')
-        .trim(),
+        .trim()
+        .isIn(['FR', 'SN', 'ML', 'BF', 'CI', 'GN', 'NE', 'TG', 'BJ', 'GH', 'NG', 'CM', 'TD', 'CF', 'CG', 'CD', 'GA', 'GQ', 'ST', 'AO', 'ZM', 'ZW', 'BW', 'NA', 'ZA', 'LS', 'SZ', 'MZ', 'MW', 'TZ', 'KE', 'UG', 'RW', 'BI', 'ET', 'ER', 'DJ', 'SO', 'SD', 'SS', 'EG', 'LY', 'TN', 'DZ', 'MA', 'MR', 'CV', 'GM', 'GW', 'SL', 'LR'])
+        .withMessage('Code pays invalide'),
     body('profession')
         .notEmpty()
         .withMessage('La profession est requise')
         .isIn(['etudiant', 'employe', 'fonctionnaire', 'entrepreneur', 'commercant', 'artisan', 'agriculteur', 'enseignant', 'sante', 'transport', 'retraite', 'sans_emploi', 'autre'])
-        .withMessage('Profession invalide')
-        .isLength({ min: 2, max: 100 })
-        .withMessage('Pays invalide'),
+        .withMessage('Profession invalide'),
     handleValidationErrors
 ];
 

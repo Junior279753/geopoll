@@ -255,43 +255,17 @@
                     Découvrez les témoignages de notre communauté
                 </p>
             </div>
-            <div class="testimonials-grid">
-                <div class="testimonial-card">
-                    <p class="testimonial-quote">
-                        "Grâce à GeoPoll, j'ai pu générer un revenu complémentaire significatif. La plateforme est intuitive et les paiements sont rapides."
-                    </p>
-                    <div class="testimonial-author">
-                        <div class="testimonial-avatar">AM</div>
-                        <div class="testimonial-info">
-                            <h4>Aminata Diallo</h4>
-                            <p>Étudiante, Dakar</p>
-                        </div>
-                    </div>
+            <div class="testimonials-container">
+                <div class="testimonials-grid" id="testimonialsGrid">
+                    <!-- Les témoignages seront générés dynamiquement -->
+
+
+
+
+
                 </div>
-                <div class="testimonial-card">
-                    <p class="testimonial-quote">
-                        "La subvention de démarrage m'a vraiment aidé à commencer. Maintenant je gagne régulièrement avec les sondages."
-                    </p>
-                    <div class="testimonial-author">
-                        <div class="testimonial-avatar">KT</div>
-                        <div class="testimonial-info">
-                            <h4>Kouame Yves</h4>
-                            <p>Entrepreneur, Abidjan</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="testimonial-card">
-                    <p class="testimonial-quote">
-                        "Interface moderne et facile à utiliser. Je recommande GeoPoll à tous ceux qui veulent gagner de l'argent en ligne."
-                    </p>
-                    <div class="testimonial-author">
-                        <div class="testimonial-avatar">FN</div>
-                        <div class="testimonial-info">
-                            <h4>Fatou Ndiaye</h4>
-                            <p>Consultante, Bamako</p>
-                        </div>
-                    </div>
-                </div>
+
+
             </div>
         </div>
     </section>
@@ -395,7 +369,7 @@
                                 <div class="step-indicator"></div>
                                 <div class="step-indicator"></div>
                             </div>
-                            <h3>👤 Identité</h3>
+                            <h3><i class="fas fa-user"></i> Identité</h3>
                             <p style="color: var(--gray-600); margin: 0;">Étape 1 sur 3</p>
                         </div>
                         <form id="step1Form">
@@ -413,7 +387,7 @@
                                 <label class="form-label" for="email">Adresse email *</label>
                                 <input type="email" id="email" name="email" class="form-input" placeholder="votre@email.com" required>
                                 <div class="form-hint">
-                                    📧 Utilisée pour la connexion et les notifications
+                                    <i class="fas fa-envelope"></i> Utilisée pour la connexion et les notifications
                                 </div>
                             </div>
                             <div class="form-actions">
@@ -437,7 +411,7 @@
                                 <div class="step-indicator active"></div>
                                 <div class="step-indicator"></div>
                             </div>
-                            <h3>🌍 Localisation & Contact</h3>
+                            <h3><i class="fas fa-globe-americas"></i> Localisation & Contact</h3>
                             <p style="color: var(--gray-600); margin: 0;">Étape 2 sur 3</p>
                         </div>
                         <form id="step2Form">
@@ -445,19 +419,19 @@
                                 <label class="form-label" for="country">Pays de résidence *</label>
                                 <div class="country-select-wrapper">
                                     <select id="country" name="country" class="form-select" required>
-                                        <option value="">🌍 Sélectionnez votre pays</option>
+                                        <option value=""><i class="fas fa-globe"></i> Sélectionnez votre pays</option>
                                         <!-- Les options seront chargées dynamiquement -->
                                     </select>
                                 </div>
                                 <div class="form-hint">
-                                    🌍 Détermine les sondages disponibles dans votre région
+                                    <i class="fas fa-map-marker-alt"></i> Détermine les sondages disponibles dans votre région
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="form-label" for="phone">Numéro de téléphone *</label>
                                 <div class="phone-input-wrapper">
                                     <div class="phone-code-display" id="phoneCodeDisplay">
-                                        <span class="flag-icon">🌍</span>
+                                        <span class="flag-icon"><i class="fas fa-flag"></i></span>
                                         <span class="phone-code">+000</span>
                                     </div>
                                     <input type="tel" id="phone" name="phone" class="form-input phone-input" placeholder="07 00 00 00 00" required>
@@ -467,25 +441,25 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="form-label" for="profession">Profession *</label>
+                                <label class="form-label" for="profession"><i class="fas fa-briefcase"></i> Profession *</label>
                                 <select id="profession" name="profession" class="form-select" required>
-                                    <option value="">💼 Sélectionnez votre profession</option>
-                                    <option value="etudiant">🎓 Étudiant(e)</option>
-                                    <option value="employe">👔 Employé(e)</option>
-                                    <option value="fonctionnaire">🏛️ Fonctionnaire</option>
-                                    <option value="entrepreneur">🚀 Entrepreneur</option>
-                                    <option value="commercant">🏪 Commerçant(e)</option>
-                                    <option value="artisan">🔨 Artisan</option>
-                                    <option value="agriculteur">🌾 Agriculteur</option>
-                                    <option value="enseignant">📚 Enseignant(e)</option>
-                                    <option value="sante">⚕️ Professionnel de santé</option>
-                                    <option value="transport">🚗 Transport</option>
-                                    <option value="retraite">🏡 Retraité(e)</option>
-                                    <option value="sans_emploi">🔍 Sans emploi</option>
-                                    <option value="autre">🔧 Autre</option>
+                                    <option value="">Sélectionnez votre profession</option>
+                                    <option value="etudiant">Étudiant(e)</option>
+                                    <option value="employe">Employé(e)</option>
+                                    <option value="fonctionnaire">Fonctionnaire</option>
+                                    <option value="entrepreneur">Entrepreneur</option>
+                                    <option value="commercant">Commerçant(e)</option>
+                                    <option value="artisan">Artisan</option>
+                                    <option value="agriculteur">Agriculteur</option>
+                                    <option value="enseignant">Enseignant(e)</option>
+                                    <option value="sante">Professionnel de santé</option>
+                                    <option value="transport">Transport</option>
+                                    <option value="retraite">Retraité(e)</option>
+                                    <option value="sans_emploi">Sans emploi</option>
+                                    <option value="autre">Autre</option>
                                 </select>
                                 <div class="form-hint">
-                                    💼 Aide à personnaliser les sondages selon votre profil
+                                    <i class="fas fa-briefcase"></i> Aide à personnaliser les sondages selon votre profil
                                 </div>
                             </div>
                             <div class="form-actions">
@@ -509,7 +483,7 @@
                                 <div class="step-indicator completed"></div>
                                 <div class="step-indicator active"></div>
                             </div>
-                            <h3>🔐 Sécurité</h3>
+                            <h3><i class="fas fa-lock"></i> Sécurité</h3>
                             <p style="color: var(--gray-600); margin: 0;">Étape 3 sur 3</p>
                         </div>
                         <form id="step3Form">
@@ -586,15 +560,15 @@
                                     Prochaines étapes
                                 </h4>
                                 <ol style="text-align: left; color: var(--gray-700); line-height: 1.8;">
-                                    <li>📧 Vous recevrez un email de confirmation</li>
-                                    <li>⏳ Un administrateur examinera votre demande</li>
-                                    <li>✅ Vous serez notifié de l'approbation</li>
-                                    <li>🚀 Vous pourrez alors vous connecter et commencer</li>
+                                    <li><i class="fas fa-envelope"></i> Vous recevrez un email de confirmation</li>
+                                    <li><i class="fas fa-hourglass-half"></i> Un administrateur examinera votre demande</li>
+                                    <li><i class="fas fa-check-circle"></i> Vous serez notifié de l'approbation</li>
+                                    <li><i class="fas fa-rocket"></i> Vous pourrez alors vous connecter et commencer</li>
                                 </ol>
                             </div>
                             <div style="background: var(--gray-50); padding: 1rem; border-radius: 0.5rem; margin-bottom: 2rem;">
                                 <p style="font-size: 0.875rem; color: var(--gray-600); margin: 0;">
-                                    💡 <strong>Astuce :</strong> L'approbation prend généralement 24-48 heures
+                                    <i class="fas fa-lightbulb"></i> <strong>Astuce :</strong> L'approbation prend généralement 24-48 heures
                                 </p>
                             </div>
                             <button class="btn btn-primary" onclick="closeModal('registerModal')">
