@@ -59,7 +59,7 @@ const authenticateToken = async (req, res, next) => {
     }
 };
 
-// Middleware pour vérifier l'abonnement actif
+// Middleware pour vérifier l\'abonnement actif
 const requireActiveSubscription = async (req, res, next) => {
     try {
         const hasSubscription = await req.user.hasActiveSubscription();
@@ -80,13 +80,24 @@ const requireActiveSubscription = async (req, res, next) => {
     }
 };
 
+// Middleware pour vérifier la monétisation du compte
+const requireMonetization = (req, res, next) => {
+    if (!req.user || !req.user.accountMonetized) {
+        return res.status(403).json({
+            error: "Votre compte doit être monétisé pour accéder à cette fonctionnalité.",
+            code: 'MONETIZATION_REQUIRED'
+        });
+    }
+    next();
+};
+
 // Middleware pour vérifier les droits administrateur
 const requireAdmin = (req, res, next) => {
     console.log('🔍 Vérification admin pour:', req.user.email);
     console.log('🔍 isAdmin:', req.user.isAdmin);
     console.log('🔍 is_admin:', req.user.is_admin);
 
-    // Vérifier si l'utilisateur a les droits admin (support des deux formats)
+    // Vérifier si l\'utilisateur a les droits admin (support des deux formats)
     const isAdmin = req.user.isAdmin || req.user.is_admin;
 
     if (!isAdmin) {
@@ -126,7 +137,7 @@ const optionalAuth = async (req, res, next) => {
         
         next();
     } catch (error) {
-        // En cas d'erreur, on continue sans utilisateur authentifié
+        // En cas d\'erreur, on continue sans utilisateur authentifié
         next();
     }
 };
@@ -134,6 +145,7 @@ const optionalAuth = async (req, res, next) => {
 module.exports = {
     authenticateToken,
     requireActiveSubscription,
+    requireMonetization,
     requireAdmin,
     generateToken,
     optionalAuth

@@ -151,14 +151,30 @@ function handlePhoneInput(event) {
     const input = event.target;
     const countrySelect = document.getElementById('country');
     const countryCode = countrySelect ? countrySelect.value : null;
-    
+
     if (countryCode && typeof formatPhoneNumber === 'function') {
-        const formatted = formatPhoneNumber(input.value, countryCode);
-        if (formatted !== input.value) {
-            const cursorPos = input.selectionStart;
+        const originalValue = input.value;
+        const originalCursor = input.selectionStart;
+        const digitsBeforeCursor = (originalValue.slice(0, originalCursor).match(/\d/g) || []).length;
+
+        const formatted = formatPhoneNumber(originalValue, countryCode);
+
+        if (formatted !== originalValue) {
+            let newCursor = 0;
+            let digitsCounted = 0;
+            while (digitsCounted < digitsBeforeCursor && newCursor < formatted.length) {
+                if (/\d/.test(formatted[newCursor])) {
+                    digitsCounted++;
+                }
+                newCursor++;
+            }
+            
+            while (newCursor < formatted.length && !/\d/.test(formatted[newCursor])) {
+                newCursor++;
+            }
+
             input.value = formatted;
-            // Restaurer la position du curseur
-            input.setSelectionRange(cursorPos, cursorPos);
+            input.setSelectionRange(newCursor, newCursor);
         }
     }
 }

@@ -9,6 +9,14 @@ const DatabaseFactory = require('../models/databaseFactory');
 router.get('/themes', authenticateToken, async (req, res) => {
     try {
         const db = DatabaseFactory.create();
+        const user = await db.get('users', { id: req.user.id });
+
+        if (!user.account_monetized) {
+            return res.status(403).json({
+                error: 'ACCOUNT_NOT_MONETIZED',
+                message: 'Veuillez monétiser votre compte pour accéder aux sondages.'
+            });
+        }
 
         // Obtenir tous les thèmes actifs
         const allThemes = await db.all('survey_themes', { is_active: true });

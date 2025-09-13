@@ -147,6 +147,10 @@ function getStatusBadge(user) {
     } else {
         badges.push('<span class="badge badge-secondary">Inactif</span>');
     }
+
+    if (user.account_monetized) {
+        badges.push('<span class="badge badge-info">Monétisé</span>');
+    }
     
     return badges.join(' ');
 }
@@ -176,6 +180,20 @@ function getActionButtons(user) {
                 <i class="fas ${statusIcon}"></i>
             </button>
         `);
+
+        if (user.account_monetized) {
+            buttons.push(`
+                <button onclick="demonetizeUser(${user.id})" class="btn btn-sm btn-warning" title="Démonétiser">
+                    <i class="fas fa-dollar-sign"></i>
+                </button>
+            `);
+        } else {
+            buttons.push(`
+                <button onclick="monetizeUser(${user.id})" class="btn btn-sm btn-info" title="Monétiser">
+                    <i class="fas fa-dollar-sign"></i>
+                </button>
+            `);
+        }
     }
     
     buttons.push(`
@@ -189,7 +207,7 @@ function getActionButtons(user) {
 
 // Approuver un utilisateur
 async function approveUser(userId) {
-    if (!confirm('Approuver cet utilisateur ?')) return;
+    if (!confirm('Approuver cet utilisateur ?')) return; 
     
     try {
         const response = await fetch(`/api/admin/users/${userId}/approve`, {
@@ -211,6 +229,57 @@ async function approveUser(userId) {
         showError('Erreur de connexion');
     }
 }
+
+// Monétiser un utilisateur
+async function monetizeUser(userId) {
+    if (!confirm('Monétiser ce compte utilisateur ?')) return;
+    
+    try {
+        const response = await fetch(`/api/admin/users/${userId}/monetize`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        });
+        
+        if (response.ok) {
+            showSuccess('Compte utilisateur monétisé avec succès');
+            loadUsers(currentPage);
+        } else {
+            const error = await response.json();
+            showError(error.message || 'Erreur lors de la monétisation du compte.');
+        }
+    } catch (error) {
+        console.error('Erreur:', error);
+        showError('Erreur de connexion');
+    }
+}
+
+// Démonétiser un utilisateur
+async function demonetizeUser(userId) {
+    if (!confirm('Démonétiser ce compte utilisateur ?')) return;
+    
+    try {
+        const response = await fetch(`/api/admin/users/${userId}/demonetize`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        });
+        
+        if (response.ok) {
+            showSuccess('Compte utilisateur démonétisé avec succès');
+            loadUsers(currentPage);
+        } else {
+            const error = await response.json();
+            showError(error.message || 'Erreur lors de la démonétisation du compte.');
+        }
+    } catch (error) {
+        console.error('Erreur:', error);
+        showError('Erreur de connexion');
+    }
+}
+
 
 // Rejeter un utilisateur
 function rejectUser(userId) {

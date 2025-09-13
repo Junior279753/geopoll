@@ -8,7 +8,7 @@ let currentSection = 'dashboard';
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🚀 Dashboard utilisateur chargé');
     
-    // Vérifier l'authentification et rediriger les admins
+    // Vérifier lauthentification et rediriger les admins
     checkUserAuth();
     
     // Initialiser la navigation
@@ -36,20 +36,20 @@ async function checkUserAuth() {
             const data = await response.json();
             currentUser = data.user;
             
-            // IMPORTANT: Rediriger les admins vers l'interface admin
+            // IMPORTANT: Rediriger les admins vers linterface admin
             if (data.user.isAdmin || data.user.is_admin) {
                 console.log('🔄 Admin détecté, redirection vers interface admin...');
                 window.location.href = '/admin-modern.html';
                 return;
             }
             
-            // Vérifier si l'utilisateur est approuvé
+            // Vérifier si lutilisateur est approuvé
             if (!data.user.adminApproved && !data.user.admin_approved) {
                 showPendingApprovalMessage();
                 return;
             }
             
-            // Mettre à jour l'interface avec les infos utilisateur
+            // Mettre à jour linterface avec les infos utilisateur
             updateUserInfo(data.user);
         } else {
             throw new Error('Token invalide');
@@ -66,19 +66,19 @@ async function checkUserAuth() {
 function updateUserInfo(user) {
     if (!user) return;
 
-    // Mettre à jour le nom d'utilisateur
+    // Mettre à jour le nom dutilisateur
     const userName = document.getElementById('userName');
     if (userName) {
         userName.textContent = `${user.firstName || user.first_name} ${user.lastName || user.last_name}`;
     }
 
-    // Mettre à jour l'ID unique
+    // Mettre à jour lID unique
     const userUniqueId = document.getElementById('userUniqueId');
     if (userUniqueId) {
         userUniqueId.textContent = `GP${String(user.id).padStart(4, '0')}`;
     }
 
-    // Mettre à jour les initiales dans l'avatar
+    // Mettre à jour les initiales dans lavatar
     const userInitials = document.getElementById('userInitials');
     if (userInitials) {
         const firstName = user.firstName || user.first_name || '';
@@ -87,7 +87,7 @@ function updateUserInfo(user) {
         userInitials.textContent = initials;
     }
 
-    // Générer une couleur d'avatar basée sur l'ID utilisateur
+    // Générer une couleur davatar basée sur lID utilisateur
     const userAvatar = document.getElementById('userAvatar');
     if (userAvatar) {
         const colors = [
@@ -117,7 +117,7 @@ function updateSidebarUserInfo(user) {
         sidebarUserName.textContent = `${user.firstName || user.first_name} ${user.lastName || user.last_name}`;
     }
 
-    // Mettre à jour l'ID dans la sidebar
+    // Mettre à jour lID dans la sidebar
     const sidebarUserId = document.getElementById('sidebarUserId');
     if (sidebarUserId) {
         sidebarUserId.textContent = user.uniqueId || user.unique_id || 'GP------';
@@ -132,7 +132,7 @@ function showPendingApprovalMessage() {
                 <div class="pending-icon">
                     <i class="fas fa-clock"></i>
                 </div>
-                <h2>Compte en attente d'approbation</h2>
+                <h2>Compte en attente dapprobation</h2>
                 <p>Votre compte est en cours de vérification par notre équipe.</p>
                 <p>Vous recevrez une notification par email dès que votre compte sera approuvé.</p>
                 <button onclick="logout()" class="btn btn-outline">
@@ -259,7 +259,7 @@ function loadSectionData(sectionName) {
             loadProfile();
             break;
         case 'help':
-            console.log('❓ Section d\'aide');
+            console.log('❓ Section daide');
             break;
         default:
             console.log(`Section ${sectionName} non implémentée`);
@@ -276,11 +276,17 @@ async function loadAvailableSurveys() {
 
         if (response.ok) {
             const data = await response.json();
-            // L'API retourne directement un tableau de sondages
             availableSurveys = Array.isArray(data) ? data : (data.themes || []);
             console.log(`✅ ${availableSurveys.length} sondages chargés`);
             displaySurveys(availableSurveys);
         } else {
+            if (response.status === 403) {
+                const errorData = await response.json();
+                if (errorData.error === 'ACCOUNT_NOT_MONETIZED') {
+                    displayMonetizationMessage();
+                    return;
+                }
+            }
             console.error('Erreur lors du chargement des sondages');
             displaySurveysError();
         }
@@ -288,6 +294,20 @@ async function loadAvailableSurveys() {
         console.error('❌ Erreur chargement sondages:', error);
         displaySurveysError();
     }
+}
+
+function displayMonetizationMessage() {
+    const container = document.getElementById('surveysGrid');
+    if (!container) return;
+
+    container.innerHTML = `
+        <div class="monetization-message">
+            <h3>Activation requise</h3>
+            <p>Pour accéder aux sondages, vous devez dabord faire monétiser votre compte.</p>
+            <p>Veuillez contacter ladministrateur pour connaître les modalités dactivation.</p>
+            <button class="btn btn-primary" onclick="showSection('help')">Contacter le support</button>
+        </div>
+    `;
 }
 
 function displaySurveys(surveys) {
@@ -487,7 +507,7 @@ async function startSurvey(surveyId) {
             console.log(`✅ ${currentSurveyData.questions.length} questions chargées`);
 
             if (currentSurveyData.questions.length === 0) {
-                showErrorPopup('Ce sondage n\'a pas encore de questions. Veuillez réessayer plus tard.');
+                showErrorPopup('Ce sondage n a pas encore de questions. Veuillez réessayer plus tard.');
                 return;
             }
 
@@ -509,7 +529,7 @@ async function startSurvey(surveyId) {
     }
 }
 
-// Initialiser l'interface de sondage
+// Initialiser linterface de sondage
 function initializeSurveyInterface() {
     if (!currentSurveyData) return;
 
@@ -605,7 +625,7 @@ function displayCurrentQuestion() {
                 </label>
             `;
 
-            // Ajouter l'événement de sélection
+            // Ajouter lévénement de sélection
             const radio = optionElement.querySelector('input[type="radio"]');
             radio.addEventListener('change', function() {
                 if (this.checked) {
@@ -631,7 +651,7 @@ function selectOption(optionIndex) {
     // Enregistrer la réponse
     userAnswers[currentQuestionIndex] = optionIndex;
 
-    // Mettre à jour l'interface
+    // Mettre à jour linterface
     const options = document.querySelectorAll('.option-item');
     options.forEach((option, index) => {
         if (index === optionIndex) {
@@ -743,7 +763,7 @@ async function submitSurvey() {
         // Calculer le score
         const score = (userAnswers.length / currentSurveyData.questions.length) * 100;
 
-        // Préparer les données de soumission selon le format attendu par l'API
+        // Préparer les données de soumission selon le format attendu par lAPI
         const submissionData = {
             themeId: currentSurveyData.id,
             answers: userAnswers.map((answer, index) => ({
@@ -808,8 +828,6 @@ function initializeSurveyInterface() {
 
 
 
-
-
 // ===== SYSTÈME DE POPUP MODERNE =====
 function showPopup(title, message, type = 'info', confirmCallback = null) {
     const overlay = document.getElementById('popupOverlay');
@@ -825,7 +843,7 @@ function showPopup(title, message, type = 'info', confirmCallback = null) {
     titleEl.textContent = title;
     messageEl.textContent = message;
 
-    // Mettre à jour l'icône selon le type
+    // Mettre à jour lconvénée selon le type
     iconEl.className = `popup-icon ${type}`;
     const icons = {
         success: 'fas fa-check',
@@ -933,7 +951,7 @@ function closeSidebar() {
 
     if (overlay) {
         overlay.classList.remove('active');
-        console.log('✅ Classe active supprimée de l\'overlay');
+        console.log('✅ Classe active supprimée de loverlay');
     } else {
         console.error('❌ Overlay non trouvé');
     }
@@ -951,7 +969,7 @@ function logout() {
     localStorage.removeItem('authToken');
     localStorage.removeItem('user');
 
-    // Rediriger vers la page d'accueil
+    // Rediriger vers la page daccueil
     window.location.href = '/';
 }
 
@@ -994,7 +1012,7 @@ document.addEventListener('DOMContentLoaded', function() {
         console.error('❌ Bouton sidebarToggle non trouvé');
     }
 
-    // Fermer la sidebar en cliquant sur l'overlay
+    // Fermer la sidebar en cliquant sur loverlay
     const sidebarOverlay = document.getElementById('sidebarOverlay');
     if (sidebarOverlay) {
         sidebarOverlay.addEventListener('click', closeSidebar);

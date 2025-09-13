@@ -64,7 +64,7 @@ router.get('/', authenticateToken, requireAdmin, async (req, res) => {
     }
 });
 
-// Route spécifique pour les utilisateurs en attente d'approbation
+// Route spécifique pour les utilisateurs en attente d\'approbation
 router.get('/pending', authenticateToken, requireAdmin, async (req, res) => {
     try {
         const db = DatabaseFactory.create();
@@ -89,6 +89,7 @@ router.get('/pending', authenticateToken, requireAdmin, async (req, res) => {
 // Attribuer un ID unique à un utilisateur
 router.post('/:id/assign-id', authenticateToken, requireAdmin, async (req, res) => {
     try {
+        const db = DatabaseFactory.create();
         const userId = req.params.id;
         const adminId = req.user.id;
         const { uniqueId } = req.body;
@@ -97,30 +98,35 @@ router.post('/:id/assign-id', authenticateToken, requireAdmin, async (req, res) 
             return res.status(400).json({ error: 'ID unique requis' });
         }
 
-        // Vérifier que l'utilisateur existe et n'est pas admin
-        const user = await db.get('SELECT * FROM users WHERE id = ? AND is_admin = 0', [userId]);
+        // Vérifier que l\'utilisateur existe et n\'est pas admin
+        const user = await db.get('users', { id: userId, is_admin: false });
         if (!user) {
             return res.status(404).json({ error: 'Utilisateur non trouvé' });
         }
 
-        // Vérifier que l'ID unique n'est pas déjà utilisé
-        const existingUser = await db.get('SELECT id FROM users WHERE unique_id = ?', [uniqueId]);
+        // Vérifier que l\'ID unique n\'est pas déjà utilisé
+        const existingUser = await db.get('users', { unique_id: uniqueId });
         if (existingUser) {
             return res.status(409).json({ error: 'Cet ID unique est déjà utilisé' });
         }
 
-        // Attribuer l'ID unique, approuver l'utilisateur et ajouter la subvention
-        await db.run(`
-            UPDATE users
-            SET unique_id = ?, admin_approved = 1, is_active = 1, approved_by = ?, approved_at = CURRENT_TIMESTAMP, balance = balance + 500000
-            WHERE id = ?
-        `, [uniqueId, adminId, userId]);
+        // Attribuer l\'ID unique, approuver l\'utilisateur et ajouter la subvention
+        await db.update('users', {
+            unique_id: uniqueId,
+            admin_approved: true,
+            is_active: true,
+            approved_by: adminId,
+            approved_at: new Date().toISOString(),
+            balance: user.balance + 500000
+        }, { id: userId });
 
-        // Log de l'activité
-        await db.run(
-            'INSERT INTO activity_logs (user_id, action, details) VALUES (?, ?, ?)',
-            [userId, 'USER_ID_ASSIGNED', `Unique ID ${uniqueId} assigned by admin ${adminId}`]
-        );
+        // Log de l\'activité
+        await db.insert('activity_logs', {
+            user_id: userId,
+            action: 'USER_ID_ASSIGNED',
+            details: `Unique ID ${uniqueId} assigned by admin ${adminId}`,
+            created_at: new Date().toISOString()
+        });
 
         res.json({
             message: 'ID unique attribué avec succès',
@@ -141,13 +147,13 @@ router.post('/:id/approve', authenticateToken, requireAdmin, async (req, res) =>
         const adminId = req.user.id;
         const db = DatabaseFactory.create();
 
-        // Vérifier que l'utilisateur existe et n'est pas admin
+        // Vérifier que l\'utilisateur existe et n\'est pas admin
         const user = await db.get('users', { id: userId, is_admin: false });
         if (!user) {
             return res.status(404).json({ error: 'Utilisateur non trouvé' });
         }
 
-        // Approuver l'utilisateur
+        // Approuver l\'utilisateur
         await db.update('users', {
             admin_approved: true,
             is_active: true,
@@ -155,7 +161,7 @@ router.post('/:id/approve', authenticateToken, requireAdmin, async (req, res) =>
             approved_at: new Date().toISOString()
         }, { id: userId });
 
-        // Log de l'activité
+        // Log de l\'activité
         await db.insert('activity_logs', {
             user_id: userId,
             action: 'USER_APPROVED',
@@ -177,32 +183,31 @@ router.post('/:id/approve', authenticateToken, requireAdmin, async (req, res) =>
 // Monétiser un compte utilisateur
 router.post('/:id/monetize', authenticateToken, requireAdmin, async (req, res) => {
     try {
+        const db = DatabaseFactory.create();
         const userId = req.params.id;
         const adminId = req.user.id;
 
-        // Vérifier que l'utilisateur existe et n'est pas admin
-        const user = await db.get('SELECT * FROM users WHERE id = ? AND is_admin = 0', [userId]);
+        // Vérifier que l\'utilisateur existe et n\'est pas admin
+        const user = await db.get('users', { id: userId, is_admin: false });
         if (!user) {
             return res.status(404).json({ error: 'Utilisateur non trouvé' });
         }
 
-        // Vérifier que l'utilisateur est approuvé
+        // Vérifier que l\'utilisateur est approuvé
         if (!user.admin_approved) {
             return res.status(400).json({ error: 'L\'utilisateur doit d\'abord être approuvé' });
         }
 
         // Monétiser le compte
-        await db.run(`
-            UPDATE users
-            SET account_monetized = 1
-            WHERE id = ?
-        `, [userId]);
+        await db.update('users', { account_monetized: true }, { id: userId });
 
-        // Log de l'activité
-        await db.run(
-            'INSERT INTO activity_logs (user_id, action, details) VALUES (?, ?, ?)',
-            [userId, 'ACCOUNT_MONETIZED', `Account monetized by admin ${adminId}`]
-        );
+        // Log de l\'activité
+        await db.insert('activity_logs', {
+            user_id: userId,
+            action: 'ACCOUNT_MONETIZED',
+            details: `Account monetized by admin ${adminId}`,
+            created_at: new Date().toISOString()
+        });
 
         res.json({
             message: 'Compte monétisé avec succès',
@@ -218,27 +223,26 @@ router.post('/:id/monetize', authenticateToken, requireAdmin, async (req, res) =
 // Démonétiser un compte utilisateur
 router.post('/:id/demonetize', authenticateToken, requireAdmin, async (req, res) => {
     try {
+        const db = DatabaseFactory.create();
         const userId = req.params.id;
         const adminId = req.user.id;
 
-        // Vérifier que l'utilisateur existe et n'est pas admin
-        const user = await db.get('SELECT * FROM users WHERE id = ? AND is_admin = 0', [userId]);
+        // Vérifier que l\'utilisateur existe et n\'est pas admin
+        const user = await db.get('users', { id: userId, is_admin: false });
         if (!user) {
             return res.status(404).json({ error: 'Utilisateur non trouvé' });
         }
 
         // Démonétiser le compte
-        await db.run(`
-            UPDATE users
-            SET account_monetized = 0
-            WHERE id = ?
-        `, [userId]);
+        await db.update('users', { account_monetized: false }, { id: userId });
 
-        // Log de l'activité
-        await db.run(
-            'INSERT INTO activity_logs (user_id, action, details) VALUES (?, ?, ?)',
-            [userId, 'ACCOUNT_DEMONETIZED', `Account demonetized by admin ${adminId}`]
-        );
+        // Log de l\'activité
+        await db.insert('activity_logs', {
+            user_id: userId,
+            action: 'ACCOUNT_DEMONETIZED',
+            details: `Account demonetized by admin ${adminId}`,
+            created_at: new Date().toISOString()
+        });
 
         res.json({
             message: 'Compte démonétisé avec succès',
@@ -254,30 +258,34 @@ router.post('/:id/demonetize', authenticateToken, requireAdmin, async (req, res)
 // Rejeter/désapprouver un utilisateur
 router.post('/:id/reject', authenticateToken, requireAdmin, async (req, res) => {
     try {
+        const db = DatabaseFactory.create();
         const userId = req.params.id;
         const adminId = req.user.id;
         const { reason } = req.body;
         
-        // Vérifier que l'utilisateur existe et n'est pas admin
-        const user = await db.get('SELECT * FROM users WHERE id = ? AND is_admin = 0', [userId]);
+        // Vérifier que l\'utilisateur existe et n\'est pas admin
+        const user = await db.get('users', { id: userId, is_admin: false });
         if (!user) {
             return res.status(404).json({ error: 'Utilisateur non trouvé' });
         }
         
-        // Rejeter l'utilisateur
-        await db.run(`
-            UPDATE users 
-            SET admin_approved = 0, is_active = 0, approved_by = NULL, approved_at = NULL 
-            WHERE id = ?
-        `, [userId]);
+        // Rejeter l\'utilisateur
+        await db.update('users', {
+            admin_approved: false,
+            is_active: false,
+            approved_by: null,
+            approved_at: null
+        }, { id: userId });
         
-        // Log de l'activité
-        await db.run(
-            'INSERT INTO activity_logs (user_id, action, details) VALUES (?, ?, ?)',
-            [userId, 'USER_REJECTED', `User rejected by admin ${adminId}. Reason: ${reason || 'No reason provided'}`]
-        );
+        // Log de l\'activité
+        await db.insert('activity_logs', {
+            user_id: userId,
+            action: 'USER_REJECTED',
+            details: `User rejected by admin ${adminId}. Reason: ${reason || 'No reason provided'}`,
+            created_at: new Date().toISOString()
+        });
         
-        res.json({ 
+        res.json({
             message: 'Utilisateur rejeté avec succès',
             user: { id: userId, approved: false }
         });
@@ -291,28 +299,31 @@ router.post('/:id/reject', authenticateToken, requireAdmin, async (req, res) => 
 // Activer/désactiver un utilisateur
 router.post('/:id/toggle-status', authenticateToken, requireAdmin, async (req, res) => {
     try {
+        const db = DatabaseFactory.create();
         const userId = req.params.id;
         const adminId = req.user.id;
         
-        // Vérifier que l'utilisateur existe et n'est pas admin
-        const user = await db.get('SELECT * FROM users WHERE id = ? AND is_admin = 0', [userId]);
+        // Vérifier que l\'utilisateur existe et n\'est pas admin
+        const user = await db.get('users', { id: userId, is_admin: false });
         if (!user) {
             return res.status(404).json({ error: 'Utilisateur non trouvé' });
         }
         
-        const newStatus = user.is_active ? 0 : 1;
+        const newStatus = !user.is_active;
         
         // Changer le statut
-        await db.run('UPDATE users SET is_active = ? WHERE id = ?', [newStatus, userId]);
+        await db.update('users', { is_active: newStatus }, { id: userId });
         
-        // Log de l'activité
+        // Log de l\'activité
         const action = newStatus ? 'USER_ACTIVATED' : 'USER_DEACTIVATED';
-        await db.run(
-            'INSERT INTO activity_logs (user_id, action, details) VALUES (?, ?, ?)',
-            [userId, action, `User ${newStatus ? 'activated' : 'deactivated'} by admin ${adminId}`]
-        );
+        await db.insert('activity_logs', {
+            user_id: userId,
+            action: action,
+            details: `User ${newStatus ? 'activated' : 'deactivated'} by admin ${adminId}`,
+            created_at: new Date().toISOString()
+        });
         
-        res.json({ 
+        res.json({
             message: `Utilisateur ${newStatus ? 'activé' : 'désactivé'} avec succès`,
             user: { id: userId, isActive: newStatus }
         });
@@ -326,29 +337,32 @@ router.post('/:id/toggle-status', authenticateToken, requireAdmin, async (req, r
 // Supprimer un utilisateur
 router.delete('/:id', authenticateToken, requireAdmin, async (req, res) => {
     try {
+        const db = DatabaseFactory.create();
         const userId = req.params.id;
         const adminId = req.user.id;
         
-        // Vérifier que l'utilisateur existe et n'est pas admin
-        const user = await db.get('SELECT * FROM users WHERE id = ? AND is_admin = 0', [userId]);
+        // Vérifier que l\'utilisateur existe et n\'est pas admin
+        const user = await db.get('users', { id: userId, is_admin: false });
         if (!user) {
             return res.status(404).json({ error: 'Utilisateur non trouvé' });
         }
         
-        // Log de l'activité avant suppression
-        await db.run(
-            'INSERT INTO activity_logs (user_id, action, details) VALUES (?, ?, ?)',
-            [userId, 'USER_DELETED', `User ${user.email} deleted by admin ${adminId}`]
-        );
+        // Log de l\'activité avant suppression
+        await db.insert('activity_logs', {
+            user_id: userId,
+            action: 'USER_DELETED',
+            details: `User ${user.email} deleted by admin ${adminId}`,
+            created_at: new Date().toISOString()
+        });
         
-        // Supprimer l'utilisateur et toutes ses données associées
-        await db.run('DELETE FROM survey_attempts WHERE user_id = ?', [userId]);
-        await db.run('DELETE FROM subscriptions WHERE user_id = ?', [userId]);
-        await db.run('DELETE FROM payment_methods WHERE user_id = ?', [userId]);
-        await db.run('DELETE FROM transactions WHERE user_id = ?', [userId]);
-        await db.run('DELETE FROM users WHERE id = ?', [userId]);
+        // Supprimer l\'utilisateur et toutes ses données associées
+        await db.delete('survey_attempts', { user_id: userId });
+        await db.delete('subscriptions', { user_id: userId });
+        await db.delete('payment_methods', { user_id: userId });
+        await db.delete('transactions', { user_id: userId });
+        await db.delete('users', { id: userId });
         
-        res.json({ 
+        res.json({
             message: 'Utilisateur supprimé avec succès',
             user: { id: userId, deleted: true }
         });

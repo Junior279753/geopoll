@@ -166,7 +166,7 @@ async function loadDashboardData() {
     }
 }
 
-// Fonction pour charger et afficher les demandes d'approbation en priorité
+// Fonction pour charger et afficher les demandes d\'approbation en priorité
 async function loadPendingApprovals() {
     try {
         const token = localStorage.getItem('token') || localStorage.getItem('authToken');
@@ -182,7 +182,7 @@ async function loadPendingApprovals() {
             // Afficher la carte dans le dashboard
             displayPendingApprovalsCard(pendingUsers);
 
-            // Afficher aussi l'alerte flottante si nécessaire
+            // Afficher aussi l\'alerte flottante si nécessaire
             if (pendingUsers.length > 0) {
                 setTimeout(() => {
                     displayPendingApprovalsAlert(pendingUsers);
@@ -201,7 +201,7 @@ function displayPendingApprovalsCard(pendingUsers) {
     if (card && text) {
         if (pendingUsers.length > 0) {
             card.style.display = 'block';
-            text.textContent = `${pendingUsers.length} utilisateur(s) en attente d'approbation. Cliquez pour les gérer.`;
+            text.textContent = `${pendingUsers.length} utilisateur(s) en attente d\'approbation. Cliquez pour les gérer.`;
         } else {
             card.style.display = 'none';
         }
@@ -218,9 +218,9 @@ function updatePendingApprovalsCard(pendingCount) {
     if (card && text) {
         if (pendingCount > 0) {
             card.style.display = 'block';
-            text.textContent = `${pendingCount} utilisateur(s) en attente d'approbation. Cliquez pour les gérer.`;
+            text.textContent = `${pendingCount} utilisateur(s) en attente d\'approbation. Cliquez pour les gérer.`;
 
-            // Ajouter une animation pour attirer l'attention
+            // Ajouter une animation pour attirer l\'attention
             card.style.animation = 'pulse 2s infinite';
         } else {
             card.style.display = 'none';
@@ -230,7 +230,7 @@ function updatePendingApprovalsCard(pendingCount) {
 }
 
 function displayPendingApprovalsAlert(pendingUsers) {
-    // Créer ou mettre à jour l'alerte des demandes en attente
+    // Créer ou mettre à jour l\'alerte des demandes en attente
     let alertContainer = document.getElementById('pendingApprovalsAlert');
 
     if (!alertContainer) {
@@ -256,13 +256,13 @@ function displayPendingApprovalsAlert(pendingUsers) {
     alertContainer.innerHTML = `
         <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
             <i class="fas fa-exclamation-triangle" style="color: #856404;"></i>
-            <strong style="color: #856404;">Demandes d'approbation en attente</strong>
+            <strong style="color: #856404;">Demandes d\'approbation en attente</strong>
             <button onclick="this.parentElement.parentElement.remove()" style="background: none; border: none; margin-left: auto; cursor: pointer; opacity: 0.7;">
                 <i class="fas fa-times"></i>
             </button>
         </div>
         <p style="margin: 0.5rem 0; color: #856404; font-size: 0.9rem;">
-            ${pendingUsers.length} utilisateur(s) en attente d'approbation
+            ${pendingUsers.length} utilisateur(s) en attente d\'approbation
         </p>
         <div style="margin-top: 1rem;">
             <button onclick="showSection('users'); this.parentElement.parentElement.parentElement.remove();" style="background: #ffc107; color: #000; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer; font-size: 0.9rem;">
@@ -333,7 +333,7 @@ function updateStatsDisplay() {
     // Mettre à jour les badges de navigation
     updateNavigationBadges();
 
-    // Mettre à jour la carte des demandes d'approbation
+    // Mettre à jour la carte des demandes d\'approbation
     updatePendingApprovalsCard(stats.userStats?.pending || 0);
 
     console.log('📊 Statistiques mises à jour:', elements);
@@ -540,7 +540,7 @@ async function loadUsers() {
             // Afficher spécialement les utilisateurs en attente
             const pendingUsers = users.filter(u => !u.admin_approved);
             if (pendingUsers.length > 0) {
-                console.log(`⏳ ${pendingUsers.length} utilisateurs en attente d'approbation:`, pendingUsers);
+                console.log(`⏳ ${pendingUsers.length} utilisateurs en attente d\'approbation:`, pendingUsers);
             }
         }
     } catch (error) {
@@ -581,7 +581,7 @@ function displayUsers(usersList) {
 
         ${pendingUsers.length > 0 ? `
             <div class="section-header" style="background: #fff3cd; padding: 1rem; margin-bottom: 1rem; border-radius: 8px; border-left: 4px solid #ffc107;">
-                <h3 style="margin: 0; color: #856404;"><i class="fas fa-clock"></i> Utilisateurs en attente d'approbation (${pendingUsers.length})</h3>
+                <h3 style="margin: 0; color: #856404;"><i class="fas fa-clock"></i> Utilisateurs en attente d\'approbation (${pendingUsers.length})</h3>
                 <p style="margin: 0.5rem 0 0 0; color: #856404; font-size: 0.9rem;">Ces utilisateurs nécessitent votre approbation pour accéder à la plateforme</p>
             </div>
             ${generateUserTable(pendingUsers, true)}
@@ -680,7 +680,7 @@ function generateUserTable(users, isPending) {
     return `
         <table class="admin-table" style="margin-bottom: 2rem;">
             <thead>
-                <tr ${isPending ? 'style="background: #fff3cd;"' : ''}>
+                <tr ${isPending ? 'style="background: #fff3cd;"' : ''}> 
                     <th style="width: 50%;">Coordonnées Complètes</th>
                     <th style="width: 20%;">Statut & Activité</th>
                     <th style="width: 15%;">Inscription</th>
@@ -689,7 +689,7 @@ function generateUserTable(users, isPending) {
             </thead>
             <tbody>
                 ${users.map(user => `
-                    <tr ${isPending ? 'style="background: #fffbf0;"' : ''}>
+                    <tr ${isPending ? 'style="background: #fffbf0;"' : ''}> 
                         <td>
                             <div class="user-full-details">
                                 <div class="user-header" style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid #e9ecef;">
@@ -1124,7 +1124,7 @@ function displayLogs(logs) {
 
     const html = `
         <div style="margin-bottom: 1rem;">
-            <h3><i class="fas fa-list-alt"></i> Logs d'activité (${logs.length})</h3>
+            <h3><i class="fas fa-list-alt"></i> Logs d\'activité (${logs.length})</h3>
             <p style="color: #666;">Historique des actions effectuées sur la plateforme</p>
         </div>
 
@@ -1439,11 +1439,18 @@ function refreshCache() {
 }
 
 function getUserStatusBadge(user) {
+    let badges = [];
     if (user.admin_approved) {
-        return '<span class="badge badge-success">Approuvé</span>';
+        badges.push('<span class="status-badge approved">Approuvé</span>');
     } else {
-        return '<span class="badge badge-warning">En attente</span>';
+        badges.push('<span class="status-badge pending">En attente</span>');
     }
+
+    if (user.account_monetized) {
+        badges.push('<span class="status-badge info">Monétisé</span>');
+    }
+
+    return badges.join(' ');
 }
 
 function getUserActions(user) {
@@ -1460,6 +1467,20 @@ function getUserActions(user) {
                 <i class="fas fa-times"></i> Rejeter
             </button>
         `);
+    } else {
+        if (user.account_monetized) {
+            actions.push(`
+                <button class="btn btn-sm btn-warning" onclick="demonetizeUser(${user.id})">
+                    <i class="fas fa-dollar-sign"></i> Démonétiser
+                </button>
+            `);
+        } else {
+            actions.push(`
+                <button class="btn btn-sm btn-info" onclick="monetizeUser(${user.id})">
+                    <i class="fas fa-dollar-sign"></i> Monétiser
+                </button>
+            `);
+        }
     }
     
     return actions.join(' ');
@@ -1511,6 +1532,57 @@ async function rejectUser(userId) {
         showNotification('❌ Erreur de connexion', 'error');
     }
 }
+
+async function monetizeUser(userId) {
+    if (!confirm('Monétiser ce compte utilisateur ?')) return;
+    
+    try {
+        const token = localStorage.getItem('token') || localStorage.getItem('authToken');
+        const response = await fetch(`/api/admin/users/${userId}/monetize`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        
+        if (response.ok) {
+            showNotification('Compte utilisateur monétisé avec succès', 'success');
+            loadUsers();
+        } else {
+            const error = await response.json();
+            showNotification(error.message || 'Erreur lors de la monétisation du compte.', 'error');
+        }
+    } catch (error) {
+        console.error('Erreur:', error);
+        showNotification('Erreur de connexion', 'error');
+    }
+}
+
+async function demonetizeUser(userId) {
+    if (!confirm('Démonétiser ce compte utilisateur ?')) return;
+    
+    try {
+        const token = localStorage.getItem('token') || localStorage.getItem('authToken');
+        const response = await fetch(`/api/admin/users/${userId}/demonetize`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        
+        if (response.ok) {
+            showNotification('Compte utilisateur démonétisé avec succès', 'success');
+            loadUsers();
+        } else {
+            const error = await response.json();
+            showNotification(error.message || 'Erreur lors de la démonétisation du compte.', 'error');
+        }
+    } catch (error) {
+        console.error('Erreur:', error);
+        showNotification('Erreur de connexion', 'error');
+    }
+}
+
 
 // ===== UTILITAIRES =====
 function setupEventListeners() {
@@ -1565,13 +1637,13 @@ function createQuiz() {
 }
 
 function exportWithdrawals() {
-    // TODO: Implémenter l'export des retraits
+    // TODO: Implémenter l\'export des retraits
     showNotification('Fonctionnalité export en développement', 'info');
 }
 
 // Fonction supprimée - pas utilisée dans la version tableau
 
-// Nouvelle fonction pour voir les détails d'un utilisateur
+// Nouvelle fonction pour voir les détails d\'un utilisateur
 function viewUserDetails(userId) {
     const user = users.find(u => u.id === userId);
     if (!user) return;
@@ -1617,7 +1689,7 @@ function viewUserDetails(userId) {
     modal.className = 'modal';
     document.body.appendChild(modal);
 
-    // Fermer en cliquant à l'extérieur
+    // Fermer en cliquant à l\'extérieur
     modal.addEventListener('click', (e) => {
         if (e.target === modal) modal.remove();
     });
@@ -1684,7 +1756,7 @@ document.addEventListener('click', function(event) {
 function showProfile() {
     console.log('🔄 Affichage du profil admin...');
 
-    // Obtenir les informations de l'utilisateur connecté
+    // Obtenir les informations de l\'utilisateur connecté
     const user = JSON.parse(localStorage.getItem('user') || '{}');
 
     // Créer une modal pour le profil
@@ -1780,7 +1852,7 @@ function showProfile() {
         </div>
     `;
 
-    // Fermer en cliquant sur l'overlay
+    // Fermer en cliquant sur l\'overlay
     modal.addEventListener('click', (e) => {
         if (e.target === modal) {
             modal.remove();
@@ -1801,7 +1873,7 @@ function showSettings() {
 function showHelp() {
     console.log('❓ Affichage de l\'aide...');
 
-    // Créer une modal pour l'aide
+    // Créer une modal pour l\'aide
     const modal = document.createElement('div');
     modal.className = 'modal-overlay';
     modal.style.cssText = `
@@ -1820,7 +1892,7 @@ function showHelp() {
     modal.innerHTML = `
         <div class="modal-content" style="background: white; padding: 2rem; border-radius: 12px; max-width: 800px; width: 90%; max-height: 80vh; overflow-y: auto;">
             <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 1.5rem;">
-                <h3 style="margin: 0;"><i class="fas fa-question-circle"></i> Guide d'utilisation - Interface Admin</h3>
+                <h3 style="margin: 0;"><i class="fas fa-question-circle"></i> Guide d\'utilisation - Interface Admin</h3>
                 <button onclick="this.closest('.modal-overlay').remove()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; margin-left: auto;">&times;</button>
             </div>
 
@@ -1829,7 +1901,7 @@ function showHelp() {
                     <h4><i class="fas fa-tachometer-alt"></i> Dashboard</h4>
                     <p>Le tableau de bord affiche les statistiques en temps réel de la plateforme :</p>
                     <ul>
-                        <li>Nombre d'utilisateurs total, en attente et actifs</li>
+                        <li>Nombre d\'utilisateurs total, en attente et actifs</li>
                         <li>Revenus générés et transactions</li>
                         <li>Activité récente des utilisateurs</li>
                         <li>Actualisation automatique toutes les 30 secondes</li>
@@ -1868,7 +1940,7 @@ function showHelp() {
                 </div>
 
                 <div style="margin-bottom: 2rem;">
-                    <h4><i class="fas fa-list-alt"></i> Logs d'Activité</h4>
+                    <h4><i class="fas fa-list-alt"></i> Logs d\'Activité</h4>
                     <p>Suivi de toutes les actions sur la plateforme :</p>
                     <ul>
                         <li>Connexions et déconnexions</li>
@@ -1890,9 +1962,9 @@ function showHelp() {
                 </div>
 
                 <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px; margin-top: 2rem;">
-                    <h5><i class="fas fa-lightbulb"></i> Conseils d'utilisation</h5>
+                    <h5><i class="fas fa-lightbulb"></i> Conseils d\'utilisation</h5>
                     <ul style="margin: 0.5rem 0;">
-                        <li>Vérifiez régulièrement les utilisateurs en attente d'approbation</li>
+                        <li>Vérifiez régulièrement les utilisateurs en attente d\'approbation</li>
                         <li>Surveillez les demandes de retrait pour éviter les fraudes</li>
                         <li>Consultez les logs en cas de problème</li>
                         <li>Les données se mettent à jour automatiquement</li>
@@ -1901,7 +1973,7 @@ function showHelp() {
 
                 <div style="background: #d1ecf1; padding: 1rem; border-radius: 8px; margin-top: 1rem;">
                     <h5><i class="fas fa-phone"></i> Support</h5>
-                    <p style="margin: 0;">En cas de problème technique, contactez l'équipe de développement ou consultez les logs pour plus de détails.</p>
+                    <p style="margin: 0;">En cas de problème technique, contactez l\'équipe de développement ou consultez les logs pour plus de détails.</p>
                 </div>
             </div>
 
@@ -1913,7 +1985,7 @@ function showHelp() {
         </div>
     `;
 
-    // Fermer en cliquant sur l'overlay
+    // Fermer en cliquant sur l\'overlay
     modal.addEventListener('click', (e) => {
         if (e.target === modal) {
             modal.remove();
@@ -1943,7 +2015,7 @@ function logout() {
         // Afficher notification
         showNotification('Déconnexion réussie', 'success');
 
-        // Rediriger vers la page d'accueil
+        // Rediriger vers la page d\'accueil
         setTimeout(() => {
             window.location.href = '/';
         }, 1000);
@@ -1963,7 +2035,7 @@ function showNotification(message, type = 'info') {
         document.body.appendChild(container);
     }
 
-    // Créer l'élément notification
+    // Créer l\'élément notification
     const notification = document.createElement('div');
     notification.className = `notification notification-${type}`;
 
@@ -2011,7 +2083,7 @@ function removeNotification(notification) {
             notification.remove();
         }
 
-        // Supprimer le container s'il est vide
+        // Supprimer le container s\'il est vide
         const container = document.querySelector('.notifications-container');
         if (container && container.children.length === 0) {
             container.remove();
@@ -2075,7 +2147,7 @@ function showNotification(message, type = 'info') {
     
     document.body.appendChild(notification);
     
-    // Animer l'entrée
+    // Animer l\'entrée
     setTimeout(() => {
         notification.style.transform = 'translateX(0)';
     }, 100);
@@ -2162,3 +2234,5 @@ window.searchUsers = searchUsers;
 window.copyToClipboard = copyToClipboard;
 window.copyAllUserInfo = copyAllUserInfo;
 window.exportUsers = exportUsers;
+window.monetizeUser = monetizeUser;
+window.demonetizeUser = demonetizeUser;

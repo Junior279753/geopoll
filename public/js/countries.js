@@ -377,26 +377,26 @@ function getCountryData(countryCode) {
 // Fonction pour formater un numéro de téléphone
 function formatPhoneNumber(phone, countryCode) {
     const countryData = getCountryData(countryCode);
-    if (!countryData) return phone;
-    
-    // Supprimer tous les caractères non numériques
-    const cleanPhone = phone.replace(/\D/g, '');
-    
-    // Appliquer le format selon le pays
-    const format = countryData.phoneFormat;
-    let formatted = '';
-    let phoneIndex = 0;
-    
-    for (let i = 0; i < format.length && phoneIndex < cleanPhone.length; i++) {
-        if (format[i] === 'X') {
-            formatted += cleanPhone[phoneIndex];
-            phoneIndex++;
-        } else {
-            formatted += format[i];
-        }
+    if (!countryData || !countryData.phoneFormat) {
+        // Retourne les chiffres si aucun format n'est trouvé
+        return phone.replace(/\D/g, '');
     }
-    
-    return formatted;
+
+    const cleanPhone = phone.replace(/\D/g, '');
+    const formatParts = countryData.phoneFormat.split(' ');
+    const phoneParts = [];
+    let phoneIndex = 0;
+
+    for (const part of formatParts) {
+        if (phoneIndex >= cleanPhone.length) {
+            break;
+        }
+        const partLength = part.length;
+        phoneParts.push(cleanPhone.substr(phoneIndex, partLength));
+        phoneIndex += partLength;
+    }
+
+    return phoneParts.join(' ');
 }
 
 // Fonction pour valider un code postal
