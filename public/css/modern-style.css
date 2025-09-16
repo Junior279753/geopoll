@@ -357,6 +357,7 @@ a:hover {
         top: 80px;
         left: 0;
         right: 0;
+        bottom: 0; /* Add this to make it full height */
         background: var(--white);
         flex-direction: column;
         padding: var(--spacing-6);
@@ -365,12 +366,15 @@ a:hover {
         opacity: 0;
         visibility: hidden;
         transition: var(--transition-normal);
+        z-index: 999; /* Ensure it's above other content */
+        overflow-y: auto; /* Allow scrolling if content overflows */
     }
     
     .nav-menu.active {
         transform: translateY(0);
         opacity: 1;
         visibility: visible;
+        z-index: 999; /* Ensure it's above other content */
     }
     
     .nav-buttons {

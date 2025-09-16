@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function initializeApp() {
+    console.log('🚀 initializeApp called');
     // Navigation mobile
     setupMobileNavigation();
     
@@ -42,7 +43,8 @@ function setupMobileNavigation() {
             console.log('🍔 Clic sur menu hamburger');
             navMenu.classList.toggle('active');
             navToggle.classList.toggle('active');
-            console.log('🔍 Menu actif:', navMenu.classList.contains('active'));
+            console.log('🔍 navMenu classList after toggle:', navMenu.classList);
+            console.log('🔍 navToggle classList after toggle:', navToggle.classList);
         });
 
         // Fermer le menu en cliquant sur un lien

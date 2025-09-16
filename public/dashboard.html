@@ -11,7 +11,7 @@
 </head>
 <body class="dashboard-body">
     <!-- Overlay pour mobile -->
-    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
     <!-- Sidebar -->
     <aside class="sidebar" id="sidebar">
@@ -22,7 +22,7 @@
                 </div>
                 <span class="brand-text">GeoPoll</span>
             </div>
-            <button class="sidebar-toggle" id="sidebarToggle" onclick="closeSidebar()">
+            <button class="sidebar-toggle" id="sidebarToggle">
                 <i class="fas fa-times"></i>
             </button>
         </div>
@@ -46,10 +46,10 @@
 
             <div class="nav-section">
                 <div class="nav-title">Compte</div>
-                <a href="#profile" class="nav-item" data-section="profile">
-                    <i class="fas fa-user"></i>
-                    <span>Mon Profil</span>
-                </a>
+                <a href="#">
+                        <i class="fas fa-user"></i>
+                        Mon Profil
+                    </a>
                 <a href="#help" class="nav-item" data-section="help">
                     <i class="fas fa-question-circle"></i>
                     <span>Centre d'aide</span>
@@ -67,10 +67,10 @@
                     <p id="sidebarUserId">GP------</p>
                 </div>
             </div>
-            <button class="logout-btn" onclick="logout()">
-                <i class="fas fa-sign-out-alt"></i>
-                <span>Déconnexion</span>
-            </button>
+            <a href="#">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Déconnexion
+                    </a>
         </div>
     </aside>
 
@@ -79,7 +79,7 @@
         <!-- Header -->
         <header class="dashboard-header">
             <div class="header-left">
-                <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleSidebar()">
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
                     <i class="fas fa-bars"></i>
                 </button>
                 <h1 class="page-title">Tableau de bord</h1>
@@ -109,7 +109,7 @@
                         <i class="fas fa-user"></i>
                         Mon Profil
                     </a>
-                    <a href="#" onclick="showSection('payments')">
+                    <a href="#">
                         <i class="fas fa-wallet"></i>
                         Mes Paiements
                     </a>
