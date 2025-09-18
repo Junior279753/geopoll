@@ -303,7 +303,11 @@ a:hover {
     color: var(--primary-color);
 }
 
-.nav-link.active::after {
+.nav-link > span {
+    position: relative;
+}
+
+.nav-link.active > span::after {
     content: '';
     position: absolute;
     bottom: -2px;
@@ -350,46 +354,87 @@ a:hover {
     transform: rotate(-45deg) translate(7px, -6px);
 }
 
-/* ===== RESPONSIVE NAVIGATION ===== */
+.menu-header {
+    display: none; /* Cacher l'en-tête du menu mobile sur le bureau */
+}
+
+/* ===== RESPONSIVE NAVIGATION (MOBILE) ===== */
 @media (max-width: 768px) {
-    .nav-menu {
-        position: fixed;
-        top: 80px;
-        left: 0;
-        right: 0;
-        bottom: 0; /* Add this to make it full height */
-        background: var(--white);
-        flex-direction: column;
-        padding: var(--spacing-6);
-        box-shadow: var(--shadow-lg);
-        transform: translateY(-100%);
-        opacity: 0;
-        visibility: hidden;
-        transition: var(--transition-normal);
-        z-index: 999; /* Ensure it's above other content */
-        overflow-y: auto; /* Allow scrolling if content overflows */
+    /* Le logo est maintenant visible sur mobile */
+    /* .nav-container > .nav-brand {
+        display: none;
+    } */
+    /* Aligner la marque à gauche et l'icône du burger à droite */
+    .nav-container {
+        justify-content: space-between;
     }
-    
-    .nav-menu.active {
-        transform: translateY(0);
-        opacity: 1;
-        visibility: visible;
-        z-index: 999; /* Ensure it's above other content */
-    }
-    
-    .nav-buttons {
-        margin-top: var(--spacing-6);
-        flex-direction: column;
-        width: 100%;
-    }
-    
-    .nav-buttons .btn {
-        width: 100%;
-        justify-content: center;
-    }
-    
     .nav-toggle {
         display: flex;
+    }
+
+    /* Conteneur du menu qui glisse vers le bas */
+    .nav-menu {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 100vh;
+        background: var(--white);
+        display: flex;
+        flex-direction: column; /* Aligner les éléments verticalement */
+        align-items: stretch; /* Étirer les éléments sur toute la largeur */
+        padding: 0; /* Pas de padding pour que l'en-tête/pied de page prennent toute la largeur */
+        box-shadow: var(--shadow-lg);
+        transform: translateY(-100%);
+        transition: var(--transition-normal);
+        visibility: hidden;
+        opacity: 0;
+        z-index: 1001; /* Au-dessus de la navbar */
+    }
+
+    .nav-menu.active {
+        transform: translateY(0);
+        visibility: visible;
+        opacity: 1;
+    }
+
+    /* En-tête à l'intérieur du menu mobile */
+    .menu-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: var(--spacing-4) var(--spacing-6);
+        border-bottom: 1px solid var(--gray-200);
+        flex-shrink: 0; /* Empêcher la réduction */
+    }
+
+    /* Bouton de fermeture */
+    .close-menu {
+        background: transparent;
+        border: none;
+        font-size: 2.5rem;
+        line-height: 1;
+        color: var(--gray-500);
+        cursor: pointer;
+    }
+
+    /* Liens de navigation dans le menu */
+    .nav-menu > .nav-link {
+        padding: var(--spacing-4) var(--spacing-6);
+        border-bottom: 1px solid var(--gray-100);
+        text-align: center; /* Centrer le texte */
+        font-size: var(--font-size-lg);
+    }
+
+    /* Boutons d'action en bas du menu */
+    .nav-menu > .nav-buttons {
+        margin-top: auto; /* Pousse les boutons en bas */
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-3);
+        padding: var(--spacing-6);
+        background-color: var(--gray-50);
+        border-top: 1px solid var(--gray-200);
     }
 }
 
@@ -1685,3 +1730,4 @@ a:hover {
     color: var(--primary-color);
     width: 20px;
 }
+

@@ -33,11 +33,17 @@ function setupMobileNavigation() {
 
     const navToggle = document.getElementById('navToggle');
     const navMenu = document.getElementById('navMenu');
+    const closeMenu = document.getElementById('closeMenu');
 
     console.log('🔍 navToggle:', navToggle);
     console.log('🔍 navMenu:', navMenu);
 
     if (navToggle && navMenu) {
+        const closeMenuFunction = () => {
+            navMenu.classList.remove('active');
+            navToggle.classList.remove('active');
+        };
+
         navToggle.addEventListener('click', (e) => {
             e.preventDefault();
             console.log('🍔 Clic sur menu hamburger');
@@ -47,20 +53,21 @@ function setupMobileNavigation() {
             console.log('🔍 navToggle classList after toggle:', navToggle.classList);
         });
 
+        // Fermer le menu en cliquant sur le bouton de fermeture
+        if (closeMenu) {
+            closeMenu.addEventListener('click', closeMenuFunction);
+        }
+
         // Fermer le menu en cliquant sur un lien
         const navLinks = navMenu.querySelectorAll('.nav-link');
         navLinks.forEach(link => {
-            link.addEventListener('click', () => {
-                navMenu.classList.remove('active');
-                navToggle.classList.remove('active');
-            });
+            link.addEventListener('click', closeMenuFunction);
         });
 
         // Fermer le menu en cliquant en dehors
         document.addEventListener('click', (e) => {
             if (!navToggle.contains(e.target) && !navMenu.contains(e.target)) {
-                navMenu.classList.remove('active');
-                navToggle.classList.remove('active');
+                closeMenuFunction();
             }
         });
 
