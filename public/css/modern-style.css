@@ -378,7 +378,7 @@ a:hover {
         top: 0;
         left: 0;
         right: 0;
-        height: 100vh;
+        height: auto;
         background: var(--white);
         display: flex;
         flex-direction: column; /* Aligner les éléments verticalement */
@@ -390,6 +390,8 @@ a:hover {
         visibility: hidden;
         opacity: 0;
         z-index: 1001; /* Au-dessus de la navbar */
+        border-bottom-left-radius: var(--border-radius-2xl);
+        border-bottom-right-radius: var(--border-radius-2xl);
     }
 
     .nav-menu.active {
@@ -435,6 +437,10 @@ a:hover {
         padding: var(--spacing-6);
         background-color: var(--gray-50);
         border-top: 1px solid var(--gray-200);
+    }
+
+    .nav-menu > .nav-buttons .btn {
+        width: 100%;
     }
 }
 
