@@ -16,6 +16,15 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Charger les données utilisateur
     loadUserData();
+
+    // --- Attacher l'événement de déconnexion ---
+    const logoutButtonSidebar = document.getElementById('logout-link-sidebar');
+    if (logoutButtonSidebar) {
+        logoutButtonSidebar.addEventListener('click', (e) => {
+            e.preventDefault();
+            logout();
+        });
+    }
 });
 
 // ===== AUTHENTIFICATION =====
@@ -960,16 +969,28 @@ function closeSidebar() {
 }
 
 // Fonction de déconnexion
-function logout() {
+async function logout() {
     console.log('🚪 Déconnexion...');
+    const token = localStorage.getItem('token') || localStorage.getItem('authToken');
 
-    // Supprimer les tokens
-    localStorage.removeItem('token');
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('user');
-
-    // Rediriger vers la page daccueil
-    window.location.href = '/';
+    try {
+        if (token) {
+            await fetch('/api/auth/logout', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+        }
+    } catch (error) {
+        console.error('Erreur lors de la déconnexion côté serveur:', error);
+    } finally {
+        // Toujours nettoyer le client même si le serveur échoue
+        localStorage.removeItem('token');
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('user');
+        window.location.href = '/';
+    }
 }
 
 // Fermer le menu utilisateur en cliquant ailleurs
@@ -982,29 +1003,21 @@ document.addEventListener('click', function(event) {
     }
 });
 
-
-
 // Exposer les fonctions globalement
-window.showSection = showSection;
-window.logout = logout;
-window.startSurvey = startSurvey;
-window.filterSurveys = filterSurveys;
-window.toggleUserMenu = toggleUserMenu;
-window.toggleSidebar = toggleSidebar;
-window.openSidebar = openSidebar;
-window.closeSidebar = closeSidebar;
-window.previousQuestion = previousQuestion;
-window.nextQuestion = nextQuestion;
-window.submitSurvey = submitSurvey;
-window.selectOption = selectOption;
-window.closePopup = closePopup;
+Object.assign(window, {
+    showSection,
+    logout,
+    startSurvey,
+    filterSurveys,
+    toggleUserMenu,
+    toggleSidebar,
+    openSidebar,
+    closeSidebar,
+    previousQuestion,
+    nextQuestion,
+    submitSurvey,
+    selectOption,
+    closePopup
+});
 
-// Test des fonctions exposées
-console.log('🔍 Test des fonctions exposées:');
-console.log('- showSection:', typeof window.showSection);
-console.log('- logout:', typeof window.logout);
-console.log('- closeSidebar:', typeof window.closeSidebar);
-console.log('- toggleSidebar:', typeof window.toggleSidebar);
-console.log('✅ Toutes les fonctions sont exposées');
-window.showSection = showSection;
-window.logout = logout;
+console.log('✅ Fonctions de la fenêtre principale exposées.');
