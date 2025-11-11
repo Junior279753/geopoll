@@ -179,6 +179,27 @@
             display: none; /* Caché par défaut sur desktop */
         }
 
+        /* Overlay backdrop pour mobile */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999; /* Just below sidebar */
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .sidebar-overlay.active {
+            display: block;
+            opacity: 1;
+            visibility: visible;
+        }
+
         .sidebar-header {
             padding: 1.5rem;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
@@ -643,9 +664,24 @@
 
         /* ===== RESPONSIVE ADMIN (< 768px) ===== */
         @media (max-width: 768px) {
+            .sidebar-toggle {
+                display: block !important; /* Show burger button on mobile */
+                background: none;
+                border: none;
+                font-size: 1.5rem;
+                cursor: pointer;
+                color: var(--admin-text);
+                min-height: 44px;
+                min-width: 44px;
+                padding: 0.5rem;
+            }
+
             .admin-sidebar {
                 transform: translateX(-100%);
-                box-shadow: var(--shadow-xl);
+                transition: transform 0.3s ease;
+                width: 100%;
+                max-width: 300px;
+                box-shadow: 4px 0 15px rgba(0, 0, 0, 0.2);
             }
 
             .admin-sidebar.open {
@@ -654,19 +690,11 @@
 
             .admin-main {
                 margin-left: 0;
+                width: 100%;
             }
 
             .admin-header {
                 padding: 0 1rem;
-            }
-
-            .sidebar-toggle {
-                display: block; /* Afficher le bouton burger */
-                background: none;
-                border: none;
-                font-size: 1.5rem;
-                cursor: pointer;
-                color: var(--admin-text);
             }
 
             .page-title {
@@ -678,7 +706,7 @@
             }
 
             .stats-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: 1fr !important;
                 gap: 1rem;
             }
 
@@ -690,22 +718,91 @@
                 font-size: 1.5rem;
             }
 
-            .sidebar-overlay {
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(0, 0, 0, 0.5);
-                z-index: 999; /* Juste en dessous de la sidebar */
-                opacity: 0;
-                visibility: hidden;
-                transition: opacity 0.3s ease;
+            /* Table responsiveness - horizontal scroll */
+            .admin-table {
+                display: block;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
             }
 
-            .sidebar-overlay.active {
-                opacity: 1;
-                visibility: visible;
+            .admin-table thead {
+                display: block;
+            }
+
+            .admin-table tbody {
+                display: block;
+            }
+
+            .admin-table th,
+            .admin-table td {
+                padding: 0.75rem 0.5rem;
+                font-size: 0.9rem;
+            }
+
+            /* Touch-friendly button sizes */
+            button, .btn, a.nav-item {
+                min-height: 44px;
+                min-width: 44px;
+            }
+
+            .btn {
+                padding: 0.75rem 1rem;
+            }
+
+            /* Cards responsive */
+            .settings-grid {
+                grid-template-columns: 1fr !important;
+            }
+
+            .admin-card {
+                border-radius: 8px;
+                padding: 1rem;
+            }
+
+            /* User details responsive */
+            .user-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .detail-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.25rem;
+            }
+
+            .detail-label {
+                min-width: auto;
+            }
+
+            .detail-value {
+                min-width: auto;
+                width: 100%;
+            }
+
+            .table-header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            /* Filters responsive */
+            .users-filters {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .filter-group {
+                width: 100%;
+            }
+
+            .filter-group input,
+            .filter-group select {
+                width: 100%;
+            }
+
+            /* Quick actions responsive */
+            .quick-actions {
+                grid-template-columns: 1fr !important;
             }
         }
 
@@ -1299,6 +1396,113 @@
             }
             to {
                 opacity: 0;
+            }
+        }
+
+        /* ===== ADDITIONAL RESPONSIVE & TOUCH-FRIENDLY STYLES ===== */
+        
+        /* Ensure all interactive elements meet 44x44px minimum touch target */
+        a, button, input[type="button"], input[type="submit"], input[type="checkbox"], input[type="radio"] {
+            min-height: 44px;
+            min-width: 44px;
+        }
+
+        /* Smooth transitions for sidebar interactions */
+        .admin-sidebar,
+        .sidebar-overlay {
+            -webkit-transition: all 0.3s ease;
+            transition: all 0.3s ease;
+        }
+
+        /* Prevent horizontal scroll on body */
+        html, body {
+            overflow-x: hidden;
+            max-width: 100%;
+        }
+
+        /* Improve mobile navigation visibility */
+        @media (max-width: 480px) {
+            .admin-header {
+                padding: 0.5rem 0.75rem;
+            }
+
+            .page-title {
+                font-size: 1.1rem;
+            }
+
+            .admin-content {
+                padding: 0.75rem;
+            }
+
+            .admin-card {
+                padding: 0.75rem;
+                border-radius: 8px;
+            }
+
+            /* Smaller font on very small screens */
+            .stat-label,
+            .detail-label {
+                font-size: 0.8rem;
+            }
+
+            /* Stack action buttons vertically on very small screens */
+            .action-buttons {
+                flex-direction: column;
+                gap: 0.25rem;
+            }
+        }
+
+        /* Tablet optimizations (481px - 768px) */
+        @media (min-width: 481px) and (max-width: 768px) {
+            .admin-sidebar {
+                max-width: 350px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+        }
+
+        /* Desktop layout (769px+) */
+        @media (min-width: 769px) {
+            .admin-main {
+                margin-left: var(--sidebar-width);
+            }
+
+            .sidebar-toggle {
+                display: none !important;
+            }
+
+            .sidebar-overlay {
+                display: none !important;
+            }
+
+            .admin-sidebar {
+                transform: translateX(0) !important;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            }
+        }
+
+        /* Accessibility: High contrast mode support */
+        @media (prefers-contrast: more) {
+            .admin-sidebar {
+                border-right: 2px solid currentColor;
+            }
+
+            .sidebar-overlay {
+                background: rgba(0, 0, 0, 0.8);
+            }
+        }
+
+        /* Accessibility: Reduced motion support */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
             }
         }
     </style>

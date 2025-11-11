@@ -86,7 +86,7 @@ function updateAdminInfo(user) {
 
 // ===== NAVIGATION =====
 function setupNavigation() {
-    // Navigation sidebar
+    // Navigation sidebar - Auto-close on mobile only
     const navItems = document.querySelectorAll('.nav-item');
     navItems.forEach(item => {
         item.addEventListener('click', (e) => {
@@ -97,6 +97,7 @@ function setupNavigation() {
                 // Fermer la sidebar sur mobile après avoir cliqué sur un lien
                 if (window.innerWidth <= 768) {
                     closeSidebar();
+                    console.log('🔍 Sidebar fermée après clic (mobile)');
                 }
             }
         });
@@ -105,32 +106,64 @@ function setupNavigation() {
     // Toggle sidebar mobile
     const sidebarToggle = document.getElementById('sidebarToggle');
     const sidebarOverlay = document.getElementById('sidebarOverlay'); // Fond noir
+    const sidebar = document.getElementById('adminSidebar');
 
     if (sidebarToggle) {
-        sidebarToggle.addEventListener('click', toggleSidebar);
+        sidebarToggle.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent event bubbling
+            toggleSidebar();
+            console.log('🔘 Toggle sidebar clicked');
+        });
     }
 
     if (sidebarOverlay) {
-        sidebarOverlay.addEventListener('click', closeSidebar);
+        sidebarOverlay.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent event bubbling
+            closeSidebar();
+            console.log('🔙 Sidebar fermée via overlay click');
+        });
     }
+
+    // Prevent sidebar from closing when clicking inside it (mobile)
+    if (sidebar) {
+        sidebar.addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
+    }
+
+    console.log('✅ Navigation setup complete');
 }
 
 // Fonction pour ouvrir la sidebar
 function openSidebar() {
     const sidebar = document.getElementById('adminSidebar');
     const overlay = document.getElementById('sidebarOverlay');
-    if (sidebar) sidebar.classList.add('open');
-    if (overlay) overlay.classList.add('active');
+    
+    if (sidebar) {
+        sidebar.classList.add('open');
+        console.log('✨ Sidebar ouverte');
+    }
+    if (overlay) {
+        overlay.classList.add('active');
+    }
     document.body.classList.add('no-scroll'); // Empêche le scroll du body
+    console.log('🔒 Scroll verrouillé');
 }
 
 // Fonction pour fermer la sidebar
 function closeSidebar() {
     const sidebar = document.getElementById('adminSidebar');
     const overlay = document.getElementById('sidebarOverlay');
-    if (sidebar) sidebar.classList.remove('open');
-    if (overlay) overlay.classList.remove('active');
+    
+    if (sidebar) {
+        sidebar.classList.remove('open');
+        console.log('✨ Sidebar fermée');
+    }
+    if (overlay) {
+        overlay.classList.remove('active');
+    }
     document.body.classList.remove('no-scroll'); // Rétablit le scroll
+    console.log('🔓 Scroll déverrouillé');
 }
 
 // Fonction pour basculer l'état de la sidebar
@@ -1620,6 +1653,30 @@ async function demonetizeUser(userId) {
 
 // ===== UTILITAIRES =====
 function setupEventListeners() {
+    // ===== KEYBOARD HANDLERS =====
+    // ESC key to close sidebar on mobile
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            const sidebar = document.getElementById('adminSidebar');
+            if (sidebar && sidebar.classList.contains('open')) {
+                closeSidebar();
+                console.log('🔙 Sidebar fermée via ESC');
+            }
+        }
+    });
+
+    // ===== WINDOW RESIZE HANDLER =====
+    // Close sidebar when resizing from mobile to desktop
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 768) {
+            const sidebar = document.getElementById('adminSidebar');
+            if (sidebar && sidebar.classList.contains('open')) {
+                closeSidebar();
+            }
+        }
+    });
+
+    // ===== AUTO-REFRESH =====
     // Actualisation automatique toutes les 30 secondes
     setInterval(() => {
         console.log('🔄 Actualisation automatique...');
@@ -1641,6 +1698,8 @@ function setupEventListeners() {
             loadStats();
         });
     }
+
+    console.log('✅ Event listeners configurés');
 }
 
 function refreshUsers() {
