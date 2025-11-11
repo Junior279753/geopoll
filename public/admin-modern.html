@@ -48,6 +48,11 @@
             overflow-x: hidden;
         }
 
+        /* Empêche le scroll quand la sidebar est ouverte sur mobile */
+        body.admin-body.no-scroll {
+            overflow: hidden;
+        }
+
         /* Styles pour les onglets utilisateurs */
         .users-tabs {
             display: flex;
@@ -167,6 +172,11 @@
             z-index: 1000;
             overflow-y: auto;
             transition: transform 0.3s ease;
+        }
+
+        /* Bouton pour ouvrir/fermer la sidebar sur mobile */
+        .sidebar-toggle {
+            display: none; /* Caché par défaut sur desktop */
         }
 
         .sidebar-header {
@@ -452,25 +462,6 @@
             transform: translateY(-1px);
         }
 
-        @media (max-width: 1024px) {
-            .admin-sidebar {
-                transform: translateX(-100%);
-            }
-
-            .admin-main {
-                margin-left: 0;
-            }
-
-            .stats-grid {
-                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-                gap: 1rem;
-            }
-
-            .admin-content {
-                padding: 1rem;
-            }
-        }
-
         /* Styles pour les utilisateurs en attente */
         .section-header {
             margin: 1rem 0;
@@ -647,6 +638,74 @@
 
             .admin-user-info {
                 display: none;
+            }
+        }
+
+        /* ===== RESPONSIVE ADMIN (< 768px) ===== */
+        @media (max-width: 768px) {
+            .admin-sidebar {
+                transform: translateX(-100%);
+                box-shadow: var(--shadow-xl);
+            }
+
+            .admin-sidebar.open {
+                transform: translateX(0);
+            }
+
+            .admin-main {
+                margin-left: 0;
+            }
+
+            .admin-header {
+                padding: 0 1rem;
+            }
+
+            .sidebar-toggle {
+                display: block; /* Afficher le bouton burger */
+                background: none;
+                border: none;
+                font-size: 1.5rem;
+                cursor: pointer;
+                color: var(--admin-text);
+            }
+
+            .page-title {
+                font-size: 1.25rem;
+            }
+
+            .admin-content {
+                padding: 1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .stat-card {
+                padding: 1rem;
+            }
+
+            .stat-value {
+                font-size: 1.5rem;
+            }
+
+            .sidebar-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 999; /* Juste en dessous de la sidebar */
+                opacity: 0;
+                visibility: hidden;
+                transition: opacity 0.3s ease;
+            }
+
+            .sidebar-overlay.active {
+                opacity: 1;
+                visibility: visible;
             }
         }
 
@@ -1306,6 +1365,9 @@
                     </a>
                 </div>
             </nav>
+
+            <!-- Overlay pour la sidebar mobile -->
+            <div class="sidebar-overlay" id="sidebarOverlay"></div>
         </aside>
 
         <!-- Contenu principal -->

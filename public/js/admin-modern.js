@@ -94,18 +94,52 @@ function setupNavigation() {
             const section = item.dataset.section;
             if (section) {
                 showSection(section);
+                // Fermer la sidebar sur mobile après avoir cliqué sur un lien
+                if (window.innerWidth <= 768) {
+                    closeSidebar();
+                }
             }
         });
     });
     
     // Toggle sidebar mobile
     const sidebarToggle = document.getElementById('sidebarToggle');
+    const sidebarOverlay = document.getElementById('sidebarOverlay'); // Fond noir
+
+    if (sidebarToggle) {
+        sidebarToggle.addEventListener('click', toggleSidebar);
+    }
+
+    if (sidebarOverlay) {
+        sidebarOverlay.addEventListener('click', closeSidebar);
+    }
+}
+
+// Fonction pour ouvrir la sidebar
+function openSidebar() {
     const sidebar = document.getElementById('adminSidebar');
-    
-    if (sidebarToggle && sidebar) {
-        sidebarToggle.addEventListener('click', () => {
-            sidebar.classList.toggle('open');
-        });
+    const overlay = document.getElementById('sidebarOverlay');
+    if (sidebar) sidebar.classList.add('open');
+    if (overlay) overlay.classList.add('active');
+    document.body.classList.add('no-scroll'); // Empêche le scroll du body
+}
+
+// Fonction pour fermer la sidebar
+function closeSidebar() {
+    const sidebar = document.getElementById('adminSidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    if (sidebar) sidebar.classList.remove('open');
+    if (overlay) overlay.classList.remove('active');
+    document.body.classList.remove('no-scroll'); // Rétablit le scroll
+}
+
+// Fonction pour basculer l'état de la sidebar
+function toggleSidebar() {
+    const sidebar = document.getElementById('adminSidebar');
+    if (sidebar && sidebar.classList.contains('open')) {
+        closeSidebar();
+    } else {
+        openSidebar();
     }
 }
 
