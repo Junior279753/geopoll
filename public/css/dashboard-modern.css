@@ -97,6 +97,11 @@
     border-radius: 8px;
     transition: background-color 0.2s;
     display: none; /* Masqué par défaut sur desktop */
+    min-height: 44px;
+    min-width: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .sidebar-toggle:hover {
@@ -284,11 +289,16 @@
     background: none;
     border: none;
     color: var(--dashboard-text);
-    font-size: 1.2rem;
+    font-size: 1.5rem;
     cursor: pointer;
     padding: 0.5rem;
     border-radius: 6px;
     transition: all 0.3s ease;
+    min-height: 44px;
+    min-width: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .mobile-menu-btn:hover {
@@ -553,7 +563,16 @@
 /* ===== RESPONSIVE ===== */
 @media (max-width: 1024px) {
     .sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 100%;
+        max-width: 300px;
+        height: 100vh;
         transform: translateX(-100%);
+        z-index: 1001;
+        box-shadow: 4px 0 15px rgba(0, 0, 0, 0.2);
+        transition: transform 0.3s ease;
     }
     
     .sidebar.open {
@@ -562,10 +581,19 @@
     
     .main-content {
         margin-left: 0;
+        width: 100%;
     }
 
     .mobile-menu-btn {
-        display: block;
+        display: block !important;
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: var(--dashboard-text);
+        min-height: 44px;
+        min-width: 44px;
+        padding: 0.5rem;
     }
     
     .dashboard-header {
@@ -575,11 +603,39 @@
     .dashboard-content {
         padding: 1rem;
     }
+
+    /* Désactiver scroll quand sidebar est ouverte */
+    body.dashboard-body.no-scroll {
+        overflow: hidden;
+    }
+
+    /* Overlay */
+    .sidebar-overlay {
+        display: block;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.45);
+        z-index: 1000;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.25s ease, visibility 0.25s ease;
+        pointer-events: none;
+    }
+
+    .sidebar-overlay.active {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+    }
 }
 
 @media (max-width: 768px) {
     .sidebar {
         width: 100%;
+        max-width: 100%;
     }
     
     .dashboard-header h1 {
@@ -588,6 +644,10 @@
     
     .header-right {
         gap: 0.5rem;
+    }
+
+    .sidebar-toggle {
+        display: block !important;
     }
 }
 
