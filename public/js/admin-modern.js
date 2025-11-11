@@ -249,12 +249,13 @@ async function loadPendingApprovals() {
             // Afficher la carte dans le dashboard
             displayPendingApprovalsCard(pendingUsers);
 
-            // Afficher aussi l\'alerte flottante si nécessaire
-            if (pendingUsers.length > 0) {
-                setTimeout(() => {
-                    displayPendingApprovalsAlert(pendingUsers);
-                }, 3000); // Après 3 secondes
-            }
+            // Afficher aussi l'alerte flottante si nécessaire
+            // NOTE: popup notification removed per request — keep dashboard card but do not show floating alert
+            // if (pendingUsers.length > 0) {
+            //     setTimeout(() => {
+            //         displayPendingApprovalsAlert(pendingUsers);
+            //     }, 3000); // Après 3 secondes
+            // }
         }
     } catch (error) {
         console.error('❌ Erreur chargement demandes d\'approbation:', error);

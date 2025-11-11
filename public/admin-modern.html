@@ -169,36 +169,32 @@
             height: 100vh;
             left: 0;
             top: 0;
-            z-index: 1000;
+            z-index: 1001;
             overflow-y: auto;
             transition: transform 0.3s ease;
         }
 
         /* Bouton pour ouvrir/fermer la sidebar sur mobile */
-        .sidebar-toggle {
-            display: none; /* Caché par défaut sur desktop */
-        }
+            .sidebar-overlay {
+                display: block;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.45);
+                z-index: 999; /* below sidebar */
+                opacity: 0;
+                visibility: hidden;
+                transition: opacity 0.25s ease, visibility 0.25s ease;
+                pointer-events: none; /* don't capture clicks when hidden */
+            }
 
-        /* Overlay backdrop pour mobile */
-        .sidebar-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 999; /* Just below sidebar */
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-        }
-
-        .sidebar-overlay.active {
-            display: block;
-            opacity: 1;
-            visibility: visible;
-        }
+            .sidebar-overlay.active {
+                opacity: 1;
+                visibility: visible;
+                pointer-events: auto; /* only capture clicks when active */
+            }
 
         .sidebar-header {
             padding: 1.5rem;
@@ -1570,9 +1566,9 @@
                 </div>
             </nav>
 
-            <!-- Overlay pour la sidebar mobile -->
-            <div class="sidebar-overlay" id="sidebarOverlay"></div>
         </aside>
+        <!-- Overlay pour la sidebar mobile (sibling, so it sits under the sidebar) -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
         <!-- Contenu principal -->
         <main class="admin-main">
