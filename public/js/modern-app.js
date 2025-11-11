@@ -698,7 +698,7 @@ const testimonials = [
         name: "Aminata Diallo",
         role: "Étudiante en Informatique",
         company: "UAC Cotonou",
-        image: "https://images.unsplash.com/photo-1494790108755-2616b612b786?auto=format&fit=crop&q=80&w=200&h=200",
+        image: "/images/testimonials/femme-1.jpg",
         rating: 5,
         testimonial: "Grâce à GeoPoll, j'ai pu générer un revenu complémentaire significatif. La plateforme est intuitive et les paiements sont rapides."
     },
@@ -706,7 +706,7 @@ const testimonials = [
         name: "Kouame Yves",
         role: "Entrepreneur",
         company: "Abidjan",
-        image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200&h=200",
+        image: "/images/testimonials/homme-1.jpg",
         rating: 5,
         testimonial: "La subvention de démarrage m'a vraiment aidé à commencer mon entreprise. Maintenant je gagne régulièrement avec les sondages."
     },
@@ -714,7 +714,7 @@ const testimonials = [
         name: "Fatou Ndiaye",
         role: "Consultante Marketing",
         company: "Bamako",
-        image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=200&h=200",
+        image: "/images/testimonials/femme-2.jpg",
         rating: 5,
         testimonial: "Interface moderne et facile à utiliser. Je recommande GeoPoll à tous ceux qui veulent gagner de l'argent en ligne."
     },
@@ -722,7 +722,7 @@ const testimonials = [
         name: "Marie Kouassi",
         role: "Étudiante en Gestion",
         company: "Université de Cocody",
-        image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=200&h=200",
+        image: "/images/testimonials/femme-3.jpg",
         rating: 5,
         testimonial: "J'ai trouvé un stage parfait chez Orange Bénin grâce aux connexions que j'ai faites sur GeoPoll. Le processus était simple et efficace."
     },
@@ -730,7 +730,7 @@ const testimonials = [
         name: "Ibrahim Traoré",
         role: "Enseignant",
         company: "Ouagadougou",
-        image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=200&h=200",
+        image: "/images/testimonials/homme-2.jpg",
         rating: 5,
         testimonial: "En tant qu'enseignant, GeoPoll me permet d'arrondir mes fins de mois. Les sondages sont pertinents et bien rémunérés."
     },
@@ -738,7 +738,7 @@ const testimonials = [
         name: "Dr. Aisha Camara",
         role: "Médecin",
         company: "Conakry",
-        image: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&q=80&w=200&h=200",
+        image: "/images/testimonials/femme-4.jpg",
         rating: 5,
         testimonial: "La flexibilité de GeoPoll me permet de participer aux sondages entre mes consultations. Parfait pour les professionnels de santé."
     }
