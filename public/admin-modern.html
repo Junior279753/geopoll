@@ -156,6 +156,76 @@
             }
         }
 
+        /* Additional mobile fixes for user cards to override inline styles and improve layout */
+        @media (max-width: 767px) {
+            .users-grid {
+                grid-template-columns: 1fr !important;
+            }
+
+            .user-card {
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 0.75rem !important;
+                padding: 1rem !important;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.06) !important;
+            }
+
+            .user-header {
+                display: flex !important;
+                flex-direction: column !important;
+                align-items: center !important;
+                text-align: center !important;
+                gap: 0.5rem !important;
+            }
+
+            .user-avatar {
+                width: 56px !important;
+                height: 56px !important;
+                font-size: 1.1rem !important;
+                margin: 0 auto !important;
+            }
+
+            .contact-details {
+                display: block !important;
+                width: 100% !important;
+            }
+
+            .detail-row {
+                display: flex !important;
+                flex-direction: column !important;
+                align-items: flex-start !important;
+                gap: 0.5rem !important;
+            }
+
+            .detail-label {
+                min-width: auto !important;
+                font-weight: 600;
+            }
+
+            .detail-value {
+                min-width: 0 !important;
+                width: 100% !important;
+                white-space: normal !important;
+                overflow-wrap: anywhere !important;
+                word-break: break-word !important;
+            }
+
+            .copy-btn, .copy-all-btn {
+                align-self: flex-end !important;
+            }
+
+            .user-actions {
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 0.5rem !important;
+                width: 100% !important;
+            }
+
+            .user-actions .btn, .user-actions button {
+                width: 100% !important;
+            }
+        }
+
         .admin-layout {
             display: flex;
             min-height: 100vh;
@@ -1099,6 +1169,68 @@
             background: #f8f9fa;
         }
 
+        /* ===== TABLE RESPONSIVENESS - Mobile Cards Layout ===== */
+        @media (max-width: 768px) {
+            .admin-table {
+                display: block;
+                width: 100%;
+                border: none;
+                box-shadow: none;
+                margin-bottom: 1rem;
+            }
+
+            .admin-table thead {
+                display: none;
+            }
+
+            .admin-table tbody {
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .admin-table tr {
+                display: flex;
+                flex-direction: column;
+                background: white;
+                border: 1px solid #e9ecef;
+                border-radius: 8px;
+                padding: 1rem !important;
+                gap: 0.75rem;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            }
+
+            .admin-table td {
+                display: flex;
+                flex-direction: column;
+                padding: 0 !important;
+                border: none !important;
+                gap: 0.25rem;
+                word-break: break-word;
+                overflow-wrap: anywhere;
+            }
+
+            .admin-table td::before {
+                content: attr(data-label);
+                font-weight: 600;
+                color: #495057;
+                font-size: 0.75rem;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+            }
+
+            .action-buttons {
+                flex-direction: row !important;
+                flex-wrap: wrap !important;
+                gap: 0.5rem !important;
+            }
+
+            .action-buttons .btn {
+                flex: 1;
+                min-width: 100px;
+            }
+        }
+
         .action-buttons {
             display: flex;
             flex-direction: column;
@@ -1534,10 +1666,6 @@
                         <i class="fas fa-poll"></i>
                         <span>Sondages</span>
                     </a>
-                    <a href="#quiz" class="nav-item" data-section="quiz">
-                        <i class="fas fa-gamepad"></i>
-                        <span>Quiz</span>
-                    </a>
                 </div>
                 
                 <div class="nav-section">
@@ -1831,31 +1959,6 @@
                                 <div class="loading-spinner">
                                     <i class="fas fa-spinner fa-spin"></i>
                                     <span>Chargement des sondages...</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Section Quiz -->
-                <section id="quiz" class="content-section">
-                    <div class="admin-card">
-                        <div class="card-header">
-                            <h3 class="card-title">Gestion des quiz</h3>
-                            <div class="card-actions">
-                                <button class="btn btn-primary" onclick="refreshQuiz()">
-                                    <i class="fas fa-sync"></i> Actualiser
-                                </button>
-                                <button class="btn btn-success" onclick="createQuiz()">
-                                    <i class="fas fa-plus"></i> Nouveau quiz
-                                </button>
-                            </div>
-                        </div>
-                        <div class="card-content">
-                            <div id="quizTable">
-                                <div class="loading-spinner">
-                                    <i class="fas fa-spinner fa-spin"></i>
-                                    <span>Chargement des quiz...</span>
                                 </div>
                             </div>
                         </div>

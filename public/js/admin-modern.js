@@ -5,6 +5,17 @@ let currentSection = 'dashboard';
 let users = [];
 let stats = {};
 
+// Small helper to escape HTML when injecting user-provided strings into templates
+function escapeHtml(str) {
+    if (str === undefined || str === null) return '';
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
 // Initialisation
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🚀 Interface admin moderne chargée');
@@ -758,7 +769,7 @@ function generateUserTable(users, isPending) {
             <tbody>
                 ${users.map(user => `
                     <tr ${isPending ? 'style="background: #fffbf0;"' : ''}> 
-                        <td>
+                        <td data-label="Coordonnées Complètes">
                             <div class="user-full-details">
                                 <div class="user-header" style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid #e9ecef;">
                                     <div class="user-avatar" style="width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(135deg, #667eea, #764ba2); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.2rem;">
@@ -818,7 +829,7 @@ function generateUserTable(users, isPending) {
                                 </div>
                             </div>
                         </td>
-                        <td>
+                        <td data-label="Statut & Activité">
                             <div class="status-info" style="display: flex; flex-direction: column; gap: 0.5rem;">
                                 ${getUserStatusBadge(user)}
                                 <div style="font-size: 0.8rem; color: ${user.is_active ? '#28a745' : '#dc3545'};">
@@ -838,11 +849,11 @@ function generateUserTable(users, isPending) {
                                 `}
                             </div>
                         </td>
-                        <td>
+                        <td data-label="Inscription">
                             <div style="font-size: 0.9rem; color: #495057;">${formatDate(user.created_at)}</div>
                             <div style="font-size: 0.8rem; color: #6c757d;">${getRelativeTime(user.created_at)}</div>
                         </td>
-                        <td>
+                        <td data-label="Actions">
                             <div class="action-buttons" style="display: flex; flex-direction: column; gap: 0.5rem;">
                                 ${getUserActions(user)}
                             </div>
@@ -873,6 +884,11 @@ async function loadSurveys() {
             const surveysData = await surveysResponse.json();
             const statsData = await statsResponse.json();
 
+            // Log a sample to help diagnose mismatched field names (keeps frontend-only changes)
+            if (Array.isArray(surveysData.surveys) && surveysData.surveys.length > 0) {
+                console.debug('🔍 survey sample', surveysData.surveys[0]);
+            }
+
             displaySurveys(surveysData.surveys, statsData);
             console.log(`📋 ${surveysData.surveys.length} sondages chargés`);
         }
@@ -894,6 +910,59 @@ function displaySurveys(surveys, stats) {
         return;
     }
 
+    // Helper to safely pick multiple possible keys and nested locations
+    const pick = (obj, ...keys) => {
+        for (const key of keys) {
+            if (!obj) continue;
+            // support nested path like 'user.email'
+            if (key.includes('.')) {
+                const parts = key.split('.');
+                let cur = obj;
+                for (const p of parts) {
+                    if (cur && (p in cur)) cur = cur[p];
+                    else { cur = undefined; break; }
+                }
+                if (cur !== undefined && cur !== null) return cur;
+            } else {
+                if (obj[key] !== undefined && obj[key] !== null) return obj[key];
+            }
+        }
+        return undefined;
+    };
+
+    const rows = surveys.map(survey => {
+        const first = pick(survey, 'first_name', 'firstName', 'user.first_name', 'user.firstName') || '';
+        const last = pick(survey, 'last_name', 'lastName', 'user.last_name', 'user.lastName') || '';
+        const email = pick(survey, 'email', 'user.email') || '';
+        const theme = pick(survey, 'theme_name', 'theme', 'themeName') || 'N/A';
+        const rawScore = pick(survey, 'score', 'score_value') ;
+        const score = (typeof rawScore === 'number') ? rawScore : (rawScore ? Number(rawScore) : 0);
+        const reward = pick(survey, 'reward_amount', 'reward', 'rewardAmount');
+        const startedAt = pick(survey, 'started_at', 'startedAt') || pick(survey, 'created_at', 'createdAt');
+
+        const scoreClass = score >= 8 ? 'high' : score >= 6 ? 'medium' : 'low';
+
+        return `
+            <tr>
+                <td data-label="Utilisateur">
+                    <div class="user-info">
+                        <strong>${escapeHtml(first)} ${escapeHtml(last)}</strong>
+                        <br><small>${escapeHtml(email)}</small>
+                    </div>
+                </td>
+                <td data-label="Thème">${escapeHtml(theme)}</td>
+                <td data-label="Score">
+                    <span class="score-badge ${scoreClass}">
+                        ${score}/10
+                    </span>
+                </td>
+                <td data-label="Statut">${getSurveyStatusBadge(survey)}</td>
+                <td data-label="Récompense">${formatAmount(reward || 0)}</td>
+                <td data-label="Date">${formatDate(startedAt)}</td>
+            </tr>
+        `;
+    }).join('');
+
     const html = `
         <!-- Statistiques des sondages -->
         <div class="stats-grid" style="margin-bottom: 2rem;">
@@ -902,7 +971,7 @@ function displaySurveys(surveys, stats) {
                     <i class="fas fa-poll"></i>
                 </div>
                 <div class="stat-content">
-                    <div class="stat-value">${stats.total}</div>
+                    <div class="stat-value">${stats.total || 0}</div>
                     <div class="stat-label">Total tentatives</div>
                 </div>
             </div>
@@ -911,7 +980,7 @@ function displaySurveys(surveys, stats) {
                     <i class="fas fa-check-circle"></i>
                 </div>
                 <div class="stat-content">
-                    <div class="stat-value">${stats.completed}</div>
+                    <div class="stat-value">${stats.completed || 0}</div>
                     <div class="stat-label">Terminés</div>
                 </div>
             </div>
@@ -920,7 +989,7 @@ function displaySurveys(surveys, stats) {
                     <i class="fas fa-trophy"></i>
                 </div>
                 <div class="stat-content">
-                    <div class="stat-value">${stats.passed}</div>
+                    <div class="stat-value">${stats.passed || 0}</div>
                     <div class="stat-label">Réussis</div>
                 </div>
             </div>
@@ -929,7 +998,7 @@ function displaySurveys(surveys, stats) {
                     <i class="fas fa-coins"></i>
                 </div>
                 <div class="stat-content">
-                    <div class="stat-value">${formatAmount(stats.totalRewards)}</div>
+                    <div class="stat-value">${formatAmount(stats.totalRewards || 0)}</div>
                     <div class="stat-label">Récompenses payées</div>
                 </div>
             </div>
@@ -948,25 +1017,7 @@ function displaySurveys(surveys, stats) {
                 </tr>
             </thead>
             <tbody>
-                ${surveys.map(survey => `
-                    <tr>
-                        <td>
-                            <div class="user-info">
-                                <strong>${survey.first_name} ${survey.last_name}</strong>
-                                <br><small>${survey.email}</small>
-                            </div>
-                        </td>
-                        <td>${survey.theme_name || 'N/A'}</td>
-                        <td>
-                            <span class="score-badge ${survey.score >= 8 ? 'high' : survey.score >= 6 ? 'medium' : 'low'}">
-                                ${survey.score || 0}/10
-                            </span>
-                        </td>
-                        <td>${getSurveyStatusBadge(survey)}</td>
-                        <td>${survey.reward_amount ? formatAmount(survey.reward_amount) : '-'}</td>
-                        <td>${formatDate(survey.started_at)}</td>
-                    </tr>
-                `).join('')}
+                ${rows}
             </tbody>
         </table>
     `;
@@ -985,7 +1036,9 @@ function getSurveyStatusBadge(survey) {
 }
 
 function formatAmount(amount) {
-    return new Intl.NumberFormat('fr-FR').format(amount) + ' FCFA';
+    const n = Number(amount);
+    if (!isFinite(n)) return '0 FCFA';
+    return new Intl.NumberFormat('fr-FR').format(n) + ' FCFA';
 }
 
 // ===== GESTION DES RETRAITS =====
@@ -1042,19 +1095,19 @@ function displayWithdrawals(withdrawals) {
                 <tbody>
                     ${pendingWithdrawals.map(withdrawal => `
                         <tr style="background: #fffbf0;">
-                            <td>
+                            <td data-label="Utilisateur">
                                 <div class="user-info">
                                     <strong>${withdrawal.first_name} ${withdrawal.last_name}</strong>
                                     <br><small>${withdrawal.email}</small>
                                     <br><small>Solde: ${formatAmount(withdrawal.balance)}</small>
                                 </div>
                             </td>
-                            <td>
+                            <td data-label="Montant">
                                 <strong style="color: #dc3545;">${formatAmount(Math.abs(withdrawal.amount))}</strong>
                             </td>
-                            <td>${withdrawal.payment_method || 'N/A'}</td>
-                            <td>${formatDate(withdrawal.created_at)}</td>
-                            <td>
+                            <td data-label="Méthode">${withdrawal.payment_method || 'N/A'}</td>
+                            <td data-label="Date demande">${formatDate(withdrawal.created_at)}</td>
+                            <td data-label="Actions">
                                 <div class="actions">
                                     <button class="btn btn-sm btn-success" onclick="processWithdrawal(${withdrawal.id}, 'approve')" title="Approuver">
                                         <i class="fas fa-check"></i> Approuver
@@ -1087,16 +1140,16 @@ function displayWithdrawals(withdrawals) {
                 <tbody>
                     ${processedWithdrawals.map(withdrawal => `
                         <tr>
-                            <td>
+                            <td data-label="Utilisateur">
                                 <div class="user-info">
                                     <strong>${withdrawal.first_name} ${withdrawal.last_name}</strong>
                                     <br><small>${withdrawal.email}</small>
                                 </div>
                             </td>
-                            <td>${formatAmount(Math.abs(withdrawal.amount))}</td>
-                            <td>${getWithdrawalStatusBadge(withdrawal.status)}</td>
-                            <td>${formatDate(withdrawal.created_at)}</td>
-                            <td>${withdrawal.processed_at ? formatDate(withdrawal.processed_at) : '-'}</td>
+                            <td data-label="Montant">${formatAmount(Math.abs(withdrawal.amount))}</td>
+                            <td data-label="Statut">${getWithdrawalStatusBadge(withdrawal.status)}</td>
+                            <td data-label="Date demande">${formatDate(withdrawal.created_at)}</td>
+                            <td data-label="Date traitement">${withdrawal.processed_at ? formatDate(withdrawal.processed_at) : '-'}</td>
                         </tr>
                     `).join('')}
                 </tbody>
@@ -1209,7 +1262,7 @@ function displayLogs(logs) {
             <tbody>
                 ${logs.map(log => `
                     <tr>
-                        <td>
+                        <td data-label="Utilisateur">
                             ${log.first_name && log.last_name ? `
                                 <div class="user-info">
                                     <strong>${log.first_name} ${log.last_name}</strong>
@@ -1219,18 +1272,18 @@ function displayLogs(logs) {
                                 <span style="color: #666;">ID: ${log.user_id}</span>
                             `}
                         </td>
-                        <td>
+                        <td data-label="Action">
                             <span class="action-badge ${getActionBadgeClass(log.action)}">
                                 ${getActionText(log.action)}
                             </span>
                         </td>
-                        <td>
+                        <td data-label="Détails">
                             <small style="color: #666;">${log.details || '-'}</small>
                         </td>
-                        <td>
+                        <td data-label="IP">
                             <code style="font-size: 0.8rem;">${log.ip_address || '-'}</code>
                         </td>
-                        <td>${formatDateTime(log.created_at)}</td>
+                        <td data-label="Date">${formatDateTime(log.created_at)}</td>
                     </tr>
                 `).join('')}
             </tbody>
@@ -1715,19 +1768,9 @@ function refreshWithdrawals() {
     loadWithdrawals();
 }
 
-function refreshQuiz() {
-    // TODO: Implémenter le chargement des quiz
-    showNotification('Fonctionnalité quiz en développement', 'info');
-}
-
 function createSurvey() {
     // TODO: Implémenter la création de sondage
     showNotification('Fonctionnalité création de sondage en développement', 'info');
-}
-
-function createQuiz() {
-    // TODO: Implémenter la création de quiz
-    showNotification('Fonctionnalité création de quiz en développement', 'info');
 }
 
 function exportWithdrawals() {
