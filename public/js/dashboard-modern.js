@@ -898,8 +898,84 @@ async function submitSurvey() {
 }
 
 async function loadPayments() {
-    console.log('💳 Chargement des paiements...');
-    // TODO: Implémenter le chargement des paiements
+    try {
+        const token = localStorage.getItem('token') || localStorage.getItem('authToken');
+        
+        // Fetch user balance and transaction history
+        const [balanceResponse, transactionsResponse] = await Promise.all([
+            fetch('/api/user/balance', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            }),
+            fetch('/api/user/transactions', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            })
+        ]);
+
+        // Handle balance
+        if (balanceResponse.ok) {
+            const balanceData = await balanceResponse.json();
+            const balanceEl = document.getElementById('paymentBalance');
+            const withdrawnEl = document.getElementById('totalWithdrawn');
+            const pendingEl = document.getElementById('pendingAmount');
+            
+            if (balanceEl) balanceEl.textContent = formatAmount(balanceData.balance || 0);
+            if (withdrawnEl) withdrawnEl.textContent = formatAmount(balanceData.totalWithdrawn || 0);
+            if (pendingEl) pendingEl.textContent = formatAmount(balanceData.pending || 0);
+        } else {
+            console.warn('⚠️ Impossible de charger le solde');
+        }
+
+        // Handle transactions
+        if (transactionsResponse.ok) {
+            const transData = await transactionsResponse.json();
+            displayTransactions(transData.transactions || []);
+        } else {
+            console.warn('⚠️ Impossible de charger l\'historique des transactions');
+        }
+
+        console.log('💳 Paiements chargés');
+    } catch (error) {
+        console.error('❌ Erreur chargement paiements:', error);
+    }
+}
+
+function displayTransactions(transactions) {
+    const tbody = document.getElementById('transactionTableBody');
+    if (!tbody) return;
+
+    if (!transactions || transactions.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 2rem; color: #666;">Aucune transaction</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = transactions.map(tx => {
+        const date = formatDate(tx.created_at || tx.date);
+        const type = tx.type === 'withdrawal' || tx.type === 'withdraw' ? '💸 Retrait' : '✅ Dépôt';
+        const amount = formatAmount(Math.abs(tx.amount || 0));
+        const method = tx.payment_method || tx.paymentMethod || 'N/A';
+        const statusBadge = getTransactionStatusBadge(tx.status);
+        
+        return `
+            <tr>
+                <td data-label="Date">${date}</td>
+                <td data-label="Type">${type}</td>
+                <td data-label="Montant">${amount}</td>
+                <td data-label="Moyen">${method}</td>
+                <td data-label="Statut">${statusBadge}</td>
+            </tr>
+        `;
+    }).join('');
+}
+
+function getTransactionStatusBadge(status) {
+    const statuses = {
+        'pending': '<span class="badge badge-warning">En attente</span>',
+        'completed': '<span class="badge badge-success">Complétée</span>',
+        'approved': '<span class="badge badge-success">Approuvée</span>',
+        'rejected': '<span class="badge badge-danger">Rejetée</span>',
+        'failed': '<span class="badge badge-danger">Échouée</span>'
+    };
+    return statuses[status] || '<span class="badge badge-secondary">Inconnu</span>';
 }
 
 // ===== INTERFACE DE SONDAGE =====
@@ -1076,6 +1152,76 @@ document.addEventListener('click', function(event) {
         userMenu.classList.remove('active');
     }
 });
+
+// Gestionnaire pour le formulaire de retrait
+document.addEventListener('DOMContentLoaded', function() {
+    const withdrawalForm = document.getElementById('withdrawalForm');
+    if (withdrawalForm) {
+        withdrawalForm.addEventListener('submit', handleWithdrawalSubmit);
+    }
+});
+
+async function handleWithdrawalSubmit(e) {
+    e.preventDefault();
+    
+    try {
+        const formData = new FormData(this);
+        const amount = parseFloat(formData.get('amount'));
+        const paymentMethod = formData.get('paymentMethod');
+        const accountNumber = formData.get('accountNumber');
+        
+        // Validation
+        if (!amount || amount <= 0) {
+            showErrorPopup('Veuillez entrer un montant valide');
+            return;
+        }
+        
+        if (!paymentMethod) {
+            showErrorPopup('Veuillez sélectionner un moyen de paiement');
+            return;
+        }
+        
+        if (!accountNumber || accountNumber.trim().length === 0) {
+            showErrorPopup('Veuillez entrer un numéro de compte');
+            return;
+        }
+        
+        // Soumettre la requête
+        const token = localStorage.getItem('token') || localStorage.getItem('authToken');
+        const response = await fetch('/api/user/withdraw', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                amount,
+                payment_method: paymentMethod,
+                account_number: accountNumber
+            })
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            showSuccessPopup('Demande de retrait soumise avec succès ! Elle sera traitée dans 2-3 jours ouvrables.', () => {
+                // Réinitialiser le formulaire et recharger les données
+                this.reset();
+                loadPayments();
+            });
+        } else if (response.status === 400) {
+            const error = await response.json();
+            showErrorPopup(error.message || 'Erreur lors de la soumission du retrait');
+        } else if (response.status === 401) {
+            showErrorPopup('Session expirée. Veuillez vous reconnecter.');
+            logout();
+        } else {
+            showErrorPopup('Erreur serveur lors du traitement du retrait');
+        }
+    } catch (error) {
+        console.error('❌ Erreur retrait:', error);
+        showErrorPopup('Une erreur s\'est produite. Veuillez réessayer.');
+    }
+}
 
 // Exposer les fonctions globalement
 Object.assign(window, {

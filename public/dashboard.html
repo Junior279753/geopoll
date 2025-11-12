@@ -38,10 +38,12 @@
                     <i class="fas fa-poll"></i>
                     <span>Sondages</span>
                 </a>
+                <!-- Paiements temporairement désactivé - Backend à finaliser
                 <a href="#payments" class="nav-item" data-section="payments">
                     <i class="fas fa-credit-card"></i>
                     <span>Paiements</span>
                 </a>
+                -->
             </div>
 
             <div class="nav-section">
@@ -108,10 +110,6 @@
                     <a href="#" onclick="showSection('profile')">
                         <i class="fas fa-user"></i>
                         Mon Profil
-                    </a>
-                    <a href="#">
-                        <i class="fas fa-wallet"></i>
-                        Mes Paiements
                     </a>
                     <div class="menu-divider"></div>
                     <a href="#" onclick="logout()">
@@ -204,6 +202,7 @@
                             </div>
                         </button>
                         
+                        <!-- Paiements temporairement désactivé - Backend à finaliser
                         <button class="action-card" onclick="showSection('payments')">
                             <div class="action-icon">
                                 <i class="fas fa-money-bill-wave"></i>
@@ -223,6 +222,7 @@
                                 <p>Gérer vos moyens de paiement</p>
                             </div>
                         </button>
+                        -->
                         
                         <button class="action-card" onclick="showSection('profile')">
                             <div class="action-icon">
@@ -363,6 +363,115 @@
                     <div class="survey-actions">
                         <button class="btn btn-secondary" id="prevBtn" onclick="previousQuestion()" disabled>
                             <i class="fas fa-chevron-left"></i> Précédent
+                <!-- Payments Section -->
+                <section id="payments" class="content-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-wallet"></i> Mes paiements</h2>
+                        <p>Gérez vos transactions et demandes de retrait</p>
+                    </div>
+
+                    <!-- Payment Stats -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon" style="background-color: #e3f2fd;">
+                                <i class="fas fa-piggy-bank" style="color: #1976d2;"></i>
+                            </div>
+                            <div class="stat-content">
+                                <p>Solde disponible</p>
+                                <h3 id="paymentBalance">0 FCFA</h3>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon" style="background-color: #f3e5f5;">
+                                <i class="fas fa-arrow-down" style="color: #7b1fa2;"></i>
+                            </div>
+                            <div class="stat-content">
+                                <p>Total retiré</p>
+                                <h3 id="totalWithdrawn">0 FCFA</h3>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon" style="background-color: #fce4ec;">
+                                <i class="fas fa-hourglass-half" style="color: #c2185b;"></i>
+                            </div>
+                            <div class="stat-content">
+                                <p>Retrait en attente</p>
+                                <h3 id="pendingAmount">0 FCFA</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Withdrawal Form -->
+                    <div class="withdrawal-form">
+                        <h3><i class="fas fa-money-bill-wave"></i> Demande de retrait</h3>
+                        <form id="withdrawalForm">
+                            <div class="form-group">
+                                <label for="amount">Montant à retirer (FCFA)</label>
+                                <input 
+                                    type="number" 
+                                    id="amount" 
+                                    name="amount" 
+                                    min="1000" 
+                                    step="500" 
+                                    placeholder="Minimum: 1000 FCFA"
+                                    required
+                                >
+                            </div>
+
+                            <div class="form-group">
+                                <label for="paymentMethod">Moyen de paiement</label>
+                                <select id="paymentMethod" name="paymentMethod" required>
+                                    <option value="">-- Sélectionnez un moyen --</option>
+                                    <option value="mobileMoneyOrange">📱 Orange Money</option>
+                                    <option value="mobileMoneyWave">📱 Wave</option>
+                                    <option value="mobileMoneyMTN">📱 MTN Mobile Money</option>
+                                    <option value="bankTransfer">🏦 Virement bancaire</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="accountNumber">Numéro de compte / Téléphone</label>
+                                <input 
+                                    type="text" 
+                                    id="accountNumber" 
+                                    name="accountNumber" 
+                                    placeholder="ex: +221 77 XXX XX XX ou IBAN"
+                                    required
+                                >
+                            </div>
+
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">
+                                <i class="fas fa-arrow-down"></i> Demander un retrait
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Transaction History -->
+                    <div style="margin-top: 2rem;">
+                        <h3 style="margin-bottom: 1.5rem;"><i class="fas fa-history"></i> Historique des transactions</h3>
+                        <div style="overflow-x: auto;">
+                            <table id="transactionTable">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Type</th>
+                                        <th>Montant</th>
+                                        <th>Moyen</th>
+                                        <th>Statut</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="transactionTableBody">
+                                    <tr>
+                                        <td colspan="5" style="text-align: center; padding: 2rem; color: #999;">
+                                            <i class="fas fa-inbox"></i> Aucune transaction
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
                         </button>
                         <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()" disabled>
                             Suivant <i class="fas fa-chevron-right"></i>
